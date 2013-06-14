@@ -16,3 +16,6 @@
 *.lai
 *.la
 *.a
+
+debug/
+release/

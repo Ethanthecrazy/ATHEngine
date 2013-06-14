@@ -2,6 +2,11 @@
 *.slo
 *.lo
 *.o
+*.pdb
+*.obj
+*.tlog
+*.idb
+*.manifest
 
 # Compiled Dynamic libraries
 *.so

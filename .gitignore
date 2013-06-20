@@ -7,6 +7,11 @@
 *.tlog
 *.idb
 *.manifest
+*.ipch
+*.suo
+*.sdf
+*.user
+*.filters
 
 # Compiled Dynamic libraries
 *.so

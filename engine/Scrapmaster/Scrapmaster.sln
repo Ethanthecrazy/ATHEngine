@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj", "{28B3A1B0-4640-4707-9F6F-E326C6B18199}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3CD0723B-34DE-4591-9252-74606FC3CE5C} = {3CD0723B-34DE-4591-9252-74606FC3CE5C}
+		{994C58BD-9E62-4403-9ABF-5729C5D8BA97} = {994C58BD-9E62-4403-9ABF-5729C5D8BA97}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ATHUtil", "ATHUtil\ATHUtil.vcxproj", "{3CD0723B-34DE-4591-9252-74606FC3CE5C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ATHRenderer", "ATHRenderer\ATHRenderer.vcxproj", "{994C58BD-9E62-4403-9ABF-5729C5D8BA97}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{28B3A1B0-4640-4707-9F6F-E326C6B18199}.Debug|Win32.ActiveCfg = Debug|Win32
+		{28B3A1B0-4640-4707-9F6F-E326C6B18199}.Debug|Win32.Build.0 = Debug|Win32
+		{28B3A1B0-4640-4707-9F6F-E326C6B18199}.Release|Win32.ActiveCfg = Release|Win32
+		{28B3A1B0-4640-4707-9F6F-E326C6B18199}.Release|Win32.Build.0 = Release|Win32
+		{3CD0723B-34DE-4591-9252-74606FC3CE5C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3CD0723B-34DE-4591-9252-74606FC3CE5C}.Debug|Win32.Build.0 = Debug|Win32
+		{3CD0723B-34DE-4591-9252-74606FC3CE5C}.Release|Win32.ActiveCfg = Release|Win32
+		{3CD0723B-34DE-4591-9252-74606FC3CE5C}.Release|Win32.Build.0 = Release|Win32
+		{994C58BD-9E62-4403-9ABF-5729C5D8BA97}.Debug|Win32.ActiveCfg = Debug|Win32
+		{994C58BD-9E62-4403-9ABF-5729C5D8BA97}.Debug|Win32.Build.0 = Debug|Win32
+		{994C58BD-9E62-4403-9ABF-5729C5D8BA97}.Release|Win32.ActiveCfg = Release|Win32
+		{994C58BD-9E62-4403-9ABF-5729C5D8BA97}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

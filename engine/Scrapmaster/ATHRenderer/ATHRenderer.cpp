@@ -30,29 +30,7 @@ void ATHRenderer::BuildQuad()
 
 void ATHRenderer::ProcessNode( ATHRenderNode* _target )
 {
-	D3DXMATRIX modify =  m_pCamera->GetViewMatrix() * m_pCamera->GetProjectionMatrix();
 
-	m_pEffect->SetMatrix("gWVP", &( _target->m_matTransform * modify ));
-
-	m_pEffect->SetTexture("tex1", _target->m_pTexture.GetTexture() );
-
-	float4 fDrawRect = _target->m_fCropping;
-	float2 fDims = _target->m_pTexture.GetDimensions();
-
-	float2 fHorz = float2( fDrawRect.rLeft, fDrawRect.rRight );
-	float2 fVert = float2( fDrawRect.rTop, fDrawRect.rBottom );
-
-	m_pEffect->SetFloatArray( "xAxis", fHorz.Array, 2 );
-	m_pEffect->SetFloatArray( "yAxis", fVert.Array, 2 );
-
-	m_pEffect->SetFloatArray( "multColor", _target->m_fColor.Array, 4 );
-
-	m_pEffect->CommitChanges();
-
-	m_pDevice->SetStreamSource( 0, m_meshQuad.GetVertexBuffer(), 0, sizeof( sVertPosNormUV ) );
-	m_pDevice->SetVertexDeclaration( m_pvdPosNormUV );
-	m_pDevice->SetIndices( m_meshQuad.GetIndexBuffer() );
-	m_pDevice->DrawIndexedPrimitive( D3DPT_TRIANGLELIST, 0, 0, 4, 0, 2 );
 }
 
 ATHRenderNode* ATHRenderer::CreateNode()
@@ -105,8 +83,6 @@ ATHRenderer::ATHRenderer()
 	m_pCamera			= nullptr;
 
 	m_pNodeInventory	= nullptr;
-
-	memset( m_aRenderLists, 0, sizeof( ATHRenderNode* ) * 513 );
 
 }
 
@@ -192,6 +168,8 @@ bool ATHRenderer::Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScre
 	m_pCamera = ATHNew<CCamera>("Rendering");
 	m_pCamera->BuildPerspective(D3DX_PI / 2.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.1f, 10000.0f);
 	m_pCamera->SetViewPosition(0.0f, 0.0f, -680.0f);
+
+	m_TextureAtlas.Initialize( m_pDevice );
 
 	BuildQuad();
 
@@ -282,6 +260,8 @@ void ATHRenderer::Shutdown()
 
 	if( m_pEffect )
 		m_pEffect->Release();
+
+	m_TextureAtlas.Shutdown();
 
 	m_pvdPosNormUV->Release();
 	m_pDevice->Release();

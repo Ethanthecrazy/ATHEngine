@@ -14,13 +14,6 @@ class ATHAtlas
 
 private:
 
-	static ATHAtlas* m_pInstance;
-
-	ATHAtlas();
-	ATHAtlas( const ATHAtlas&);
-	ATHAtlas& operator=(const ATHAtlas&);
-	~ATHAtlas();
-
 	struct sTexNode
 	{
 
@@ -52,7 +45,7 @@ public:
 	private:
 
 		sTexNode* m_pTexNode;
-
+		
 		ATHTextureHandle( sTexNode* _target ) : m_pTexNode( _target ) {}
 
 	public:
@@ -68,10 +61,9 @@ public:
 
 	};
 
-	static ATHAtlas* GetInstance();
-	static void DeleteInstance();
+	ATHAtlas();
 
-	void Initialize(); 
+	void Initialize( LPDIRECT3DDEVICE9 _device ); 
 	void Shutdown();
 
 	void LoadTexture( char* _szHandle, char* _szFilepath );

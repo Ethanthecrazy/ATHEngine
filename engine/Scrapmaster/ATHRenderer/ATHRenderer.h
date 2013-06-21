@@ -44,10 +44,9 @@ private:
 	ATHRenderNode*					m_pNodeInventory;
 
 	std::map< int, ATHRenderNode* > m_mapRenderLists;
-
-	ATHRenderNode* m_aRenderLists[513];
-
 	
+	ATHAtlas						m_TextureAtlas;
+
 	ATHRenderer( const ATHRenderer&);
 	ATHRenderer& operator=(const ATHRenderer&);
 	~ATHRenderer();

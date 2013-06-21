@@ -3,6 +3,7 @@
 
 #include <map>
 #include <string>
+#include <iostream>
 
 class MemoryManager
 {
@@ -76,6 +77,7 @@ public:
 };
 
 // Utility Functions
+// Allocate with this
 template< typename allocType >
 allocType* ATHNew( char* _usage = NULL )
 {
@@ -91,6 +93,7 @@ allocType* ATHNew( char* _usage = NULL )
 
 }
 
+// Allocate an array with this
 template< typename allocType >
 allocType* ATHNew( unsigned int _count, char* _usage = NULL )
 {
@@ -120,6 +123,7 @@ allocType* ATHNew( unsigned int _count, char* _usage = NULL )
 
 }
 
+// Delete with this
 template< typename allocType >
 void ATHDelete( allocType* target )
 {

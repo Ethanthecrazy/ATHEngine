@@ -1,23 +1,6 @@
 #include "ATHAtlas.h"
 #include "ATHRenderer.h"
-
-ATHAtlas* ATHAtlas::m_pInstance = nullptr;
-
-ATHAtlas* ATHAtlas::GetInstance()
-{
-	if( !m_pInstance )
-		m_pInstance = new ATHAtlas();
-	return m_pInstance;
-}
-
-void ATHAtlas::DeleteInstance()
-{
-	if( m_pInstance )
-	{
-		delete m_pInstance;
-		m_pInstance = nullptr;
-	}
-}
+#include "../ATHUtil/MemoryManager.h"
 
 ATHAtlas::ATHAtlas()
 {
@@ -25,14 +8,9 @@ ATHAtlas::ATHAtlas()
 	m_pLastTex = nullptr;
 }
 
-ATHAtlas::~ATHAtlas()
+void ATHAtlas::Initialize( LPDIRECT3DDEVICE9 _device )
 {
-
-}
-
-void ATHAtlas::Initialize()
-{
-	m_pDevice = ATHRenderer::GetInstance()->GetDevice();
+	m_pDevice = _device;
 }
 
 void ATHAtlas::Shutdown()
@@ -42,7 +20,7 @@ void ATHAtlas::Shutdown()
 
 void ATHAtlas::LoadTexture( char* _szHandle, char* _szFilepath )
 {
-	if( strlen( _szHandle ) < 3 || strlen( _szFilepath ) < 3 )
+	if( strlen( _szHandle ) < 3 || strlen( _szFilepath ) < 4 )
 		return;
 
 	std::string szHandleString = _szHandle;
@@ -50,7 +28,7 @@ void ATHAtlas::LoadTexture( char* _szHandle, char* _szFilepath )
 	if( m_mapTextures.count( szHandleString ) )
 		return;
 
-	sTexNode* pNewTex = new sTexNode();
+	sTexNode* pNewTex = ATHNew<sTexNode>("Rendering - Texture");
 
 	HRESULT result = 0;
 	result = D3DXCreateTextureFromFileExA( m_pDevice,
@@ -99,7 +77,7 @@ void ATHAtlas::UnloadTexture( LPDIRECT3DTEXTURE9 _texture )
 		if( (*itrCurr).second->m_lpTexture == _texture )
 		{
 			(*itrCurr).second->m_lpTexture->Release();
-			delete (*itrCurr).second;
+			ATHDelete( (*itrCurr).second );
 			m_mapTextures.erase( itrCurr );
 			return;
 		}
@@ -142,7 +120,7 @@ void ATHAtlas::Clear()
 	while( itrCurr != m_mapTextures.end() )
 	{
 		(*itrCurr).second->m_lpTexture->Release();
-		delete (*itrCurr).second;
+		ATHDelete( (*itrCurr).second );
 		
 		itrCurr++;
 	}

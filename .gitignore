@@ -12,6 +12,7 @@
 *.sdf
 *.user
 *.filters
+*.opensdf
 
 # Compiled Dynamic libraries
 *.so

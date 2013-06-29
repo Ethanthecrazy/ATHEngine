@@ -25,23 +25,40 @@ class ATHRenderNode
 private:
 
 	ATHAtlas::ATHTextureHandle	m_pTexture[RENDERNODE_TEXTURE_COUNT];
-
-	RenderFunc					m_fpRenderFunction;
+	ATHMesh						m_pMesh;
 	D3DXMATRIX					m_matTransform;
 
-	ATHRenderNode*				m_pNext;
+	bool						m_bDirty;
+	unsigned int				m_unRenderPriority;
 
 	// Nothing except the ATHRenderer is allowed to destroy these.
 	~ATHRenderNode();
+
+	//Only the managers can manipulate the name list;
+	std::vector<std::string> m_vecPassNames;
+
+
+	void AddPassName( std::string _name );
+	void RemovePassname( std::string _name );
+
 
 public:
 
 	ATHRenderNode();
 
-	void SetImage( ATHAtlas::ATHTextureHandle _texture, int _index = 0 ) { m_pTexture[_index] = _texture; }
+
+
+	std::vector< std::string > GetPassNames();
+
+	void SetRenderPriority( unsigned int _priority );
+	unsigned int GetRenderPriority() { return m_unRenderPriority; }
+
+	void SetTexture( ATHAtlas::ATHTextureHandle _texture, int _index = 0 ) { m_pTexture[_index] = _texture; }
 	void SetTransform( D3DXMATRIX _transform ){ m_matTransform = _transform; }
 
+
 	friend class ATHRenderer;
+	friend class ATHRenderPass;
 };
 
 #endif

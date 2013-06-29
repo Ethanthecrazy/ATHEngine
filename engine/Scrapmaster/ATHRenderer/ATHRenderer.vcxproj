@@ -71,13 +71,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="ATHAtlas.h" />
     <ClInclude Include="ATHMesh.h" />
     <ClInclude Include="ATHRenderer.h" />
     <ClInclude Include="ATHRenderNode.h" />
+    <ClInclude Include="ATHRenderpass.h" />
     <ClInclude Include="Camera.h" />
   </ItemGroup>
   <ItemGroup>
@@ -85,6 +83,7 @@
     <ClCompile Include="ATHMesh.cpp" />
     <ClCompile Include="ATHRenderer.cpp" />
     <ClCompile Include="ATHRenderNode.cpp" />
+    <ClCompile Include="ATHRenderPass.cpp" />
     <ClCompile Include="Camera.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

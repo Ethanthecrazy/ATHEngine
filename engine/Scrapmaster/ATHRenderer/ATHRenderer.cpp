@@ -28,17 +28,12 @@ void ATHRenderer::BuildQuad()
 
 }
 
-void ATHRenderer::ProcessNode( ATHRenderNode* _target )
-{
-
-}
-
 ATHRenderNode* ATHRenderer::CreateNode()
 {
-	if( m_pNodeInventory )
+	if( m_pNodeInventory.size() > 0 )
 	{
-		ATHRenderNode* toReturn = m_pNodeInventory;
-		m_pNodeInventory = m_pNodeInventory->m_pNext;
+		ATHRenderNode* toReturn = m_pNodeInventory.back();
+		m_pNodeInventory.pop_back();
 		return toReturn;
 	}
 	else
@@ -50,18 +45,16 @@ void ATHRenderer::DestroyNode( ATHRenderNode* _toDestroy )
 	if( _toDestroy )
 	{
 		*_toDestroy = ATHRenderNode();
-		_toDestroy->m_pNext = m_pNodeInventory;
-		m_pNodeInventory = _toDestroy;
+		m_pNodeInventory.push_back( _toDestroy );
 	}
 }
 
 void ATHRenderer::ClearInventory()
 {
-	while( m_pNodeInventory )
+	while( m_pNodeInventory.size() )
 	{
-		ATHRenderNode* saved = m_pNodeInventory->m_pNext;
-		ATHDelete( m_pNodeInventory );
-		m_pNodeInventory = saved;
+		ATHDelete( m_pNodeInventory.back() );
+		m_pNodeInventory.pop_back();
 	}
 }
 
@@ -82,7 +75,7 @@ ATHRenderer::ATHRenderer()
 
 	m_pCamera			= nullptr;
 
-	m_pNodeInventory	= nullptr;
+	m_pNodeInventory	= std::list<ATHRenderNode*>();
 
 }
 

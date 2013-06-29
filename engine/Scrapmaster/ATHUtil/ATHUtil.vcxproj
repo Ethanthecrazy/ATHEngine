@@ -71,9 +71,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="MemoryManager.cpp" />
   </ItemGroup>
   <ItemGroup>

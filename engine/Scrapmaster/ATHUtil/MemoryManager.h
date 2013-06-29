@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include <assert.h>
 
 class MemoryManager
 {
@@ -87,7 +88,9 @@ allocType* ATHNew( char* _usage = NULL )
 	if( allocation )
 		toReturn = new ( allocation ) allocType();
 	else
-		std::cout << "MemoryManager has run out of space\n";
+	{
+		assert( false && "Could not allocate object" );
+	}
 
 	return toReturn;
 
@@ -116,7 +119,9 @@ allocType* ATHNew( unsigned int _count, char* _usage = NULL )
 
 		}
 		else
-			std::cout << "MemoryManager has run out of space\n";
+		{
+			assert( false && "Could not allocate object" );
+		}
 
 	}
 	return toReturn;

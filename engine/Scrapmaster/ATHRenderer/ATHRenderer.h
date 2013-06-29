@@ -11,6 +11,7 @@
 
 #include "ATHMesh.h"
 #include "ATHAtlas.h"
+#include "ATHRenderpass.h"
 #include "Camera.h"
 
 #define NODE_LAYER_OFFSET (64.0f)
@@ -41,24 +42,23 @@ private:
 	CCamera*						m_pCamera;
 	ATHMesh							m_meshQuad;
 
-	ATHRenderNode*					m_pNodeInventory;
-
-	std::map< int, ATHRenderNode* > m_mapRenderLists;
-	
-	ATHAtlas						m_TextureAtlas;
+	std::list<ATHRenderNode*>		m_pNodeInventory;
 
 	ATHRenderer( const ATHRenderer&);
 	ATHRenderer& operator=(const ATHRenderer&);
 	~ATHRenderer();
 
 	void BuildQuad();
-	void ProcessNode( ATHRenderNode* _target );
 
+	// Node inventory management
 	ATHRenderNode* CreateNode();
 	void DestroyNode( ATHRenderNode* _toDestroy );
 	void ClearInventory();
 
 public:
+
+	// Since the atlas is so entwined with the renderer, it is now a subset of the rederer.
+	ATHAtlas						m_TextureAtlas;
 
 	ATHRenderer();
 

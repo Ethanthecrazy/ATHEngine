@@ -73,6 +73,7 @@
   <ItemGroup>
     <ClInclude Include="ATHAtlas.h" />
     <ClInclude Include="ATHMesh.h" />
+    <ClInclude Include="ATHMeshManager.h" />
     <ClInclude Include="ATHRenderer.h" />
     <ClInclude Include="ATHRenderNode.h" />
     <ClInclude Include="ATHRenderpass.h" />
@@ -81,6 +82,7 @@
   <ItemGroup>
     <ClCompile Include="ATHAtlas.cpp" />
     <ClCompile Include="ATHMesh.cpp" />
+    <ClCompile Include="ATHMeshManager.cpp" />
     <ClCompile Include="ATHRenderer.cpp" />
     <ClCompile Include="ATHRenderNode.cpp" />
     <ClCompile Include="ATHRenderPass.cpp" />

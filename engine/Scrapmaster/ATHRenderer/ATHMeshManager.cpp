@@ -8,9 +8,11 @@ int ATHMeshManager::LoadMesh(char* szFilename)
 	unsigned int meshSize = m_vMeshes.size();
 	for (unsigned int i = 0; i < meshSize; ++i)
 	{
-		if (stricmp(m_vMeshes[i].m_szMeshName, szFilename) == 0)
+		if (_stricmp(m_vMeshes[i].GetMeshName().c_str(), szFilename) == 0)
 		{
 			return i;
 		}
 	}
+
+	return -1;
 }

@@ -23,6 +23,7 @@ private:
 
 	IDirect3DVertexBuffer9* m_vertBuff;
 	IDirect3DIndexBuffer9*	m_indexBuff;
+	std::string m_szMeshName;
 
 	std::vector< sVertPosNormUV > m_vecVerts;
 	std::vector< unsigned int > m_vecIndicies;
@@ -36,6 +37,8 @@ public:
 
 	IDirect3DVertexBuffer9* GetVertexBuffer() { return m_vertBuff; }
 	IDirect3DIndexBuffer9* GetIndexBuffer() { return m_indexBuff; }
+
+	std::string GetMeshName()			{return m_szMeshName;}
 
 	void RebuildBuffers();
 	void Clear();

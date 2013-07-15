@@ -7,9 +7,11 @@
 #include "../ATHUtil/hDataTypes.h"
 #include "ATHMesh.h"
 
+class ATHMesh;
+
 class ATHMeshManager
 {
-	vector<ATHMesh> m_vMeshes;
+	std::vector<ATHMesh> m_vMeshes;
 
 public:
 

@@ -69,6 +69,8 @@
             this.button_RemoveProperty = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label_NotConvex = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.numericUpDown_Zoom = new System.Windows.Forms.NumericUpDown();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -79,6 +81,7 @@
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Zoom)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -476,17 +479,51 @@
             this.label_NotConvex.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.label_NotConvex.Visible = false;
             // 
-            // Form1
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(137, 30);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(34, 13);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "Zoom";
+            // 
+            // numericUpDown_Zoom
+            // 
+            this.numericUpDown_Zoom.Location = new System.Drawing.Point(177, 28);
+            this.numericUpDown_Zoom.Maximum = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.numericUpDown_Zoom.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDown_Zoom.Name = "numericUpDown_Zoom";
+            this.numericUpDown_Zoom.Size = new System.Drawing.Size(81, 20);
+            this.numericUpDown_Zoom.TabIndex = 6;
+            this.numericUpDown_Zoom.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.numericUpDown_Zoom.ValueChanged += new System.EventHandler(this.numericUpDown_Zoom_ValueChanged);
+            // 
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(765, 512);
+            this.Controls.Add(this.numericUpDown_Zoom);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.label_NotConvex);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
             this.Margin = new System.Windows.Forms.Padding(2);
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.Text = "PPOX";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -504,6 +541,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Zoom)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -550,6 +588,8 @@
         private System.Windows.Forms.ToolStripMenuItem collisionPolygonToolStripMenuItem;
         private System.Windows.Forms.Label label_NotConvex;
         private System.Windows.Forms.ToolStripMenuItem Export_toolStripMenuItem;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.NumericUpDown numericUpDown_Zoom;
     }
 }
 

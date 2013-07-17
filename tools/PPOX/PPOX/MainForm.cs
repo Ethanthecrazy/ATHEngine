@@ -26,6 +26,8 @@ namespace WindowsFormsApplication1
         private bool isConvex = true;
         private int greatestWidth = 0;
         private int greatestHeight = 0;
+        private float zoomLevel = 1.0f;
+        private float pointSize = 16.0f;
 
         private enum Saved_State { NOTSAVED = 0, SAVED, NEVERSAVED };
         private Saved_State saved = Saved_State.NEVERSAVED;
@@ -307,6 +309,8 @@ namespace WindowsFormsApplication1
             offset.X += splitContainer1.Panel1.AutoScrollPosition.X;
             offset.Y += splitContainer1.Panel1.AutoScrollPosition.Y;
 
+            //RectangleF cameraRect = new RectangleF(offset.X * -1, offset.Y * -1, splitContainer1.Panel1.Width, splitContainer1.Panel1.Height);
+
             foreach (cObject obj in objectManager.ObjectList)
             {
                 if (obj != objectManager.SelectedObject)
@@ -314,10 +318,10 @@ namespace WindowsFormsApplication1
                     //e.Graphics.DrawImage(obj.Image, obj.Rectangle);
 
                     e.Graphics.DrawImage(obj.Image,
-                                            new RectangleF(obj.Position.X + offset.X,
-                                                obj.Position.Y + offset.Y,
-                                                obj.Image.Width,
-                                                obj.Image.Height),
+                                            new RectangleF((obj.Position.X * zoomLevel + offset.X),
+                                                (obj.Position.Y * zoomLevel + offset.Y) ,
+                                                obj.Image.Width * zoomLevel,
+                                                obj.Image.Height * zoomLevel),
                                             new RectangleF(0, 0,  obj.Image.Width,  obj.Image.Height),
                                             GraphicsUnit.Pixel);
                 }
@@ -329,16 +333,16 @@ namespace WindowsFormsApplication1
                 //e.Graphics.DrawImage(objectManager.SelectedObject.Image, objectManager.SelectedObject.Rectangle);
                 //e.Graphics.DrawRectangle(new Pen(Color.Black, 3), objectManager.SelectedObject.Rectangle);
                 e.Graphics.DrawImage(objectManager.SelectedObject.Image,
-                                            new RectangleF(objectManager.SelectedObject.Position.X + offset.X,
-                                                objectManager.SelectedObject.Position.Y + offset.Y,
-                                                objectManager.SelectedObject.Image.Width,
-                                                objectManager.SelectedObject.Image.Height),
+                                            new RectangleF((objectManager.SelectedObject.Position.X * zoomLevel + offset.X) ,
+                                                (objectManager.SelectedObject.Position.Y * zoomLevel + offset.Y) ,
+                                                objectManager.SelectedObject.Image.Width * zoomLevel,
+                                                objectManager.SelectedObject.Image.Height * zoomLevel),
                                             new RectangleF(0, 0, objectManager.SelectedObject.Image.Width, objectManager.SelectedObject.Image.Height),
                                             GraphicsUnit.Pixel);
-                e.Graphics.DrawRectangle(new Pen(Color.Black, 3), new Rectangle(objectManager.SelectedObject.Position.X + offset.X,
-                                                objectManager.SelectedObject.Position.Y + offset.Y,
-                                                objectManager.SelectedObject.Image.Width,
-                                                objectManager.SelectedObject.Image.Height));
+                e.Graphics.DrawRectangle(new Pen(Color.Black, 3), (objectManager.SelectedObject.Position.X * zoomLevel + offset.X) ,
+                                                (objectManager.SelectedObject.Position.Y * zoomLevel + offset.Y) ,
+                                                objectManager.SelectedObject.Image.Width * zoomLevel,
+                                                objectManager.SelectedObject.Image.Height * zoomLevel);
 
                 if (collisionPolygonToolStripMenuItem.Checked)
                 {
@@ -348,12 +352,11 @@ namespace WindowsFormsApplication1
                         {
                             Pen pen = new Pen(Color.Red, 2);
 
-                            Point[] tempy = new Point[objectManager.SelectedObject.CollisionPoints.Count];
+                            PointF[] tempy = new PointF[objectManager.SelectedObject.CollisionPoints.Count];
                             objectManager.SelectedObject.CollisionPoints.CopyTo(tempy);
                             for(int i = 0; i < tempy.Count(); ++i)
                             {
-                                tempy[i].X += offset.X;
-                                tempy[i].Y += offset.Y;
+                                tempy[i] = new PointF((tempy[i].X * zoomLevel + offset.X), (tempy[i].Y * zoomLevel + offset.Y));
                             }
 
                             e.Graphics.DrawLines(pen, tempy);
@@ -361,8 +364,8 @@ namespace WindowsFormsApplication1
                             if (objectManager.SelectedObject.CollisionPoints.Count > 2)
                             {
                                 e.Graphics.DrawLine(pen,
-                                    tempy[0],
-                                    tempy[tempy.Count() - 1]);
+                                    new PointF(tempy[0].X, tempy[0].Y),
+                                    new PointF(tempy[tempy.Count() - 1].X, tempy[tempy.Count() - 1].Y));
 
 
                                 if (objectManager.SelectedObject.CollisionPoints.Count > 3)
@@ -370,16 +373,15 @@ namespace WindowsFormsApplication1
                             }
                         }
 
-                        foreach (Point p in objectManager.SelectedObject.CollisionPoints)
+                        foreach (PointF p in objectManager.SelectedObject.CollisionPoints)
                         {      
-                            //TODO: change hardcoded 8 to 1/2 point size
                             if (objectManager.SelectedObject.SelectedPoint != -1 && 
                                 p == objectManager.SelectedObject.CollisionPoints[objectManager.SelectedObject.SelectedPoint])
                             {
-                                e.Graphics.DrawEllipse(new Pen(Color.Blue, 4), p.X - 8 + offset.X, p.Y - 8 + offset.Y, 16, 16);
+                                e.Graphics.DrawEllipse(new Pen(Color.Blue, 4), (p.X * zoomLevel - (pointSize / 2) + offset.X), (p.Y * zoomLevel - (pointSize / 2) + offset.Y), pointSize, pointSize);
                                 continue;
                             }
-                            e.Graphics.FillEllipse(new SolidBrush(Color.Blue), p.X - 8 + offset.X, p.Y - 8 + offset.Y, 16, 16);
+                            e.Graphics.FillEllipse(new SolidBrush(Color.Blue), (p.X * zoomLevel - (pointSize / 2) + offset.X), (p.Y * zoomLevel - (pointSize / 2) + offset.Y), pointSize, pointSize);
                         }
                     }
                 }
@@ -411,13 +413,12 @@ namespace WindowsFormsApplication1
             {
                 if (null != objectManager.SelectedObject)
                 {           
-                    Rectangle rect = Rectangle.Empty;
+                    RectangleF rect = Rectangle.Empty;
                     for(int i = 0; i < objectManager.SelectedObject.CollisionPoints.Count; ++i)
                     {
-                        //TODO: change 8 to 1/2 size of point
-                        rect = new Rectangle(
-                            new Point(objectManager.SelectedObject.CollisionPoints[i].X - 8 + offset.X, objectManager.SelectedObject.CollisionPoints[i].Y - 8 + offset.Y), 
-                            new Size(17, 17));
+                        rect = new RectangleF(
+                            new PointF((objectManager.SelectedObject.CollisionPoints[i].X * zoomLevel - (pointSize / 2) + offset.X), (objectManager.SelectedObject.CollisionPoints[i].Y * zoomLevel - (pointSize / 2) + offset.Y)), 
+                            new SizeF(pointSize, pointSize));
 
                         if (rect.Contains(e.Location))
                         {
@@ -430,9 +431,9 @@ namespace WindowsFormsApplication1
                     objectManager.SelectedObject.SelectedPoint = -1;
                     Invalidate();
 
-                    if (new Rectangle(
-                        new Point(objectManager.SelectedObject.Position.X + offset.X, objectManager.SelectedObject.Position.Y + offset.Y),
-                        objectManager.SelectedObject.Rectangle.Size).Contains(e.Location))
+                    if (new RectangleF(
+                        new PointF((objectManager.SelectedObject.Position.X * zoomLevel + offset.X), (objectManager.SelectedObject.Position.Y * zoomLevel + offset.Y)),
+                        new SizeF(objectManager.SelectedObject.Rectangle.Size.Width * zoomLevel, objectManager.SelectedObject.Rectangle.Size.Height * zoomLevel)).Contains(e.Location))
                         return;
                 }
 
@@ -440,11 +441,11 @@ namespace WindowsFormsApplication1
 
                 if (objectManager.ObjectList.Count != 0)
                 {
-                    Rectangle rect = new Rectangle();
+                    RectangleF rect = new Rectangle();
                     foreach (cObject obj in objectManager.ObjectList)
                     {
-                        rect.Location = new Point(obj.Position.X + offset.X, obj.Position.Y + offset.Y);
-                        rect.Size = obj.Image.Size;
+                        rect.Location = new PointF((obj.Position.X * zoomLevel + offset.X), (obj.Position.Y * zoomLevel + offset.Y));
+                        rect.Size = new SizeF(obj.Image.Size.Width * zoomLevel, obj.Image.Size.Height * zoomLevel);
 
                         if (rect.Contains(e.Location))
                         {
@@ -468,12 +469,11 @@ namespace WindowsFormsApplication1
 
                 if (objectManager.SelectedObject.SelectedPoint == -1)
                 {
-                    Point newPos = new Point(
-                        objectManager.SelectedObject.Position.X + deltaMoved.X, 
-                        objectManager.SelectedObject.Position.Y + deltaMoved.Y);
+                    Point newPos = new Point(                       
+                        objectManager.SelectedObject.Position.X + (int)(deltaMoved.X / zoomLevel),
+                        objectManager.SelectedObject.Position.Y + (int)(deltaMoved.Y / zoomLevel));
 
                     // clip object to screen
-                    // the 5 is to keep the selected black border visiable on all sides while moving the object
                     if (newPos.X < 0)
                         newPos.X = 0;
 
@@ -484,8 +484,8 @@ namespace WindowsFormsApplication1
                     Point moved = new Point(newPos.X - objectManager.SelectedObject.Position.X, newPos.Y - objectManager.SelectedObject.Position.Y);
                     for (int i = 0; i < objectManager.SelectedObject.CollisionPoints.Count; ++i)
                     {
-                        Point curr = objectManager.SelectedObject.CollisionPoints[i];
-                        objectManager.SelectedObject.CollisionPoints[i] = new Point(curr.X + moved.X, curr.Y + moved.Y);
+                        PointF curr = objectManager.SelectedObject.CollisionPoints[i];
+                        objectManager.SelectedObject.CollisionPoints[i] = new PointF(curr.X + moved.X, curr.Y + moved.Y);
                     }                   
 
                     objectManager.SelectedObject.Position = newPos;
@@ -494,7 +494,7 @@ namespace WindowsFormsApplication1
                     FindCanvasSize();                    
 
                     //move the scrollbar based on if the object is on the edge
-                    if (objectManager.SelectedObject.Position.X + objectManager.SelectedObject.Image.Width >= splitContainer1.Panel1.Width + -splitContainer1.Panel1.AutoScrollPosition.X && deltaMoved.X > 0)
+                    if ((objectManager.SelectedObject.Position.X + objectManager.SelectedObject.Image.Width) * zoomLevel >= splitContainer1.Panel1.Width + -splitContainer1.Panel1.AutoScrollPosition.X && deltaMoved.X > 0)
                     {
                         splitContainer1.Panel1.AutoScrollPosition = new Point(-splitContainer1.Panel1.AutoScrollPosition.X + deltaMoved.X,
                                                                               -splitContainer1.Panel1.AutoScrollPosition.Y);
@@ -505,7 +505,7 @@ namespace WindowsFormsApplication1
                                                                               -splitContainer1.Panel1.AutoScrollPosition.Y);
                     }
 
-                    if (objectManager.SelectedObject.Position.Y + objectManager.SelectedObject.Image.Height >= splitContainer1.Panel1.Height + -splitContainer1.Panel1.AutoScrollPosition.Y && deltaMoved.Y > 0)
+                    if ((objectManager.SelectedObject.Position.Y + objectManager.SelectedObject.Image.Height) * zoomLevel >= splitContainer1.Panel1.Height * zoomLevel + -splitContainer1.Panel1.AutoScrollPosition.Y && deltaMoved.Y > 0)
                     {
                         splitContainer1.Panel1.AutoScrollPosition = new Point(-splitContainer1.Panel1.AutoScrollPosition.X,
                                                                               -splitContainer1.Panel1.AutoScrollPosition.Y + deltaMoved.Y);
@@ -518,20 +518,19 @@ namespace WindowsFormsApplication1
                 }
                 else
                 {
-                    //TODO: change 8 to 1/2 point size
-                    Point newPos = new Point(
+                    PointF newPos = new PointF(
                         objectManager.SelectedObject.CollisionPoints[objectManager.SelectedObject.SelectedPoint].X + deltaMoved.X,
                         objectManager.SelectedObject.CollisionPoints[objectManager.SelectedObject.SelectedPoint].Y + deltaMoved.Y);
 
                     if (newPos.X < 0 + -splitContainer1.Panel1.AutoScrollPosition.X)
                         newPos.X = 0 + -splitContainer1.Panel1.AutoScrollPosition.X;
-                    else if (newPos.X + 8 > splitContainer1.Panel1.Width + -splitContainer1.Panel1.AutoScrollPosition.X)
-                        newPos.X = splitContainer1.Panel1.Width - 8 - splitContainer1.Panel1.AutoScrollPosition.X;
+                    else if (newPos.X + (pointSize / 2) > splitContainer1.Panel1.Width + -splitContainer1.Panel1.AutoScrollPosition.X)
+                        newPos.X = splitContainer1.Panel1.Width - (pointSize / 2) - splitContainer1.Panel1.AutoScrollPosition.X;
 
                     if (newPos.Y < 0 + -splitContainer1.Panel1.AutoScrollPosition.Y)
                         newPos.Y = 0 + -splitContainer1.Panel1.AutoScrollPosition.Y;
-                    else if (newPos.Y + 8 > splitContainer1.Panel1.Height + -splitContainer1.Panel1.AutoScrollPosition.Y)
-                        newPos.Y = splitContainer1.Panel1.Height - 8 - splitContainer1.Panel1.AutoScrollPosition.Y;
+                    else if (newPos.Y + (pointSize / 2) > splitContainer1.Panel1.Height + -splitContainer1.Panel1.AutoScrollPosition.Y)
+                        newPos.Y = splitContainer1.Panel1.Height - (pointSize / 2) - splitContainer1.Panel1.AutoScrollPosition.Y;
 
                     objectManager.SelectedObject.CollisionPoints[objectManager.SelectedObject.SelectedPoint] = newPos;
 
@@ -655,10 +654,10 @@ namespace WindowsFormsApplication1
 
         // Gets the full 360 degree angle between two vectors
         // Is actually using three verts, assuming they will share b as a point
-        public static double AngleBetween(Point a, Point b, Point c)
+        public static double AngleBetween(PointF a, PointF b, PointF c)
         {
-            Point vect1 = new Point(b.X - a.X, b.Y - a.Y);
-            Point vect2 = new Point(b.X - c.X, b.Y - c.Y);
+            PointF vect1 = new PointF(b.X - a.X, b.Y - a.Y);
+            PointF vect2 = new PointF(b.X - c.X, b.Y - c.Y);
 
             double atanA = Math.Atan2(vect1.Y, vect1.X);
             double atanB = Math.Atan2(vect2.Y, vect2.X);
@@ -671,7 +670,7 @@ namespace WindowsFormsApplication1
             return result;
         }
 
-        public static bool IsConvex(List<Point> verts)
+        public static bool IsConvex(List<PointF> verts)
         {
             //Testing how the polygon is wound 
             //Find the sum of the edges: (x2-x1)(y2+y1) 
@@ -687,7 +686,7 @@ namespace WindowsFormsApplication1
 
             //find the sum of the edges to figure out how the polygon is wound
             int i, j, k;
-            int sum = 0;
+            float sum = 0;
             for (i = 0; i < verts.Count; ++i)
             {                
                 j = i + 1;
@@ -766,7 +765,7 @@ namespace WindowsFormsApplication1
 
         private void splitContainer1_Panel1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            splitContainer1_KeyDown(sender, null);
+            //splitContainer1_KeyDown(sender, null);
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -799,10 +798,10 @@ namespace WindowsFormsApplication1
             if (objectManager.ObjectList.Count > 0)
             {
                 objectManager.ObjectList.Sort(delegate(cObject lhs, cObject rhs) { return (rhs.Position.X + rhs.Image.Width).CompareTo((lhs.Position.X + lhs.Image.Width)); });
-                greatestWidth = objectManager.ObjectList[0].Position.X + objectManager.ObjectList[0].Image.Width;
+                greatestWidth = (int)((objectManager.ObjectList[0].Position.X + objectManager.ObjectList[0].Image.Width) * zoomLevel);
 
                 objectManager.ObjectList.Sort(delegate(cObject lhs, cObject rhs) { return (rhs.Position.Y + rhs.Image.Height).CompareTo((lhs.Position.Y + lhs.Image.Height)); });
-                greatestHeight = objectManager.ObjectList[0].Position.Y + objectManager.ObjectList[0].Image.Height;
+                greatestHeight = (int)((objectManager.ObjectList[0].Position.Y + objectManager.ObjectList[0].Image.Height) * zoomLevel);
 
                 splitContainer1.Panel1.AutoScrollMinSize = new Size(greatestWidth, greatestHeight);
                 Invalidate();
@@ -822,6 +821,14 @@ namespace WindowsFormsApplication1
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void numericUpDown_Zoom_ValueChanged(object sender, EventArgs e)
+        {
+            zoomLevel = (float)numericUpDown_Zoom.Value / 100.0f;
+            FindCanvasSize();
+            Invalidate();
+            splitContainer1.Focus();
         }
     }
 }

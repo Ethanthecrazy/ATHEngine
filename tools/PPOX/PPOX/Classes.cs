@@ -49,8 +49,8 @@ namespace WindowsFormsApplication1
 
     public class cObject
     {
-        private List<Point> collisionPoints;
-        public List<Point> CollisionPoints
+        private List<PointF> collisionPoints;
+        public List<PointF> CollisionPoints
         {
             get { return collisionPoints; }
             set { collisionPoints = value; }
@@ -106,7 +106,7 @@ namespace WindowsFormsApplication1
             image = _image;
             position = new Point(0, 0);
             properties = new List<Property>();
-            collisionPoints = new List<Point>();
+            collisionPoints = new List<PointF>();
             selectedPoint = -1;
             filePath = _filepath;
         }
@@ -189,7 +189,7 @@ namespace WindowsFormsApplication1
             textWriter.WriteStartElement("Number_of_Verts", "");
             textWriter.WriteString(CollisionPoints.Count.ToString());
             textWriter.WriteEndElement();
-            foreach (Point p in CollisionPoints)
+            foreach (PointF p in CollisionPoints)
             {
                 textWriter.WriteStartElement("Vertex");
 

@@ -91,6 +91,7 @@ public:
 	ATHRenderPass*	CreateRenderPass( char* _szName, unsigned int _unPriority, RenderFunc _function );
 	ATHRenderPass*	FindRenderPass( char* _szName );
 	bool			DestroyRenderPass( char* _szName );
+	void			ClearRenderPasses();
 
 };
 

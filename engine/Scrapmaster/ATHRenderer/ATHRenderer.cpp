@@ -345,3 +345,8 @@ bool ATHRenderer::DestroyRenderPass( char* _szName )
 	return true;
 }
 //================================================================================
+void ATHRenderer::ClearRenderPasses()
+{
+	m_liSortedRenderPasses.clear();
+	m_mapRenderPasses.clear();
+}

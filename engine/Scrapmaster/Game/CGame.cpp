@@ -41,6 +41,21 @@ void CGame::Initialize(HWND _hWnd, HINSTANCE hInstance,
 	m_pRenderer = ATHRenderer::GetInstance();
 	m_pRenderer->Initialize( _hWnd, hInstance, nScreenWidth, nScreenHeight, false, false );
 
+	// Testing RenderPass Management
+	m_pRenderer->CreateRenderPass( "derp", 0, nullptr );
+	m_pRenderer->CreateRenderPass( "derp", 0, nullptr );
+	m_pRenderer->CreateRenderPass( "test", 1, nullptr );
+	
+	m_pRenderer->FindRenderPass( "test" );
+	m_pRenderer->FindRenderPass( "derp" );
+	
+	m_pRenderer->DestroyRenderPass( "derp" );
+	m_pRenderer->FindRenderPass( "derp" );
+
+	m_pRenderer->CreateRenderPass( "derp", 0, nullptr );
+	m_pRenderer->DestroyRenderPass( "test" );
+	//////////
+
 	srand( unsigned int( time( 0 ) ) );
 
 }

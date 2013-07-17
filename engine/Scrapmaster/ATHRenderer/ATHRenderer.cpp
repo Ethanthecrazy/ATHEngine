@@ -8,6 +8,11 @@
 
 
 ATHRenderer* ATHRenderer::m_pInstance = nullptr;
+// The sorting predicate for the ATHRenderPass pointers
+bool compare_ATHRenderPass( ATHRenderPass* _first, ATHRenderPass* _second )
+{
+	return ( _first->GetPriority() < _second->GetPriority() );
+}
 
 void ATHRenderer::BuildQuad()
 {
@@ -27,7 +32,7 @@ void ATHRenderer::BuildQuad()
 	m_meshQuad.RebuildBuffers();
 
 }
-
+//================================================================================
 ATHRenderNode* ATHRenderer::CreateNode()
 {
 	if( m_pNodeInventory.size() > 0 )
@@ -39,7 +44,7 @@ ATHRenderNode* ATHRenderer::CreateNode()
 	else
 		return ATHNew<ATHRenderNode>("Rendering");
 }
-
+//================================================================================
 void ATHRenderer::DestroyNode( ATHRenderNode* _toDestroy )
 {
 	if( _toDestroy )
@@ -48,7 +53,7 @@ void ATHRenderer::DestroyNode( ATHRenderNode* _toDestroy )
 		m_pNodeInventory.push_back( _toDestroy );
 	}
 }
-
+//================================================================================
 void ATHRenderer::ClearInventory()
 {
 	while( m_pNodeInventory.size() )
@@ -57,7 +62,7 @@ void ATHRenderer::ClearInventory()
 		m_pNodeInventory.pop_back();
 	}
 }
-
+//================================================================================
 ATHRenderer::ATHRenderer()
 {
 	m_FrameCounter		= 0;		// Frame Counter
@@ -78,12 +83,12 @@ ATHRenderer::ATHRenderer()
 	m_pNodeInventory	= std::list<ATHRenderNode*>();
 
 }
-
+//================================================================================
 ATHRenderer::~ATHRenderer()
 {
 
 }
-
+//================================================================================
 ATHRenderer* ATHRenderer::GetInstance()
 {
 	if( !m_pInstance )
@@ -91,7 +96,7 @@ ATHRenderer* ATHRenderer::GetInstance()
 	return m_pInstance;
 
 }
-
+//================================================================================
 void ATHRenderer::DeleteInstance()
 {
 	if( m_pInstance )
@@ -100,7 +105,7 @@ void ATHRenderer::DeleteInstance()
 		m_pInstance = nullptr;
 	}
 }
-
+//================================================================================
 bool ATHRenderer::Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScreenWidth, unsigned int nScreenHeight, bool bFullScreen, bool bVsync )
 {
 	m_hWnd				= hWnd;
@@ -168,12 +173,31 @@ bool ATHRenderer::Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScre
 
 	return true;
 }
+//================================================================================
+void ATHRenderer::Shutdown()
+{
+	if( m_pCamera )
+		ATHDelete( m_pCamera );
 
+	m_meshQuad.Clear();
+
+	ClearInventory();
+
+	if( m_pEffect )
+		m_pEffect->Release();
+
+	m_TextureAtlas.Shutdown();
+
+	m_pvdPosNormUV->Release();
+	m_pDevice->Release();
+	m_pD3D->Release();
+}
+//================================================================================
 void ATHRenderer::CommitDraws()
 {
 
 }
-
+//================================================================================
 void ATHRenderer::RasterTexture( LPDIRECT3DTEXTURE9 _texture, float _left, float _top, float _right, float _bottom )
 {
 	D3DXMATRIX _matProj;
@@ -207,7 +231,7 @@ void ATHRenderer::RasterTexture( LPDIRECT3DTEXTURE9 _texture, float _left, float
 	}
 	m_pEffect->End();
 }
-
+//================================================================================
 void ATHRenderer::DRXClear( float3 _color )
 {
 	//Cleat the current render target and the Z-Buffer
@@ -219,21 +243,21 @@ void ATHRenderer::DRXClear( float3 _color )
 		ResetDevice();
 	}
 }
-
+//================================================================================
 void ATHRenderer::DRXBegin()
 {
 	m_pDevice->BeginScene();
 	if( m_pDevice->TestCooperativeLevel() == D3DERR_DEVICENOTRESET )
 		ResetDevice();
 }
-
+//================================================================================
 void ATHRenderer::DRXEnd()
 {
 	m_pDevice->EndScene();
 	if( m_pDevice->TestCooperativeLevel() == D3DERR_DEVICENOTRESET )
 		ResetDevice();
 }
-
+//================================================================================
 void ATHRenderer::DRXPresent()
 {
 	m_pDevice->Present( NULL, NULL, NULL, NULL );
@@ -241,26 +265,7 @@ void ATHRenderer::DRXPresent()
 		ResetDevice();
 	IncrementFrameCounter();
 }
-
-void ATHRenderer::Shutdown()
-{
-	if( m_pCamera )
-		ATHDelete( m_pCamera );
-
-	m_meshQuad.Clear();
-
-	ClearInventory();
-
-	if( m_pEffect )
-		m_pEffect->Release();
-
-	m_TextureAtlas.Shutdown();
-
-	m_pvdPosNormUV->Release();
-	m_pDevice->Release();
-	m_pD3D->Release();
-}
-
+//================================================================================
 void ATHRenderer::ChangeDisplayParam( int nScreenWidth, int nScreenHeight, bool bFullScreen, bool bVsync )
 {
 	//Change the display parameters
@@ -293,8 +298,50 @@ void ATHRenderer::ChangeDisplayParam( int nScreenWidth, int nScreenHeight, bool 
 			windowWidth, windowHeight, SWP_FRAMECHANGED | SWP_SHOWWINDOW);
 	}
 }
-
+//================================================================================
 void ATHRenderer::ResetDevice(void)
 {
 	m_pDevice->Reset( &m_PresentParams );
 }
+//================================================================================
+ATHRenderPass*	ATHRenderer::CreateRenderPass( char* _szName, unsigned int _unPriority, RenderFunc _function )
+{
+	ATHRenderPass* pToReturn = nullptr;
+	std::string	idString = std::string( _szName );
+
+	if( m_mapRenderPasses.count( idString ) == 0 )
+	{
+		// Get the address of the pass being constructed and inserted into the map
+		ATHRenderPass* pNewPass = &( m_mapRenderPasses[ idString ] = ATHRenderPass( _szName, _unPriority, _function ) );
+		// Also add it to the sorted list.
+		m_liSortedRenderPasses.push_back( pNewPass );
+		m_liSortedRenderPasses.sort( compare_ATHRenderPass );
+	}
+
+	return pToReturn;
+}
+//================================================================================
+ATHRenderPass*	ATHRenderer::FindRenderPass( char* _szName )
+{
+	ATHRenderPass* pToReturn = nullptr;
+	std::string idString = std::string( _szName );
+
+	if( m_mapRenderPasses.count( idString ) > 0 )
+		pToReturn = &(m_mapRenderPasses[ idString ]);
+
+	return pToReturn;
+}
+//================================================================================
+bool ATHRenderer::DestroyRenderPass( char* _szName )
+{
+	std::string idString = std::string( _szName );
+	if( m_mapRenderPasses.count( idString ) > 0 )
+	{
+		m_liSortedRenderPasses.remove( &(m_mapRenderPasses[idString]) );
+		m_mapRenderPasses.erase( idString );
+		return true;
+	}
+
+	return true;
+}
+//================================================================================

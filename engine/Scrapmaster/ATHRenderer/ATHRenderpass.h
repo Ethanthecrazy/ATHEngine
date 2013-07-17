@@ -25,6 +25,7 @@ private:
 			ATHRenderNode* GetNode(){ return m_pMyNode; } };
 
 	std::string m_szPassName;
+	unsigned int m_unPriority;
 	RenderFunc m_Process;
 	std::vector<NodeContainer> m_vecNodes;
 	bool m_bDepthDirty;
@@ -33,12 +34,17 @@ private:
 public:
 
 	ATHRenderPass();
+	ATHRenderPass( char* _szName, unsigned int _unPriority, RenderFunc _function );
 
+	// Functionality
 	void AddNodeToPass( ATHRenderNode* _node, unsigned int _priority );
 	void RemoveNodeFromPass( ATHRenderNode* _node );
 	void PreExecute();
 	void Execute();
 	void SortNodes();
+
+	// Accessors 
+	inline unsigned int GetPriority() { return m_unPriority; }
 
 };
 

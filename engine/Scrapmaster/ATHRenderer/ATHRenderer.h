@@ -55,6 +55,10 @@ private:
 	void DestroyNode( ATHRenderNode* _toDestroy );
 	void ClearInventory();
 
+	//Renderpass management
+	std::map< std::string, ATHRenderPass > m_mapRenderPasses;
+	std::list< ATHRenderPass* > m_liSortedRenderPasses;
+
 public:
 
 	// Since the atlas is so entwined with the renderer, it is now a subset of the rederer.
@@ -62,31 +66,31 @@ public:
 
 	ATHRenderer();
 
-	static ATHRenderer* GetInstance();
+	static		ATHRenderer* GetInstance();
 	static void DeleteInstance();
 
-	bool Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScreenWidth, unsigned int nScreenHeight, bool bFullScreen, bool bVsync );
-
-	inline UINT GetFrameNumber(void){ return m_FrameCounter; }
+	// Basic Functions
+	bool		Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScreenWidth, unsigned int nScreenHeight, bool bFullScreen, bool bVsync );
+	void		Shutdown();
+	inline		UINT GetFrameNumber(void){ return m_FrameCounter; }
 	inline void IncrementFrameCounter(void){ ++m_FrameCounter; }
 
-	inline LPDIRECT3DDEVICE9 GetDevice() { return m_pDevice; }
-	inline CCamera* GetCamera() { return m_pCamera; }
+	// Graphics Management
+	inline	LPDIRECT3DDEVICE9 GetDevice() { return m_pDevice; }
+	inline	CCamera* GetCamera() { return m_pCamera; }
+	void	CommitDraws();
+	void	RasterTexture( LPDIRECT3DTEXTURE9 _texture, float _left = 0.0f, float _top = 0.0f, float _right = 1.0f, float _bottom = 1.0f );
+	void	DRXClear( float3 _color );
+	void	DRXBegin();
+	void	DRXEnd();
+	void	DRXPresent();
+	void	ChangeDisplayParam( int nScreenWidth, int nScreenHeight, bool bFullScreen, bool bVsync );
+	void	ResetDevice(void);
 
-	void CommitDraws();
-
-	void RasterTexture( LPDIRECT3DTEXTURE9 _texture, float _left = 0.0f, float _top = 0.0f, float _right = 1.0f, float _bottom = 1.0f );
-
-	void DRXClear( float3 _color );
-	void DRXBegin();
-	void DRXEnd();
-	void DRXPresent();
-
-	void Shutdown();
-
-	void ChangeDisplayParam( int nScreenWidth, int nScreenHeight, bool bFullScreen, bool bVsync );
-
-	void ResetDevice(void);
+	// RenderPass Management
+	ATHRenderPass*	CreateRenderPass( char* _szName, unsigned int _unPriority, RenderFunc _function );
+	ATHRenderPass*	FindRenderPass( char* _szName );
+	bool			DestroyRenderPass( char* _szName );
 
 };
 

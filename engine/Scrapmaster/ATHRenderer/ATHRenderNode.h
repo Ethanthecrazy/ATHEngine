@@ -13,11 +13,12 @@
 // Forward declare the render node so that the function pointer can reference it
 // Then the node can contain a function pointer that references its own class.
 class ATHRenderNode;
+class ATHRenderer;
 
 const int RENDERNODE_TEXTURE_COUNT = 3;
 
 //Function pointer
-typedef void (*RenderFunc)(ATHRenderNode* node);
+typedef void (*RenderFunc)(ATHRenderer* renderer,ATHRenderNode* node);
 
 class ATHRenderNode
 {

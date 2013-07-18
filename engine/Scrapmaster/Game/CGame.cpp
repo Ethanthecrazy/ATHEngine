@@ -8,6 +8,10 @@ using std::string;
 #include "../ATHUtil/MemoryManager.h"
 #include "../ATHRenderer/ATHRenderer.h"
 
+// For testing purposes
+#include "../ATHRenderer/RenderFunctions.h"
+//////////
+
 // default constructor
 CGame::CGame()
 {
@@ -43,17 +47,8 @@ void CGame::Initialize(HWND _hWnd, HINSTANCE hInstance,
 
 	// Testing RenderPass Management
 	m_pRenderer->CreateRenderPass( "derp", 0, nullptr );
-	m_pRenderer->CreateRenderPass( "derp", 0, nullptr );
-	m_pRenderer->CreateRenderPass( "test", 1, nullptr );
-	
-	m_pRenderer->FindRenderPass( "test" );
-	m_pRenderer->FindRenderPass( "derp" );
-	
-	m_pRenderer->DestroyRenderPass( "derp" );
-	m_pRenderer->FindRenderPass( "derp" );
+	m_pRenderer->CreateRenderPass( "test", 1, RenderTest );
 
-	m_pRenderer->CreateRenderPass( "derp", 0, nullptr );
-	m_pRenderer->DestroyRenderPass( "test" );
 	//////////
 
 	srand( unsigned int( time( 0 ) ) );

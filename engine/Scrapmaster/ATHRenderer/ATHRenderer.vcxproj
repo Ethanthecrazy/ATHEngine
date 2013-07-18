@@ -78,6 +78,7 @@
     <ClInclude Include="ATHRenderNode.h" />
     <ClInclude Include="ATHRenderpass.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="RenderFunctions.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ATHAtlas.cpp" />
@@ -87,6 +88,7 @@
     <ClCompile Include="ATHRenderNode.cpp" />
     <ClCompile Include="ATHRenderPass.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="RenderFunctions.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

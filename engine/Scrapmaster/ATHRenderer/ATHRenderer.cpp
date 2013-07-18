@@ -11,7 +11,7 @@ ATHRenderer* ATHRenderer::m_pInstance = nullptr;
 // The sorting predicate for the ATHRenderPass pointers
 bool compare_ATHRenderPass( ATHRenderPass* _first, ATHRenderPass* _second )
 {
-	return ( _first->GetPriority() < _second->GetPriority() );
+	return ( _first->GetPriority() > _second->GetPriority() );
 }
 
 void ATHRenderer::BuildQuad()
@@ -195,7 +195,12 @@ void ATHRenderer::Shutdown()
 //================================================================================
 void ATHRenderer::CommitDraws()
 {
-
+	std::list< ATHRenderPass* >::iterator itrPass = m_liSortedRenderPasses.begin();
+	while( itrPass != m_liSortedRenderPasses.end() )
+	{
+		(*itrPass)->Execute( this );
+		itrPass++;
+	}
 }
 //================================================================================
 void ATHRenderer::RasterTexture( LPDIRECT3DTEXTURE9 _texture, float _left, float _top, float _right, float _bottom )
@@ -349,4 +354,9 @@ void ATHRenderer::ClearRenderPasses()
 {
 	m_liSortedRenderPasses.clear();
 	m_mapRenderPasses.clear();
+}
+
+void ATHRenderer::OutputSuccess()
+{
+	std::cout << "ATHRenderer: Success!\n";
 }

@@ -6,7 +6,7 @@
 #include <map>
 #include <vector>
 
-
+class ATHRenderer;
 class ATHRenderPass
 {
 
@@ -39,9 +39,10 @@ public:
 	// Functionality
 	void AddNodeToPass( ATHRenderNode* _node, unsigned int _priority );
 	void RemoveNodeFromPass( ATHRenderNode* _node );
-	void PreExecute();
-	void Execute();
 	void SortNodes();
+	void PreExecute();
+	void Execute( ATHRenderer* _pRenderer );
+	
 
 	// Accessors 
 	inline unsigned int GetPriority() { return m_unPriority; }

@@ -34,3 +34,14 @@ void ATHRenderPass::SortNodes()
 {
 
 }
+
+void ATHRenderPass::PreExecute()
+{
+
+}
+void ATHRenderPass::Execute( ATHRenderer* _pRenderer )
+{
+	//Temporary
+	if( m_Process != nullptr )
+		m_Process( _pRenderer, nullptr );
+}

@@ -93,6 +93,8 @@ public:
 	bool			DestroyRenderPass( char* _szName );
 	void			ClearRenderPasses();
 
+	void			OutputSuccess();
+
 };
 
 #endif

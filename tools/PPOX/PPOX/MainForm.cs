@@ -494,7 +494,7 @@ namespace WindowsFormsApplication1
                     FindCanvasSize();                    
 
                     //move the scrollbar based on if the object is on the edge
-                    if ((objectManager.SelectedObject.Position.X + objectManager.SelectedObject.Image.Width) * zoomLevel >= splitContainer1.Panel1.Width + -splitContainer1.Panel1.AutoScrollPosition.X && deltaMoved.X > 0)
+                    if ((objectManager.SelectedObject.Position.X + objectManager.SelectedObject.Image.Width) * zoomLevel >= splitContainer1.Panel1.Width * zoomLevel + -splitContainer1.Panel1.AutoScrollPosition.X && deltaMoved.X > 0)
                     {
                         splitContainer1.Panel1.AutoScrollPosition = new Point(-splitContainer1.Panel1.AutoScrollPosition.X + deltaMoved.X,
                                                                               -splitContainer1.Panel1.AutoScrollPosition.Y);
@@ -518,24 +518,26 @@ namespace WindowsFormsApplication1
                 }
                 else
                 {
+                    //move the selected collision point
                     PointF newPos = new PointF(
-                        objectManager.SelectedObject.CollisionPoints[objectManager.SelectedObject.SelectedPoint].X + deltaMoved.X,
-                        objectManager.SelectedObject.CollisionPoints[objectManager.SelectedObject.SelectedPoint].Y + deltaMoved.Y);
+                        objectManager.SelectedObject.CollisionPoints[objectManager.SelectedObject.SelectedPoint].X + (int)(deltaMoved.X / zoomLevel),
+                        objectManager.SelectedObject.CollisionPoints[objectManager.SelectedObject.SelectedPoint].Y + (int)(deltaMoved.Y / zoomLevel));
 
+                    //clamp the point to the edges of the screen (the hardcoded 30 is to handle not moving the point past the scrollbar)
                     if (newPos.X < 0 + -splitContainer1.Panel1.AutoScrollPosition.X)
                         newPos.X = 0 + -splitContainer1.Panel1.AutoScrollPosition.X;
-                    else if (newPos.X + (pointSize / 2) > splitContainer1.Panel1.Width + -splitContainer1.Panel1.AutoScrollPosition.X)
-                        newPos.X = splitContainer1.Panel1.Width - (pointSize / 2) - splitContainer1.Panel1.AutoScrollPosition.X;
+                    else if ((newPos.X + (pointSize / 2)) * zoomLevel > (splitContainer1.Panel1.Width + -splitContainer1.Panel1.AutoScrollPosition.X) - 30 && deltaMoved.X > 0)
+                        newPos.X = (splitContainer1.Panel1.Width + -splitContainer1.Panel1.AutoScrollPosition.X) / zoomLevel - (pointSize / 2) - (30 / zoomLevel);
 
                     if (newPos.Y < 0 + -splitContainer1.Panel1.AutoScrollPosition.Y)
                         newPos.Y = 0 + -splitContainer1.Panel1.AutoScrollPosition.Y;
-                    else if (newPos.Y + (pointSize / 2) > splitContainer1.Panel1.Height + -splitContainer1.Panel1.AutoScrollPosition.Y)
-                        newPos.Y = splitContainer1.Panel1.Height - (pointSize / 2) - splitContainer1.Panel1.AutoScrollPosition.Y;
+                    else if ((newPos.Y + (pointSize / 2)) * zoomLevel > splitContainer1.Panel1.Height + -splitContainer1.Panel1.AutoScrollPosition.Y - 30 && deltaMoved.Y > 0)
+                        newPos.Y = (splitContainer1.Panel1.Height - splitContainer1.Panel1.AutoScrollPosition.Y) / zoomLevel - (pointSize / 2) - (30 / zoomLevel);
 
                     objectManager.SelectedObject.CollisionPoints[objectManager.SelectedObject.SelectedPoint] = newPos;
 
-                    if (objectManager.SelectedObject.CollisionPoints.Count >= 3)
-                        isConvex = objectManager.SelectedObject.CollisionPoints.Count == 3 ? true : IsConvex(objectManager.SelectedObject.CollisionPoints);
+                    //moving the point around so test whether the collision polygon is convex
+                    isConvex = objectManager.SelectedObject.CollisionPoints.Count <= 3 ? true : IsConvex(objectManager.SelectedObject.CollisionPoints);
                 }
 
                 saved = Saved_State.NOTSAVED;
@@ -637,15 +639,22 @@ namespace WindowsFormsApplication1
                     offset.Width += splitContainer1.Panel1.AutoScrollPosition.X;
                     offset.Height += splitContainer1.Panel1.AutoScrollPosition.Y;
 
+                    PointF loc = new PointF((int)((e.Location.X - offset.Width) / zoomLevel), (int)((e.Location.Y - offset.Height) / zoomLevel));
+
                     if(objectManager.SelectedObject.SelectedPoint == -1)
-                        objectManager.SelectedObject.CollisionPoints.Add(Point.Subtract(e.Location, offset));
+                    {
+                        objectManager.SelectedObject.CollisionPoints.Add(loc);
+                        objectManager.SelectedObject.SelectedPoint = objectManager.SelectedObject.CollisionPoints.Count - 1;
+                    }
                     else
-                        objectManager.SelectedObject.CollisionPoints.Insert(objectManager.SelectedObject.SelectedPoint + 1, Point.Subtract(e.Location, offset));
+                    {
+                        objectManager.SelectedObject.CollisionPoints.Insert(objectManager.SelectedObject.SelectedPoint + 1, loc);
+                        objectManager.SelectedObject.SelectedPoint = objectManager.SelectedObject.SelectedPoint + 1;
+                    }
 
                     if (objectManager.SelectedObject.CollisionPoints.Count >= 3)
                         isConvex = objectManager.SelectedObject.CollisionPoints.Count == 3 ? true : IsConvex(objectManager.SelectedObject.CollisionPoints);
 
-                    //objectManager.SelectedObject.SelectedPoint = objectManager.SelectedObject.CollisionPoints.FindIndex;
                     saved = Saved_State.NOTSAVED;
                     Invalidate();
                 }

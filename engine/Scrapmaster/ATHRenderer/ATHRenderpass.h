@@ -4,30 +4,19 @@
 #include "ATHRenderNode.h"
 
 #include <map>
-#include <vector>
+#include <list>
 
 class ATHRenderer;
+
 class ATHRenderPass
 {
 
 private:
 
-	// A custom struct to wrangle ATHRenderNode pointers
-	struct NodeContainer{
-		private:
-			ATHRenderNode* m_pMyNode;
-			NodeContainer();
-		public:
-			NodeContainer( ATHRenderNode* _node ) : m_pMyNode( _node ) {}
-			// Custom sorting function
-			bool operator< ( NodeContainer& cmp );
-			//Accessor
-			ATHRenderNode* GetNode(){ return m_pMyNode; } };
-
 	std::string m_szPassName;
 	unsigned int m_unPriority;
 	RenderFunc m_Process;
-	std::vector<NodeContainer> m_vecNodes;
+	std::list<ATHRenderNode*> m_liNodes;
 	bool m_bDepthDirty;
 	
 

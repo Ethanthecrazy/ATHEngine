@@ -1,6 +1,10 @@
 #include "ATHRenderer.h"
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+
 
 #include "Camera.h"
 #include "ATHRenderNode.h"
@@ -152,16 +156,7 @@ bool ATHRenderer::Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScre
 	m_pDevice->CreateVertexDeclaration(decl, &m_pvdPosNormUV);
 	m_pDevice->SetVertexDeclaration(m_pvdPosNormUV);
 
-	ID3DXBuffer	*errors(NULL);
-
-	D3DXCreateEffectFromFile( m_pDevice, "resource/texture.fx", 0, 0, D3DXSHADER_DEBUG, 0, &m_pEffect, &errors ); 
-
-	if( errors )
-	{
-		std::cout << (char*)errors->GetBufferPointer();
-		errors = NULL;
-		return false;
-	}
+	LoadShaders( SHADER_LOAD_PATH );
 
 	m_pCamera = ATHNew<CCamera>("Rendering");
 	m_pCamera->BuildPerspective(D3DX_PI / 2.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.1f, 10000.0f);
@@ -183,8 +178,7 @@ void ATHRenderer::Shutdown()
 
 	ClearInventory();
 
-	if( m_pEffect )
-		m_pEffect->Release();
+	UnloadShaders();
 
 	m_TextureAtlas.Shutdown();
 
@@ -192,12 +186,14 @@ void ATHRenderer::Shutdown()
 	m_pDevice->Release();
 	m_pD3D->Release();
 }
+
 //================================================================================
 void ATHRenderer::CommitDraws()
 {
 	std::list< ATHRenderPass* >::iterator itrPass = m_liSortedRenderPasses.begin();
 	while( itrPass != m_liSortedRenderPasses.end() )
 	{
+		(*itrPass)->PreExecute();
 		(*itrPass)->Execute( this );
 		itrPass++;
 	}
@@ -216,25 +212,25 @@ void ATHRenderer::RasterTexture( LPDIRECT3DTEXTURE9 _texture, float _left, float
 	D3DXMatrixTranslation( &translate, (_left * 2) - 1.0f, ( ( -_bottom )), 0.0f );
 	_matProj *= translate;
 
-	unsigned int passes(0);
-	m_pEffect->Begin( &passes, 0 );
-	for( unsigned int i(0); i < passes; ++i )
-	{
-		m_pEffect->BeginPass( i );
-		{
-			m_pEffect->SetTexture("tex1", _texture );
-			m_pEffect->SetFloatArray( "multColor", float4( 1.0f, 1.0f, 1.0f, 1.0f ).Array, 4 );
-			m_pEffect->SetMatrix("gWVP", &( _matProj ) );
-			m_pEffect->CommitChanges();
+	//unsigned int passes(0);
+	//m_pEffect->Begin( &passes, 0 );
+	//for( unsigned int i(0); i < passes; ++i )
+	//{
+	//	m_pEffect->BeginPass( i );
+	//	{
+	//		m_pEffect->SetTexture("tex1", _texture );
+	//		m_pEffect->SetFloatArray( "multColor", float4( 1.0f, 1.0f, 1.0f, 1.0f ).Array, 4 );
+	//		m_pEffect->SetMatrix("gWVP", &( _matProj ) );
+	//		m_pEffect->CommitChanges();
 
-			m_pDevice->SetStreamSource( 0, m_meshQuad.GetVertexBuffer(), 0, sizeof( sVertPosNormUV ) );
-			m_pDevice->SetVertexDeclaration( m_pvdPosNormUV );
-			m_pDevice->SetIndices( m_meshQuad.GetIndexBuffer() );
-			m_pDevice->DrawIndexedPrimitive( D3DPT_TRIANGLELIST, 0, 0, 4, 0, 2 );
-		}
-		m_pEffect->EndPass();
-	}
-	m_pEffect->End();
+	//		m_pDevice->SetStreamSource( 0, m_meshQuad.GetVertexBuffer(), 0, sizeof( sVertPosNormUV ) );
+	//		m_pDevice->SetVertexDeclaration( m_pvdPosNormUV );
+	//		m_pDevice->SetIndices( m_meshQuad.GetIndexBuffer() );
+	//		m_pDevice->DrawIndexedPrimitive( D3DPT_TRIANGLELIST, 0, 0, 4, 0, 2 );
+	//	}
+	//	m_pEffect->EndPass();
+	//}
+	//m_pEffect->End();
 }
 //================================================================================
 void ATHRenderer::DRXClear( float3 _color )
@@ -309,6 +305,93 @@ void ATHRenderer::ResetDevice(void)
 	m_pDevice->Reset( &m_PresentParams );
 }
 //================================================================================
+void ATHRenderer::LoadShaders( char* _path )
+{
+	// Data for searching
+	WIN32_FIND_DATA search_data;
+	memset( &search_data, 0, sizeof( WIN32_FIND_DATA ) );
+
+	// Setup the path to start the search
+	std::string pathToDirectory = std::string( _path );
+	pathToDirectory += "\\*";
+
+	HANDLE handle = FindFirstFile( pathToDirectory.c_str(), &search_data );
+
+	while( handle != INVALID_HANDLE_VALUE )
+	{
+		if( !( search_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) )
+		{
+			// Get the filename of the file
+			std::string szFilename = search_data.cFileName;
+			
+			// Get the file extension
+			unsigned int unExtenPos = szFilename.find_last_of( "." );
+			std::string szFileExtension = szFilename.substr( unExtenPos );
+
+			// Make sure that it is the correct filetype
+			if( strcmp( szFileExtension.c_str(), SHADER_SEARCH_EXTENSION ) == 0 )
+			{
+				//Generate the filepath to the effect file
+				std::string pathToFile = std::string( _path );
+				pathToFile += szFilename;
+
+				//Generate the name of the shader
+				std::string szName = szFilename.substr( 0, unExtenPos);
+
+				ID3DXEffect* pCurrEffect(NULL);
+				ID3DXBuffer	*errors(NULL);
+
+				// Create the effect file
+				D3DXCreateEffectFromFile( m_pDevice, pathToFile.c_str(), NULL, NULL, 0, NULL, &pCurrEffect, &errors );
+
+				if( errors ) // Output errors
+				{
+					std::cout << "ERROR: " << pathToFile << "\n";
+					std::cout << (char*)errors->GetBufferPointer();
+					std::cout << "\n";
+					errors->Release();
+					errors = NULL;
+				}
+				else // Load and output success
+				{
+					m_mapEffects[ szName ] = pCurrEffect;
+					std::cout << "Loaded Shader: " << pathToFile << "\n";
+				}
+			}
+		}
+
+		if( FindNextFile(handle, &search_data ) == FALSE )
+			break;
+	}
+
+	//Close the handle after use or memory/resource leak
+	FindClose(handle);
+
+}
+//================================================================================
+void ATHRenderer::UnloadShaders()
+{
+	std::map< std::string, ID3DXEffect* >::iterator itrShader = m_mapEffects.begin();
+	while( itrShader != m_mapEffects.end() )
+	{
+		itrShader->second->Release();
+		itrShader = m_mapEffects.erase( itrShader );
+	}
+
+}
+
+ID3DXEffect* ATHRenderer::GetShader( char* _szName )
+{
+	std::string strName = _szName;
+	ID3DXEffect* pToReturn = nullptr;
+
+	if( m_mapEffects.count( strName ) > 0 )
+		pToReturn = m_mapEffects.at( strName );
+
+	return pToReturn;
+}
+
+//================================================================================
 ATHRenderPass*	ATHRenderer::CreateRenderPass( char* _szName, unsigned int _unPriority, RenderFunc _function )
 {
 	ATHRenderPass* pToReturn = nullptr;
@@ -354,9 +437,4 @@ void ATHRenderer::ClearRenderPasses()
 {
 	m_liSortedRenderPasses.clear();
 	m_mapRenderPasses.clear();
-}
-
-void ATHRenderer::OutputSuccess()
-{
-	std::cout << "ATHRenderer: Success!\n";
 }

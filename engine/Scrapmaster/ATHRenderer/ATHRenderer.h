@@ -15,6 +15,8 @@
 #include "Camera.h"
 
 #define NODE_LAYER_OFFSET (64.0f)
+#define SHADER_LOAD_PATH ".\\shaders\\"
+#define SHADER_SEARCH_EXTENSION ".fx"
 
 class CCamera;
 class ATHRenderNode;
@@ -37,10 +39,10 @@ private:
 	IDirect3DDevice9*				m_pDevice;		// The Device
 	D3DPRESENT_PARAMETERS			m_PresentParams;	// Present Parameters
 	
-	IDirect3DVertexDeclaration9*	m_pvdPosNormUV;
-	ID3DXEffect*					m_pEffect;
-	CCamera*						m_pCamera;
-	ATHMesh							m_meshQuad;
+	std::map< std::string, ID3DXEffect* >	m_mapEffects;
+	IDirect3DVertexDeclaration9*			m_pvdPosNormUV;
+	CCamera*								m_pCamera;
+	ATHMesh									m_meshQuad;
 
 	std::list<ATHRenderNode*>		m_pNodeInventory;
 
@@ -76,6 +78,7 @@ public:
 	inline void IncrementFrameCounter(void){ ++m_FrameCounter; }
 
 	// Graphics Management
+	
 	inline	LPDIRECT3DDEVICE9 GetDevice() { return m_pDevice; }
 	inline	CCamera* GetCamera() { return m_pCamera; }
 	void	CommitDraws();
@@ -87,13 +90,16 @@ public:
 	void	ChangeDisplayParam( int nScreenWidth, int nScreenHeight, bool bFullScreen, bool bVsync );
 	void	ResetDevice(void);
 
+	// Shader Management
+	void			LoadShaders( char* _path );
+	void			UnloadShaders();
+	ID3DXEffect*	GetShader( char* _szName );
+
 	// RenderPass Management
 	ATHRenderPass*	CreateRenderPass( char* _szName, unsigned int _unPriority, RenderFunc _function );
 	ATHRenderPass*	FindRenderPass( char* _szName );
 	bool			DestroyRenderPass( char* _szName );
 	void			ClearRenderPasses();
-
-	void			OutputSuccess();
 
 };
 

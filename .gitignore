@@ -13,6 +13,7 @@
 *.user
 *.filters
 *.opensdf
+*.exe
 
 # Compiled Dynamic libraries
 *.so

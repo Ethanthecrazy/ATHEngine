@@ -8,6 +8,7 @@ MemoryManager* MemoryManager::mInstance = nullptr;
 MemoryManager::MemoryManager()
 {
 	mPool = nullptr;
+	memset( &m_Usages, 0, sizeof( AllocCounter ) * MM_NUM_ALLOC_COUNTERS );
 }
 
 MemoryManager::~MemoryManager()
@@ -16,27 +17,45 @@ MemoryManager::~MemoryManager()
 }
 
 
-void MemoryManager::AdjustUsage( std::string _usage, int _amount )
+unsigned int MemoryManager::AdjustUsage( char* _szUsage, int _amount )
 {
-	std::string testString = std::string( _usage );
+	unsigned int unUsageIndex = 0;
 
-	if( m_mapUsageCount.count( testString ) > 0 )
-		m_mapUsageCount[ testString ] += _amount;
-	else
-		m_mapUsageCount[ testString ] = _amount;
+	bool bFoundName = false;
 
-	// Cleanup
-	if( m_mapUsageCount[ testString ] == 0 )
+	// If the string isnt null, we need to either find an existing label or create a new one
+	if( _szUsage != nullptr )
 	{
-		m_mapUsageCount.erase( testString );
+		for( int nCounter = 0; nCounter< MM_NUM_ALLOC_COUNTERS; ++nCounter )
+		{
+			if( strcmp( _szUsage, m_Usages[nCounter].m_szName ) == 0 )
+			{
+				unUsageIndex = nCounter;
+				bFoundName = true;
+				break;
+			}
+		}
+
+		// Didnt find an existing one, so try and grab a new one
+		if( bFoundName == false )
+		{
+			for( int nCounter = 0; nCounter< MM_NUM_ALLOC_COUNTERS; ++nCounter )
+			{
+				if( strcmp( "", m_Usages[nCounter].m_szName ) == 0 )
+				{
+					unUsageIndex = nCounter;
+					strcpy_s( m_Usages[unUsageIndex].m_szName, 16, _szUsage );
+					break;
+				}
+			}
+		}
 	}
 
-	if( m_mapUsageCount[ testString ] < 0 ) 
-	{
-		assert( false && "MemoryManager trakcing error: Removing more than was added." );
-	}
+	m_Usages[unUsageIndex].m_unAmount += _amount;
 
-	std::cout << DebugString();
+	DebugString();
+
+	return unUsageIndex;
 
 }
 
@@ -82,6 +101,8 @@ void MemoryManager::Init(unsigned int poolSizeInBytes)
 	((Footer*)(end))->size = ((Header*)(mPool))->size;
 	mEndPoolFooter = ((Footer*)(end));
 
+	strcpy_s( m_Usages[0].m_szName, 16, "Undefined" );
+
 	std::cout << "MemoryManager: Initialized with " << poolSizeInBytes << " bytes\n";
 
 }
@@ -117,6 +138,7 @@ char * MemoryManager::Allocate(unsigned int allocSize, char* _usage )
 		((Header*)(parser))->prev = nullptr;
 		((Header*)(parser))->size = allocSize;
 		((Header*)(parser))->size |= (1<<31);
+		((Header*)(parser))->m_unNamedIndex = 0;
 
 		parser += sizeof( Header );
 		parser += allocSize;
@@ -127,12 +149,9 @@ char * MemoryManager::Allocate(unsigned int allocSize, char* _usage )
 		parser -= allocSize;
 
 		// Save off the usage amounts for tracking.
-		if( _usage != NULL )
-		{
-			AdjustUsage( _usage, (int)allocSize ); 
-			m_mapPtrTable[ (void*)parser ] = std::string( _usage );
-		}
+		((Header*)(parser - sizeof(Header)))->m_unNamedIndex = AdjustUsage( _usage, allocSize );
 
+		MM_ALLOCATED += allocSize;
 		return parser;
 	}
 	else
@@ -157,12 +176,9 @@ char * MemoryManager::Allocate(unsigned int allocSize, char* _usage )
 		check->size |= ( 1<<31 );
 
 		// Save off the usage amounts for tracking.
-		if( _usage != NULL )
-		{
-			AdjustUsage( _usage, (int)allocSize ); 
-			m_mapPtrTable[ (void*)parser ] = std::string( _usage );
-		}
+		((Header*)(parser - sizeof(Header)))->m_unNamedIndex = AdjustUsage( _usage, allocSize );
 
+		MM_ALLOCATED += allocSize;
 		return parser;
 	}	
 
@@ -228,14 +244,11 @@ void MemoryManager::DeAllocate(void * target)
 	// Save the data pointer for tracking cleanup.
 	int nAdjSize = (int)Target->size;
 
-	// Cleanup the tracking data.
-	if( m_mapPtrTable.count( szSourcePointer ) > 0 )
-	{
-		std::string toAdjust = m_mapPtrTable[ szSourcePointer ];
-		m_mapPtrTable.erase( szSourcePointer );
+	MM_DEALLOCATED += nAdjSize;
 
-		AdjustUsage( toAdjust, -nAdjSize );
-	}
+	// Cleanup the tracking data.
+	AdjustUsage( m_Usages[Target->m_unNamedIndex].m_szName, -((int)Target->size) );
+	
 
 	if( data != mPool )
 	{
@@ -355,33 +368,28 @@ void MemoryManager::Glom( Header* freeMemory, Header* ToBeFree )
 
 }
 
-std::string MemoryManager::DebugString()
+void MemoryManager::DebugString()
 {
-	std::string toReturn = std::string();
-
 	char buffer[64];
 
-	toReturn += "Name\tAllocation\t\n";
-	toReturn += "--------------------\n";
-	std::map< std::string, int >::iterator itrCurr = m_mapUsageCount.begin();
+	std::cout << "\nName\tAllocation\t\n";
+	std::cout << "--------------------\n";
 
-	while( itrCurr != m_mapUsageCount.end() )
+	for( int i = 0; i < MM_NUM_ALLOC_COUNTERS; ++i )
 	{
+		if( m_Usages[i].m_unAmount > 0 )
+		{
+			std::cout << m_Usages[i].m_szName;
+			std::cout << "\t";
 
-		toReturn += (*itrCurr).first;
-		toReturn += "\t";
+			sprintf_s( buffer, 64, "%d", m_Usages[i].m_unAmount );
 
-		sprintf_s( buffer, 64, "%d", (*itrCurr).second );
-
-		toReturn += buffer;
-		toReturn += "\n";
-
-		itrCurr++;
+			std::cout << buffer;
+			std::cout << "\n";
+		}
 	}
 
-	toReturn += "\n";
-
-	return toReturn;
+	std::cout << "\n";
 }
 
 

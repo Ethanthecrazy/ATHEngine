@@ -19,15 +19,12 @@ private:
 
 		// TODO: Add references to these.
 		std::string m_szName;
-		unsigned int m_uWidth;
-		unsigned int m_uHeight;
-
 		LPDIRECT3DTEXTURE9 m_lpTexture;
+		D3DSURFACE_DESC m_SurfDesc;
 
 		sTexNode()
 		{
-			m_uWidth		= 0;
-			m_uHeight		= 0;
+			ZeroMemory( &m_SurfDesc, sizeof(m_SurfDesc) );
 			m_lpTexture		= nullptr;
 		}
 	};
@@ -53,7 +50,7 @@ public:
 		ATHTextureHandle() : m_pTexNode( nullptr ) {}
 
 		std::string GetName() { return m_pTexNode->m_szName; }
-		float2 GetDimensions() { return float2( (float)m_pTexNode->m_uWidth, (float)m_pTexNode->m_uHeight ); }
+		float2 GetDimensions() { return float2( (float)m_pTexNode->m_SurfDesc.Width, (float)m_pTexNode->m_SurfDesc.Height ); }
 		LPDIRECT3DTEXTURE9 GetTexture() { return m_pTexNode->m_lpTexture; }
 
 		friend class ATHRenderer;

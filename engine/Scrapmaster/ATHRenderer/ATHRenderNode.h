@@ -35,10 +35,10 @@ private:
 	// Nothing except the ATHRenderer is allowed to destroy these.
 	~ATHRenderNode();
 
-	//Only the managers can manipulate the name list;
+	
 	std::vector<std::string> m_vecPassNames;
 
-
+	//Only the managers can manipulate the name list;
 	void AddPassName( std::string _name );
 	void RemovePassname( std::string _name );
 
@@ -60,6 +60,7 @@ public:
 
 	friend class ATHRenderer;
 	friend class ATHRenderPass;
+	friend class ATHRenderNodeHandle;
 };
 
 #endif

@@ -1,6 +1,7 @@
 #include "ATHAtlas.h"
 #include "ATHRenderer.h"
-#include "../ATHUtil/MemoryManager.h"
+
+#include "../ATHUtil/OverloadedNew.h"
 
 ATHAtlas::ATHAtlas()
 {
@@ -28,7 +29,7 @@ void ATHAtlas::LoadTexture( char* _szHandle, char* _szFilepath )
 	if( m_mapTextures.count( szHandleString ) )
 		return;
 
-	sTexNode* pNewTex = ATHNew<sTexNode>("Rendering - Texture");
+	sTexNode* pNewTex = new("ATHAtlas") sTexNode();
 
 	HRESULT result = 0;
 	result = D3DXCreateTextureFromFileExA( m_pDevice,
@@ -51,20 +52,14 @@ void ATHAtlas::LoadTexture( char* _szHandle, char* _szFilepath )
 		delete pNewTex;
 		return;
 	}
-	else
-	{
-		pNewTex->m_szName = szHandleString;
 
-		D3DSURFACE_DESC d3dSurfDesc;
+	pNewTex->m_szName = szHandleString;
 
-		ZeroMemory( &d3dSurfDesc, sizeof(d3dSurfDesc) );
-		pNewTex->m_lpTexture->GetLevelDesc( 0, &d3dSurfDesc );
+	ZeroMemory( &pNewTex->m_SurfDesc, sizeof(pNewTex->m_SurfDesc) );
+	pNewTex->m_lpTexture->GetLevelDesc( 0, &pNewTex->m_SurfDesc );
 
-		pNewTex->m_uHeight	= d3dSurfDesc.Height;
-		pNewTex->m_uWidth	= d3dSurfDesc.Width;
+	m_mapTextures[ szHandleString ] = pNewTex;
 
-		m_mapTextures[ szHandleString ] = pNewTex;
-	}
 
 }
 
@@ -77,7 +72,7 @@ void ATHAtlas::UnloadTexture( LPDIRECT3DTEXTURE9 _texture )
 		if( (*itrCurr).second->m_lpTexture == _texture )
 		{
 			(*itrCurr).second->m_lpTexture->Release();
-			ATHDelete( (*itrCurr).second );
+			delete (*itrCurr).second;
 			m_mapTextures.erase( itrCurr );
 			return;
 		}
@@ -106,8 +101,8 @@ float2 ATHAtlas::GetTexDimensions( char* _szHandle )
 
 	if( m_mapTextures.count( szHandleString ) )
 	{
-		toReturn.vX = (float)m_mapTextures[ szHandleString ]->m_uWidth;
-		toReturn.vY = (float)m_mapTextures[ szHandleString ]->m_uHeight;
+		toReturn.vX = (float)m_mapTextures[ szHandleString ]->m_SurfDesc.Width;
+		toReturn.vY = (float)m_mapTextures[ szHandleString ]->m_SurfDesc.Height;
 	}
 
 	return toReturn;
@@ -120,7 +115,7 @@ void ATHAtlas::Clear()
 	while( itrCurr != m_mapTextures.end() )
 	{
 		(*itrCurr).second->m_lpTexture->Release();
-		ATHDelete( (*itrCurr).second );
+		delete (*itrCurr).second;
 		
 		itrCurr++;
 	}

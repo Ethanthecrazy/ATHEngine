@@ -76,6 +76,7 @@
     <ClInclude Include="ATHMeshManager.h" />
     <ClInclude Include="ATHRenderer.h" />
     <ClInclude Include="ATHRenderNode.h" />
+    <ClInclude Include="ATHRenderNodeHandle.h" />
     <ClInclude Include="ATHRenderpass.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="RenderFunctions.h" />
@@ -86,6 +87,7 @@
     <ClCompile Include="ATHMeshManager.cpp" />
     <ClCompile Include="ATHRenderer.cpp" />
     <ClCompile Include="ATHRenderNode.cpp" />
+    <ClCompile Include="ATHRenderNodeHandle.cpp" />
     <ClCompile Include="ATHRenderPass.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="RenderFunctions.cpp" />

@@ -1,10 +1,19 @@
 #ifndef MEMORY_MANAGER_H
 #define MEMORY_MANAGER_H
 
-#include <map>
-#include <string>
 #include <iostream>
 #include <assert.h>
+
+const int MM_NUM_ALLOC_COUNTERS = 32;
+
+static int MM_ALLOCATED = 0;
+static int MM_DEALLOCATED = 0;
+
+struct AllocCounter
+{
+	char m_szName[16];
+	unsigned int m_unAmount;
+};
 
 class MemoryManager
 {
@@ -19,6 +28,8 @@ public:
 		Header * prev;
 		// Pointer to the next free header in the Cyclic Doubly Linked List
 		Header * next;
+
+		unsigned int m_unNamedIndex;
 	};
 	struct Footer
 	{
@@ -48,10 +59,9 @@ private:
 	Header * FirstAvailable(unsigned int allocSize);
 
 	// Keep tabs on how the memory is used.
-	std::map< std::string, int > m_mapUsageCount;
-	std::map< void*, std::string > m_mapPtrTable;
+	AllocCounter m_Usages[MM_NUM_ALLOC_COUNTERS];
 
-	void AdjustUsage( std::string _usage, int _amount );
+	unsigned int AdjustUsage( char* _szUsage, int _amount );
 	
 public:
 	// Singleton Interface
@@ -74,68 +84,7 @@ public:
 
 	void Glom( Header* freeMemory, Header* ToBeFree );
 
-	std::string DebugString();
+	void DebugString();
 };
-
-// Utility Functions
-// Allocate with this
-template< typename allocType >
-allocType* ATHNew( char* _usage = NULL )
-{
-	allocType* toReturn = NULL;
-	unsigned int nAllocSize = sizeof( allocType );
-	void* allocation = (void*)MemoryManager::GetInstance()->Allocate(  nAllocSize, _usage );
-	if( allocation )
-		toReturn = new ( allocation ) allocType();
-	else
-	{
-		assert( false && "Could not allocate object" );
-	}
-
-	return toReturn;
-
-}
-
-// Allocate an array with this
-template< typename allocType >
-allocType* ATHNew( unsigned int _count, char* _usage = NULL )
-{
-	allocType* toReturn = NULL;
-
-	if( _count > 0 )
-	{
-		unsigned int nAllocSize = sizeof( allocType ) * _count;
-		void* allocation = (void*)MemoryManager::GetInstance()->Allocate(  nAllocSize, _usage );
-		if( allocation )
-		{
-			allocType* tracker = (allocType*)(allocation);
-			for( unsigned int i = 0; i < _count; ++i )
-			{
-				tracker = new ( tracker ) allocType();
-				tracker++;
-			}
-
-			toReturn = (allocType*)allocation;
-
-		}
-		else
-		{
-			assert( false && "Could not allocate object" );
-		}
-
-	}
-	return toReturn;
-
-}
-
-// Delete with this
-template< typename allocType >
-void ATHDelete( allocType* target )
-{
-	MemoryManager::GetInstance()->DeAllocate( (void*)target ); 
-}
-
-
-
 
 #endif

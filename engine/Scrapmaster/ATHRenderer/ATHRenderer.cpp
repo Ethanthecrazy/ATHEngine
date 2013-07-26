@@ -8,8 +8,8 @@
 
 #include "Camera.h"
 #include "ATHRenderNode.h"
-#include "../ATHUtil/MemoryManager.h"
-
+#include "../ATHUtil/OverloadedNew.h"
+#include "ATHAtlas.h"
 
 ATHRenderer* ATHRenderer::m_pInstance = nullptr;
 // The sorting predicate for the ATHRenderPass pointers
@@ -46,7 +46,7 @@ ATHRenderNode* ATHRenderer::CreateNode()
 		return toReturn;
 	}
 	else
-		return ATHNew<ATHRenderNode>("Rendering");
+		return new("ATHRenderer") ATHRenderNode;
 }
 //================================================================================
 void ATHRenderer::DestroyNode( ATHRenderNode* _toDestroy )
@@ -62,7 +62,7 @@ void ATHRenderer::ClearInventory()
 {
 	while( m_pNodeInventory.size() )
 	{
-		ATHDelete( m_pNodeInventory.back() );
+		delete m_pNodeInventory.back();
 		m_pNodeInventory.pop_back();
 	}
 }
@@ -96,7 +96,7 @@ ATHRenderer::~ATHRenderer()
 ATHRenderer* ATHRenderer::GetInstance()
 {
 	if( !m_pInstance )
-		m_pInstance = ATHNew<ATHRenderer>("Rendering");
+		m_pInstance = new("ATHRenderer") ATHRenderer();
 	return m_pInstance;
 
 }
@@ -105,7 +105,7 @@ void ATHRenderer::DeleteInstance()
 {
 	if( m_pInstance )
 	{
-		ATHDelete( m_pInstance );
+		delete m_pInstance;
 		m_pInstance = nullptr;
 	}
 }
@@ -158,11 +158,12 @@ bool ATHRenderer::Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScre
 
 	LoadShaders( SHADER_LOAD_PATH );
 
-	m_pCamera = ATHNew<CCamera>("Rendering");
+	m_pCamera = new("ATHRenderer") CCamera();
 	m_pCamera->BuildPerspective(D3DX_PI / 2.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.1f, 10000.0f);
 	m_pCamera->SetViewPosition(0.0f, 0.0f, -680.0f);
 
-	m_TextureAtlas.Initialize( m_pDevice );
+	m_pTextureAtlas = new("ATHRenderer") ATHAtlas();
+	m_pTextureAtlas->Initialize( m_pDevice );
 
 	BuildQuad();
 
@@ -172,7 +173,7 @@ bool ATHRenderer::Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScre
 void ATHRenderer::Shutdown()
 {
 	if( m_pCamera )
-		ATHDelete( m_pCamera );
+		delete m_pCamera;
 
 	m_meshQuad.Clear();
 
@@ -180,7 +181,9 @@ void ATHRenderer::Shutdown()
 
 	UnloadShaders();
 
-	m_TextureAtlas.Shutdown();
+	m_pTextureAtlas->Shutdown();
+	delete m_pTextureAtlas;
+	m_pTextureAtlas = nullptr;
 
 	m_pvdPosNormUV->Release();
 	m_pDevice->Release();

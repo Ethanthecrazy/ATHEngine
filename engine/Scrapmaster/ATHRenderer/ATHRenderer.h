@@ -10,7 +10,6 @@
 #include <list>
 
 #include "ATHMesh.h"
-#include "ATHAtlas.h"
 #include "ATHRenderpass.h"
 #include "Camera.h"
 
@@ -20,6 +19,7 @@
 
 class CCamera;
 class ATHRenderNode;
+class ATHAtlas;
 
 class ATHRenderer
 {
@@ -61,12 +61,14 @@ private:
 	std::map< std::string, ATHRenderPass > m_mapRenderPasses;
 	std::list< ATHRenderPass* > m_liSortedRenderPasses;
 
-public:
-
 	// Since the atlas is so entwined with the renderer, it is now a subset of the rederer.
-	ATHAtlas						m_TextureAtlas;
+	ATHAtlas*	m_pTextureAtlas;
 
 	ATHRenderer();
+
+public:
+
+
 
 	static		ATHRenderer* GetInstance();
 	static void DeleteInstance();
@@ -76,6 +78,7 @@ public:
 	void		Shutdown();
 	inline		UINT GetFrameNumber(void){ return m_FrameCounter; }
 	inline void IncrementFrameCounter(void){ ++m_FrameCounter; }
+	ATHAtlas*	GetAtlas() { return m_pTextureAtlas; }
 
 	// Graphics Management
 	

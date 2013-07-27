@@ -77,6 +77,7 @@
   <ItemGroup>
     <ClInclude Include="hDataTypes.h" />
     <ClInclude Include="MemoryManager.h" />
+    <ClInclude Include="NewInclude.h" />
     <ClInclude Include="OverloadedNew.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -11,7 +11,7 @@ static int MM_DEALLOCATED = 0;
 
 struct AllocCounter
 {
-	char m_szName[16];
+	char m_szName[24];
 	unsigned int m_unAmount;
 };
 

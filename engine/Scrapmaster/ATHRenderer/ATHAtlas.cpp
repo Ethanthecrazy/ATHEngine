@@ -1,7 +1,7 @@
 #include "ATHAtlas.h"
 #include "ATHRenderer.h"
 
-#include "../ATHUtil/OverloadedNew.h"
+#include "../ATHUtil/NewInclude.h"
 
 ATHAtlas::ATHAtlas()
 {
@@ -29,7 +29,7 @@ void ATHAtlas::LoadTexture( char* _szHandle, char* _szFilepath )
 	if( m_mapTextures.count( szHandleString ) )
 		return;
 
-	sTexNode* pNewTex = new("ATHAtlas") sTexNode();
+	sTexNode* pNewTex = new sTexNode();
 
 	HRESULT result = 0;
 	result = D3DXCreateTextureFromFileExA( m_pDevice,

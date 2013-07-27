@@ -8,7 +8,7 @@
 
 #include "Camera.h"
 #include "ATHRenderNode.h"
-#include "../ATHUtil/OverloadedNew.h"
+#include "../ATHUtil/NewInclude.h"
 #include "ATHAtlas.h"
 
 ATHRenderer* ATHRenderer::m_pInstance = nullptr;
@@ -46,7 +46,7 @@ ATHRenderNode* ATHRenderer::CreateNode()
 		return toReturn;
 	}
 	else
-		return new("ATHRenderer") ATHRenderNode;
+		return new ATHRenderNode;
 }
 //================================================================================
 void ATHRenderer::DestroyNode( ATHRenderNode* _toDestroy )
@@ -96,7 +96,7 @@ ATHRenderer::~ATHRenderer()
 ATHRenderer* ATHRenderer::GetInstance()
 {
 	if( !m_pInstance )
-		m_pInstance = new("ATHRenderer") ATHRenderer();
+		m_pInstance = new ATHRenderer();
 	return m_pInstance;
 
 }
@@ -158,11 +158,11 @@ bool ATHRenderer::Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScre
 
 	LoadShaders( SHADER_LOAD_PATH );
 
-	m_pCamera = new("ATHRenderer") CCamera();
+	m_pCamera = new CCamera();
 	m_pCamera->BuildPerspective(D3DX_PI / 2.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.1f, 10000.0f);
 	m_pCamera->SetViewPosition(0.0f, 0.0f, -680.0f);
 
-	m_pTextureAtlas = new("ATHRenderer") ATHAtlas();
+	m_pTextureAtlas = new ATHAtlas();
 	m_pTextureAtlas->Initialize( m_pDevice );
 
 	BuildQuad();

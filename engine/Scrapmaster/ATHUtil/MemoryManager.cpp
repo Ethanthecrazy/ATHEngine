@@ -53,7 +53,7 @@ unsigned int MemoryManager::AdjustUsage( char* _szUsage, int _amount )
 
 	m_Usages[unUsageIndex].m_unAmount += _amount;
 
-	DebugString();
+	//DebugString();
 
 	return unUsageIndex;
 

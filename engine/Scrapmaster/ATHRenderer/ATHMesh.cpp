@@ -1,5 +1,6 @@
 #include "ATHMesh.h"
 #include "ATHRenderer.h"
+#include "../ATHUtil/NewInclude.h"
 
 void ATHMesh::RebuildBuffers()
 {
@@ -21,7 +22,7 @@ void ATHMesh::RebuildBuffers()
 		D3DPOOL_MANAGED, &m_indexBuff, 0);
 
 	// fill the buffers
-	// This is intentionally slow, it should never happen during gameplay.
+	// This is slow, it should never happen during gameplay.
 	sVertPosNormUV* pVertBuffer = nullptr;
 	m_vertBuff->Lock(0,0, (void**)&pVertBuffer, 0);
 

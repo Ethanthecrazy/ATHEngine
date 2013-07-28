@@ -5,7 +5,7 @@
 
 class ATHRenderer;
 
-void RenderTest(ATHRenderer* renderer, ATHRenderNode* node);
+void RenderTest(ATHRenderer* renderer, ID3DXEffect* _pShader, ATHRenderNode* node);
 
 
 #endif

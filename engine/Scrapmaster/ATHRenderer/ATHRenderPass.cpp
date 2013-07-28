@@ -6,11 +6,12 @@ ATHRenderPass::ATHRenderPass() :	m_Process( NULL ),
 
 }
 
-ATHRenderPass::ATHRenderPass( char* _szName, unsigned int _unPriority, RenderFunc _function ) : m_szPassName( _szName ),
-																								m_unPriority( _unPriority ),
+ATHRenderPass::ATHRenderPass( char* _szName, unsigned int _unPriority, ID3DXEffect* _pShader, RenderFunc _function, char* _szTechnique ) :	m_szPassName( _szName ),
+																														m_unPriority( _unPriority ),
+																								m_pShader( _pShader ),
 																								m_Process( _function )
 {
-
+	strcpy_s( m_szTechnique, 24, _szTechnique );  
 }
 
 void ATHRenderPass::AddNodeToPass( ATHRenderNode* _node, unsigned int _priority )
@@ -40,14 +41,22 @@ void ATHRenderPass::PreExecute()
 }
 void ATHRenderPass::Execute( ATHRenderer* _pRenderer )
 {
-	if( m_Process != nullptr )
+	if( m_Process != nullptr && m_pShader != nullptr )
 	{
-		std::list<ATHRenderNode*>::iterator itrNode = m_liNodes.begin();
-		while( itrNode != m_liNodes.end() )
+		unsigned int passes(0);
+		m_pShader->Begin( &passes, 0 );
+		for( unsigned int pass = 0; pass < passes; ++pass )
 		{
-			m_Process( _pRenderer, (*itrNode) );
-			++itrNode;
+			m_pShader->BeginPass( pass );
+			{
+				std::list<ATHRenderNode*>::iterator itrNode = m_liNodes.begin();
+				while( itrNode != m_liNodes.end() )
+				{
+					m_Process( _pRenderer, m_pShader, (*itrNode) );
+					++itrNode;
+				}
+			}
+			m_pShader->EndPass();
 		}
-
 	}
 }

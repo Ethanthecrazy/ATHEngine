@@ -17,25 +17,6 @@ bool compare_ATHRenderPass( ATHRenderPass* _first, ATHRenderPass* _second )
 {
 	return ( _first->GetPriority() > _second->GetPriority() );
 }
-
-void ATHRenderer::BuildQuad()
-{
-	m_meshQuad.GetVerts().push_back( sVertPosNormUV( float3( 0.0f, 1.0f, 0.0f ), float3( 0.0f, 0.0f, -1.0f ), float2( 0.0f, 0.0f ) ) );
-	m_meshQuad.GetVerts().push_back( sVertPosNormUV( float3( 1.0f, 1.0f, 0.0f ), float3( 0.0f, 0.0f, -1.0f ), float2( 1.0f, 0.0f ) ) );
-	m_meshQuad.GetVerts().push_back( sVertPosNormUV( float3( 1.0f, 0.0f, 0.0f ), float3( 0.0f, 0.0f, -1.0f ), float2( 1.0f, 1.0f ) ) );
-	m_meshQuad.GetVerts().push_back( sVertPosNormUV( float3( 0.0f, 0.0f, 0.0f ), float3( 0.0f, 0.0f, -1.0f ), float2( 0.0f, 1.0f ) ) );
-
-	m_meshQuad.GetIndicies().push_back( 0 );
-	m_meshQuad.GetIndicies().push_back( 2 );
-	m_meshQuad.GetIndicies().push_back( 3 );
-
-	m_meshQuad.GetIndicies().push_back( 0 );
-	m_meshQuad.GetIndicies().push_back( 1 );
-	m_meshQuad.GetIndicies().push_back( 2 );
-
-	m_meshQuad.RebuildBuffers();
-
-}
 //================================================================================
 ATHRenderNode* ATHRenderer::CreateNode()
 {
@@ -160,7 +141,7 @@ bool ATHRenderer::Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScre
 
 	m_pCamera = new CCamera();
 	m_pCamera->BuildPerspective(D3DX_PI / 2.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.1f, 10000.0f);
-	m_pCamera->SetViewPosition(0.0f, 0.0f, -680.0f);
+	m_pCamera->SetViewPosition(0.0f, 0.0f, 0.0f);
 
 	m_pTextureAtlas = new ATHAtlas();
 	m_pTextureAtlas->Initialize( m_pDevice );
@@ -174,8 +155,6 @@ void ATHRenderer::Shutdown()
 {
 	if( m_pCamera )
 		delete m_pCamera;
-
-	m_meshQuad.Clear();
 
 	ClearInventory();
 
@@ -395,7 +374,7 @@ ID3DXEffect* ATHRenderer::GetShader( char* _szName )
 }
 
 //================================================================================
-ATHRenderPass*	ATHRenderer::CreateRenderPass( char* _szName, unsigned int _unPriority, RenderFunc _function )
+ATHRenderPass*	ATHRenderer::CreateRenderPass( char* _szName, unsigned int _unPriority, RenderFunc _function,  char* _szShaderName, char* _szTechnique )
 {
 	ATHRenderPass* pToReturn = nullptr;
 	std::string	idString = std::string( _szName );
@@ -403,7 +382,7 @@ ATHRenderPass*	ATHRenderer::CreateRenderPass( char* _szName, unsigned int _unPri
 	if( m_mapRenderPasses.count( idString ) == 0 )
 	{
 		// Get the address of the pass being constructed and inserted into the map
-		ATHRenderPass* pNewPass = &( m_mapRenderPasses[ idString ] = ATHRenderPass( _szName, _unPriority, _function ) );
+		ATHRenderPass* pNewPass = &( m_mapRenderPasses[ idString ] = ATHRenderPass( _szName, _unPriority, GetShader( _szShaderName ), _function, _szTechnique ) );
 		// Also add it to the sorted list.
 		m_liSortedRenderPasses.push_back( pNewPass );
 		m_liSortedRenderPasses.sort( compare_ATHRenderPass );
@@ -440,4 +419,50 @@ void ATHRenderer::ClearRenderPasses()
 {
 	m_liSortedRenderPasses.clear();
 	m_mapRenderPasses.clear();
+}
+//================================================================================
+ATHRenderNode* ATHRenderer::CreateRenderNode( char* _szPassName ,unsigned int _unPriority )
+{
+	ATHRenderNode* _toReturn = CreateNode();
+	FindRenderPass( _szPassName )->AddNodeToPass( _toReturn, _unPriority );
+	return _toReturn;
+}
+//================================================================================
+void ATHRenderer::DestoryRenderNode( ATHRenderNode* _pDestroy )
+{
+	if( _pDestroy != nullptr )
+	{
+		std::vector<std::string> vecNames = _pDestroy->GetPassNames();
+		std::vector<std::string>::iterator itrNames = vecNames.begin();
+		while( itrNames != vecNames.end() )
+		{
+			FindRenderPass( (char*)(*itrNames).c_str() )->RemoveNodeFromPass( _pDestroy );
+			++itrNames;
+		}
+
+		DestroyNode( _pDestroy );
+	}
+}
+//================================================================================
+ATHMesh* ATHRenderer::BuildQuad()
+{
+	m_Quad = ATHMesh();
+
+	m_Quad.GetVerts().push_back( sVertPosNormUV( float3( 0.0f, 1.0f, 0.0f ), float3( 0.0f, 0.0f, -1.0f ), float2( 0.0f, 0.0f ) ) );
+	m_Quad.GetVerts().push_back( sVertPosNormUV( float3( 1.0f, 1.0f, 0.0f ), float3( 0.0f, 0.0f, -1.0f ), float2( 1.0f, 0.0f ) ) );
+	m_Quad.GetVerts().push_back( sVertPosNormUV( float3( 1.0f, 0.0f, 0.0f ), float3( 0.0f, 0.0f, -1.0f ), float2( 1.0f, 1.0f ) ) );
+	m_Quad.GetVerts().push_back( sVertPosNormUV( float3( 0.0f, 0.0f, 0.0f ), float3( 0.0f, 0.0f, -1.0f ), float2( 0.0f, 1.0f ) ) );
+
+	m_Quad.GetIndicies().push_back( 0 );
+	m_Quad.GetIndicies().push_back( 2 );
+	m_Quad.GetIndicies().push_back( 3 );
+
+	m_Quad.GetIndicies().push_back( 0 );
+	m_Quad.GetIndicies().push_back( 1 );
+	m_Quad.GetIndicies().push_back( 2 );
+
+	m_Quad.RebuildBuffers();
+
+	return &m_Quad;
+
 }

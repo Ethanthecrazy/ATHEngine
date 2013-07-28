@@ -18,7 +18,7 @@ class ATHRenderer;
 const int RENDERNODE_TEXTURE_COUNT = 3;
 
 //Function pointer
-typedef void (*RenderFunc)(ATHRenderer* renderer,ATHRenderNode* node);
+typedef void (*RenderFunc)(ATHRenderer* renderer, ID3DXEffect* _pShader, ATHRenderNode* node);
 
 class ATHRenderNode
 {
@@ -26,7 +26,7 @@ class ATHRenderNode
 private:
 
 	ATHAtlas::ATHTextureHandle	m_pTexture[RENDERNODE_TEXTURE_COUNT];
-	ATHMesh						m_pMesh;
+	ATHMesh*					m_pMesh;
 	D3DXMATRIX					m_matTransform;
 
 	bool						m_bDirty;
@@ -47,16 +47,17 @@ public:
 
 	ATHRenderNode();
 
-
-
 	std::vector< std::string > GetPassNames();
 
 	void SetRenderPriority( unsigned int _priority );
 	unsigned int GetRenderPriority() { return m_unRenderPriority; }
 
-	void SetTexture( ATHAtlas::ATHTextureHandle _texture, int _index = 0 ) { m_pTexture[_index] = _texture; }
-	void SetTransform( D3DXMATRIX _transform ){ m_matTransform = _transform; }
-
+	void						SetTexture( ATHAtlas::ATHTextureHandle _texture, int _index = 0 ) { m_pTexture[_index] = _texture; }
+	ATHAtlas::ATHTextureHandle	GetTexture( unsigned int _nIndex = 0 ) { return m_pTexture[ _nIndex ]; }
+	void						SetTransform( D3DXMATRIX _transform ){ m_matTransform = _transform; }
+	D3DXMATRIX					GetTrasform() { return m_matTransform; }
+	void						SetMesh( ATHMesh* _pMesh ) { m_pMesh = _pMesh; }
+	ATHMesh*					GetMesh() { return m_pMesh; }
 
 	friend class ATHRenderer;
 	friend class ATHRenderPass;

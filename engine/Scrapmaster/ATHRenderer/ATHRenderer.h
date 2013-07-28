@@ -42,15 +42,12 @@ private:
 	std::map< std::string, ID3DXEffect* >	m_mapEffects;
 	IDirect3DVertexDeclaration9*			m_pvdPosNormUV;
 	CCamera*								m_pCamera;
-	ATHMesh									m_meshQuad;
 
 	std::list<ATHRenderNode*>		m_pNodeInventory;
 
 	ATHRenderer( const ATHRenderer&);
 	ATHRenderer& operator=(const ATHRenderer&);
 	~ATHRenderer();
-
-	void BuildQuad();
 
 	// Node inventory management
 	ATHRenderNode* CreateNode();
@@ -63,6 +60,8 @@ private:
 
 	// Since the atlas is so entwined with the renderer, it is now a subset of the rederer.
 	ATHAtlas*	m_pTextureAtlas;
+
+	ATHMesh		m_Quad;
 
 	ATHRenderer();
 
@@ -99,10 +98,17 @@ public:
 	ID3DXEffect*	GetShader( char* _szName );
 
 	// RenderPass Management
-	ATHRenderPass*	CreateRenderPass( char* _szName, unsigned int _unPriority, RenderFunc _function );
+	ATHRenderPass*	CreateRenderPass( char* _szName, unsigned int _unPriority, RenderFunc _function,  char* _szShaderName, char* _szTechnique = "Default" );
 	ATHRenderPass*	FindRenderPass( char* _szName );
 	bool			DestroyRenderPass( char* _szName );
 	void			ClearRenderPasses();
+
+	// RenderNode Management
+	ATHRenderNode* CreateRenderNode( char* _szPassName, unsigned int _unPriority );
+	void DestoryRenderNode( ATHRenderNode* _pDestroy );
+
+	// Utility
+	ATHMesh* BuildQuad();
 
 };
 

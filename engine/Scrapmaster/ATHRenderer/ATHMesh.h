@@ -40,6 +40,9 @@ public:
 
 	std::string GetMeshName()			{return m_szMeshName;}
 
+	unsigned int			GetVertexCount() { return m_vecVerts.size(); }
+	unsigned int			GetIndexCount() { return m_vecIndicies.size(); }
+
 	void RebuildBuffers();
 	void Clear();
 

@@ -1,4 +1,5 @@
 #include "ATHRenderNode.h"
+#include "../ATHUtil/NewInclude.h"
 
 ATHRenderNode::ATHRenderNode() : m_bDirty( false )
 {	

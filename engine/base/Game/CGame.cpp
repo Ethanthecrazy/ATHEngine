@@ -47,12 +47,10 @@ void CGame::Initialize(HWND _hWnd, HINSTANCE hInstance,
 
 	m_pRenderer->CreateRenderPass( "test", 1, RenderTest, "texture" );
 
-	m_pRenderer->GetAtlas()->LoadTexture( "APC", "textures/apc.png" );
-
 	ATHRenderNode* pTestNode = m_pRenderer->CreateRenderNode( "test", 0 );
 
 	pTestNode->SetMesh( m_pRenderer->BuildQuad() );
-	pTestNode->SetTexture( m_pRenderer->GetAtlas()->GetTexture( "APC" ) );
+	pTestNode->SetTexture( m_pRenderer->GetAtlas()->GetTexture( "apc" ) );
 	
 	D3DXMATRIX matTrans;
 	D3DXMatrixIdentity( &matTrans );

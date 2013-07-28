@@ -18,7 +18,7 @@ void ATHRenderPass::AddNodeToPass( ATHRenderNode* _node, unsigned int _priority 
 {
 	_node->AddPassName( m_szPassName );
 	m_liNodes.push_back( _node );
-	m_bDepthDirty  = true;
+	m_bDepthDirty = true;
 }
 
 void ATHRenderPass::RemoveNodeFromPass( ATHRenderNode* _node )

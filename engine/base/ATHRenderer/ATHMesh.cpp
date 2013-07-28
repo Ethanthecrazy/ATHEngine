@@ -2,6 +2,15 @@
 #include "ATHRenderer.h"
 #include "../ATHUtil/NewInclude.h"
 
+ATHMesh::~ATHMesh()
+{
+	if( m_vertBuff )
+		m_vertBuff->Release();
+
+	if( m_indexBuff )
+		m_indexBuff->Release();
+}
+
 void ATHMesh::RebuildBuffers()
 {
 	if( m_vertBuff )

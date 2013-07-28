@@ -146,6 +146,8 @@ bool ATHRenderer::Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScre
 	m_pTextureAtlas = new ATHAtlas();
 	m_pTextureAtlas->Initialize( m_pDevice );
 
+	LoadTextures( TEXTURE_LOAD_PATH );
+
 	BuildQuad();
 
 	return true;
@@ -285,6 +287,56 @@ void ATHRenderer::ChangeDisplayParam( int nScreenWidth, int nScreenHeight, bool 
 void ATHRenderer::ResetDevice(void)
 {
 	m_pDevice->Reset( &m_PresentParams );
+}
+//================================================================================
+void ATHRenderer::LoadTextures( char* _path )
+{
+		// Data for searching
+	WIN32_FIND_DATA search_data;
+	memset( &search_data, 0, sizeof( WIN32_FIND_DATA ) );
+
+	// Setup the path to start the search
+	std::string pathToDirectory = std::string( _path );
+	pathToDirectory += "\\*";
+
+	HANDLE handle = FindFirstFile( pathToDirectory.c_str(), &search_data );
+
+	while( handle != INVALID_HANDLE_VALUE )
+	{
+		if( !( search_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) )
+		{
+			// Get the filename of the file
+			std::string szFilename = search_data.cFileName;
+			
+			// Get the file extension
+			unsigned int unExtenPos = szFilename.find_last_of( "." );
+			std::string szFileExtension = szFilename.substr( unExtenPos );
+
+			// Make sure that it is the correct filetype
+			if( strcmp( szFileExtension.c_str(), TEXTURE_SEARCH_EXTENSION ) == 0 )
+			{
+				//Generate the filepath to the effect file
+				std::string pathToFile = std::string( _path );
+				pathToFile += szFilename;
+
+				//Generate the name of the shader
+				std::string szName = szFilename.substr( 0, unExtenPos);
+
+				ID3DXEffect* pCurrEffect(NULL);
+				ID3DXBuffer	*errors(NULL);
+
+				GetAtlas()->LoadTexture( (char*)szName.c_str(), (char*)pathToFile.c_str() );
+				std::cout << "Loaded Texture: " << pathToFile << "\n";
+
+			}
+		}
+
+		if( FindNextFile(handle, &search_data ) == FALSE )
+			break;
+	}
+
+	//Close the handle after use or memory/resource leak
+	FindClose(handle);
 }
 //================================================================================
 void ATHRenderer::LoadShaders( char* _path )
@@ -462,6 +514,8 @@ ATHMesh* ATHRenderer::BuildQuad()
 	m_Quad.GetIndicies().push_back( 2 );
 
 	m_Quad.RebuildBuffers();
+
+	m_Quad.SetPrimativeType( D3DPT_TRIANGLELIST );
 
 	return &m_Quad;
 

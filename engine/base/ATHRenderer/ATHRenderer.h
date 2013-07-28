@@ -16,6 +16,8 @@
 #define NODE_LAYER_OFFSET (64.0f)
 #define SHADER_LOAD_PATH ".\\shaders\\"
 #define SHADER_SEARCH_EXTENSION ".fx"
+#define TEXTURE_LOAD_PATH ".\\textures\\"
+#define	TEXTURE_SEARCH_EXTENSION ".png"
 
 class CCamera;
 class ATHRenderNode;
@@ -91,6 +93,8 @@ public:
 	void	DRXPresent();
 	void	ChangeDisplayParam( int nScreenWidth, int nScreenHeight, bool bFullScreen, bool bVsync );
 	void	ResetDevice(void);
+
+	void	LoadTextures( char* _path );
 
 	// Shader Management
 	void			LoadShaders( char* _path );

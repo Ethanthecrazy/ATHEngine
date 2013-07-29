@@ -44,12 +44,12 @@ void ATHRenderPass::Execute( ATHRenderer* _pRenderer )
 {
 	if( m_pShader == nullptr )
 	{
-		std::cout << "Error: Attempting to render without a valid shader.";
+		std::cout << "Error: Attempting to render without a valid shader.\n";
 		return;
 	}
 	if( m_Process == nullptr )
 	{
-		std::cout << "Error: Attempting to render without a valid render function.";
+		std::cout << "Error: Attempting to render without a valid render function.\n";
 		return;
 	}
 

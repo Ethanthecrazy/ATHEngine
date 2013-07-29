@@ -1,4 +1,5 @@
 #include "ATHRenderpass.h"
+#include <iostream>
 
 ATHRenderPass::ATHRenderPass() :	m_Process( NULL ),
 									m_bDepthDirty( false )
@@ -41,22 +42,31 @@ void ATHRenderPass::PreExecute()
 }
 void ATHRenderPass::Execute( ATHRenderer* _pRenderer )
 {
-	if( m_Process != nullptr && m_pShader != nullptr )
+	if( m_pShader == nullptr )
 	{
-		unsigned int passes(0);
-		m_pShader->Begin( &passes, 0 );
-		for( unsigned int pass = 0; pass < passes; ++pass )
-		{
-			m_pShader->BeginPass( pass );
-			{
-				std::list<ATHRenderNode*>::iterator itrNode = m_liNodes.begin();
-				while( itrNode != m_liNodes.end() )
-				{
-					m_Process( _pRenderer, m_pShader, (*itrNode) );
-					++itrNode;
-				}
-			}
-			m_pShader->EndPass();
-		}
+		std::cout << "Error: Attempting to render without a valid shader.";
+		return;
 	}
+	if( m_Process == nullptr )
+	{
+		std::cout << "Error: Attempting to render without a valid render function.";
+		return;
+	}
+
+	unsigned int passes(0);
+	m_pShader->Begin( &passes, 0 );
+	for( unsigned int pass = 0; pass < passes; ++pass )
+	{
+		m_pShader->BeginPass( pass );
+		{
+			std::list<ATHRenderNode*>::iterator itrNode = m_liNodes.begin();
+			while( itrNode != m_liNodes.end() )
+			{
+				m_Process( _pRenderer, m_pShader, (*itrNode) );
+				++itrNode;
+			}
+		}
+		m_pShader->EndPass();
+	}
+
 }

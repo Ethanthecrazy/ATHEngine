@@ -43,7 +43,7 @@ void CGame::Initialize(HWND _hWnd, HINSTANCE hInstance,
 	m_nScreenHeight = nScreenHeight;
 
 	m_pRenderer = ATHRenderer::GetInstance();
-	m_pRenderer->Initialize( _hWnd, hInstance, nScreenWidth, nScreenHeight, false, false );
+	m_pRenderer->Initialize( _hWnd, hInstance, nScreenWidth, nScreenHeight, false, true );
 
 	m_pRenderer->CreateRenderPass( "test", 1, RenderTest, "texture" );
 

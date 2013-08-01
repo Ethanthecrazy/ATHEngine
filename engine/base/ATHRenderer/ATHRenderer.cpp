@@ -48,7 +48,7 @@ void ATHRenderer::ClearInventory()
 	}
 }
 //================================================================================
-ATHRenderer::ATHRenderer()
+ATHRenderer::ATHRenderer() : m_Quad( "Quad", m_pvdPosNormUV, D3DPT_TRIANGLELIST )
 {
 	m_FrameCounter		= 0;		// Frame Counter
 	m_unScreenWidth		= 0;
@@ -496,9 +496,16 @@ void ATHRenderer::DestoryRenderNode( ATHRenderNode* _pDestroy )
 	}
 }
 //================================================================================
+void ATHRenderer::DrawMesh( ATHMesh* _pMesh )
+{
+	m_pDevice->SetStreamSource( 0, _pMesh->GetVertexBuffer(), 0, sizeof( sVertPosNormUV ) );
+	m_pDevice->SetIndices( _pMesh->GetIndexBuffer() );
+	m_pDevice->DrawIndexedPrimitive( _pMesh->GetPrimativeType(), 0, 0, _pMesh->GetVertexCount(), 0, _pMesh->GetPrimativeCount() );
+}
+//================================================================================
 ATHMesh* ATHRenderer::BuildQuad()
 {
-	m_Quad = ATHMesh();
+	m_Quad = ATHMesh( "Quad", m_pvdPosNormUV, D3DPT_TRIANGLELIST );
 
 	m_Quad.GetVerts().push_back( sVertPosNormUV( float3( 0.0f, 1.0f, 0.0f ), float3( 0.0f, 0.0f, -1.0f ), float2( 0.0f, 0.0f ) ) );
 	m_Quad.GetVerts().push_back( sVertPosNormUV( float3( 1.0f, 1.0f, 0.0f ), float3( 0.0f, 0.0f, -1.0f ), float2( 1.0f, 0.0f ) ) );

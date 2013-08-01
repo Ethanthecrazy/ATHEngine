@@ -55,6 +55,43 @@ void ATHMesh::RebuildBuffers()
 	}
 
 	m_indexBuff->Unlock();
+
+
+	switch( m_PrimativeType )
+	{
+		case D3DPT_POINTLIST:
+			{
+				m_unPrimativeCount = m_vecIndicies.size();
+				break;
+			}
+		case D3DPT_LINELIST:
+			{
+				m_unPrimativeCount = m_vecIndicies.size() / 2;
+				break;
+			}
+		case D3DPT_LINESTRIP:
+			{
+				m_unPrimativeCount = 0;
+				break;
+			}
+		case D3DPT_TRIANGLELIST:  
+			{
+				m_unPrimativeCount = m_vecIndicies.size() / 3;
+				break;
+			}
+		case D3DPT_TRIANGLESTRIP:
+			{
+				m_unPrimativeCount = 0;
+				break;
+			}
+		case D3DPT_TRIANGLEFAN:
+			{
+				m_unPrimativeCount = 0;
+				break;
+			}
+
+	}
+
 }
 
 void ATHMesh::Clear()

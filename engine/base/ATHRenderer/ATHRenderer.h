@@ -14,14 +14,16 @@
 #include "Camera.h"
 
 #define NODE_LAYER_OFFSET (64.0f)
-#define SHADER_LOAD_PATH ".\\shaders\\"
+#define SHADER_LOAD_PATH ".\\data\\shaders\\"
 #define SHADER_SEARCH_EXTENSION ".fx"
-#define TEXTURE_LOAD_PATH ".\\textures\\"
+#define TEXTURE_LOAD_PATH ".\\art\\textures\\"
 #define	TEXTURE_SEARCH_EXTENSION ".png"
+#define MESH_LOAD_PATH ".\\art\\meshes\\"
 
 class CCamera;
 class ATHRenderNode;
 class ATHAtlas;
+class ATHVertexDecl;
 
 class ATHRenderer
 {
@@ -42,6 +44,7 @@ private:
 	D3DPRESENT_PARAMETERS			m_PresentParams;	// Present Parameters
 	
 	std::map< std::string, ID3DXEffect* >	m_mapEffects;
+	std::map< std::string, ATHVertexDecl* > m_mapVertexDecls;
 	IDirect3DVertexDeclaration9*			m_pvdPosNormUV;
 	CCamera*								m_pCamera;
 
@@ -96,6 +99,12 @@ public:
 
 	void	LoadTextures( char* _path );
 
+	// VertexDecl Management
+	void							LoadVertexDeclaration( char* _path );
+	void							LoadVertexDeclaration( ATHVertexDecl* _pToLoad );
+	void							UnloadVertexDeclarations();
+	IDirect3DVertexDeclaration9*	GetVertexDeclaration( char* _szName );
+	
 	// Shader Management
 	void			LoadShaders( char* _path );
 	void			UnloadShaders();
@@ -112,6 +121,7 @@ public:
 	void DestoryRenderNode( ATHRenderNode* _pDestroy );
 
 	// Utility
+	void DrawMesh( ATHMesh* _pMesh );
 	ATHMesh* BuildQuad();
 
 };

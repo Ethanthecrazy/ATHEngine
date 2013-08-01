@@ -11,11 +11,9 @@ void RenderTest( ATHRenderer* pRenderer, ID3DXEffect* _pShader, ATHRenderNode* p
 	_pShader->SetMatrix( "gWVP", &( pNode->GetTrasform() * matMVP ) );
 	_pShader->SetTexture( "tex1", pNode->GetTexture().GetTexture() );
 
-	_pShader->SetFloatArray( "multColor", float4( 1.0f, 1.0f, 0.5f, 0.5f ).Array, 4 );
+	_pShader->SetFloatArray( "multColor", float4( 1.0f, rand() % 1000 / 1000.0f, rand() % 1000 / 1000.0f, rand() % 1000 / 1000.0f ).Array, 4 );
 	_pShader->CommitChanges();
 
-	pRenderer->GetDevice()->SetStreamSource( 0, pNode->GetMesh()->GetVertexBuffer(), 0, sizeof( sVertPosNormUV ) );
-	pRenderer->GetDevice()->SetIndices( pNode->GetMesh()->GetIndexBuffer() );
-	pRenderer->GetDevice()->DrawIndexedPrimitive( pNode->GetMesh()->GetPrimativeType(), 0, 0, pNode->GetMesh()->GetVertexCount(), 0, 2 );
+	pRenderer->DrawMesh( pNode->GetMesh() );
 
 }

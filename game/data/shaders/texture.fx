@@ -68,11 +68,10 @@ float4 TransformPS( float2 uv0:TEXCOORD0):COLOR
 	//return c;
 	
 	// determine the pixel to sample from
-    float4 texCol = tex2D(samp1, uv0);
+    float4 texCol = tex2D(samp1, uv0) * multColor;
 
 	if( texCol.a == 0 )
-		//discard;
-		texCol = float4( 1.0f, 1.0f, 1.0f, 1.0f );
+		discard;
     
     return texCol;
 }

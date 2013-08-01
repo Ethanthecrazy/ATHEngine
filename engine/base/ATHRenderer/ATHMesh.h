@@ -4,6 +4,7 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <vector>
+#include <map>
 #include "../ATHUtil/hDataTypes.h"
 
 struct sVertPosNormUV
@@ -17,22 +18,48 @@ struct sVertPosNormUV
 
 };
 
+class ATHVert
+{
+private:
+public:
+};
+
 class ATHMesh
 {
 private:
 
-	IDirect3DVertexBuffer9* m_vertBuff;
-	IDirect3DIndexBuffer9*	m_indexBuff;
 	std::string				m_szMeshName;
-	D3DPRIMITIVETYPE		m_PrimativeType;
+	
+	IDirect3DVertexDeclaration9*	m_pVertDecl;
+	IDirect3DVertexBuffer9*			m_vertBuff;
+	IDirect3DIndexBuffer9*			m_indexBuff;
+	D3DPRIMITIVETYPE				m_PrimativeType;
 
 	std::vector< sVertPosNormUV > m_vecVerts;
 	std::vector< unsigned int > m_vecIndicies;
 
+	unsigned int m_unPrimativeCount;
+
+	ATHMesh();
+
 public:
 
-	ATHMesh() : m_vertBuff( nullptr ), m_indexBuff( nullptr ) {}
+	ATHMesh(	char* _szMeshName, 
+				IDirect3DVertexDeclaration9* _pVertexDecl, 
+				D3DPRIMITIVETYPE _PrimativeType ) :	m_szMeshName( _szMeshName ),
+													m_pVertDecl( _pVertexDecl ),
+													m_vertBuff( nullptr ), 
+													m_indexBuff( nullptr ), 
+													m_PrimativeType( _PrimativeType ), 
+													m_unPrimativeCount( 0 ) 
+	{
+	}
+
 	~ATHMesh();
+
+	void							SetVertexDecl( IDirect3DVertexDeclaration9* _pDecl ) { m_pVertDecl = _pDecl; }
+	IDirect3DVertexDeclaration9*	GetVertexDecl() { return m_pVertDecl; }
+
 	std::vector< sVertPosNormUV >& GetVerts() { return m_vecVerts; }
 	std::vector< unsigned int >& GetIndicies() { return m_vecIndicies; }
 
@@ -48,6 +75,8 @@ public:
 
 	void					SetPrimativeType( D3DPRIMITIVETYPE _type ) { m_PrimativeType = _type; }
 	D3DPRIMITIVETYPE		GetPrimativeType() { return m_PrimativeType; }
+
+	unsigned int			GetPrimativeCount() { return m_unPrimativeCount; }
 
 	void Clear();
 

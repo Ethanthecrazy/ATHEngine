@@ -8,6 +8,11 @@ void RenderTest( ATHRenderer* pRenderer, ID3DXEffect* _pShader, ATHRenderNode* p
 
 	D3DXMATRIX matMVP = pRenderer->GetCamera()->GetViewMatrix() * pRenderer->GetCamera()->GetProjectionMatrix();
 
+	D3DXMATRIX rot;
+	D3DXMatrixRotationY( &rot, 0.1f );
+
+	pNode->SetTransform( rot * pNode->GetTrasform() );
+
 	_pShader->SetMatrix( "gWVP", &( pNode->GetTrasform() * matMVP ) );
 	_pShader->SetTexture( "tex1", pNode->GetTexture().GetTexture() );
 

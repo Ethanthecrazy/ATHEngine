@@ -47,18 +47,22 @@ void CGame::Initialize(HWND _hWnd, HINSTANCE hInstance,
 
 	m_pRenderer->CreateRenderPass( "test", 1, RenderTest, "texture" );
 
-	ATHRenderNode* pTestNode = m_pRenderer->CreateRenderNode( "test", 0 );
+	for( int i = 0; i < 1000; ++i )
+	{
 
-	pTestNode->SetMesh( m_pRenderer->BuildQuad() );
-	pTestNode->SetTexture( m_pRenderer->GetAtlas()->GetTexture( "wall" ) );
-	
-	D3DXMATRIX matTrans;
-	D3DXMatrixTranslation( &matTrans, 0.0f, 0.0f, 5.0f );
+		ATHRenderNode* pTestNode = m_pRenderer->CreateRenderNode( "test", 0 );
 
-	D3DXMATRIX scale;
-	D3DXMatrixScaling( &scale, 2.0f, 2.0f, 2.0f );
-	
-	pTestNode->SetTransform( scale * matTrans ); 
+		pTestNode->SetMesh( m_pRenderer->BuildQuad() );
+		pTestNode->SetTexture( m_pRenderer->GetAtlas()->GetTexture( "wall" ) );
+
+		D3DXMATRIX matTrans;
+		D3DXMatrixTranslation( &matTrans, (rand() % 1000 / 100.0f ) - 5.0f, (rand() % 1000 / 100.0f ) - 5.0f, 5.0f + (rand() % 1000 / 250.0f ) );
+
+		D3DXMATRIX scale;
+		D3DXMatrixScaling( &scale, 2.0f, 2.0f, 2.0f );
+
+		pTestNode->SetTransform( scale * matTrans ); 
+	}
 
 	//////////
 

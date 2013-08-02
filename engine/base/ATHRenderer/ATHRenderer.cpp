@@ -571,8 +571,6 @@ ATHMesh* ATHRenderer::BuildQuad()
 	m_Quad.GetIndicies().push_back( 0 );
 	m_Quad.GetIndicies().push_back( 4 );
 
-
-
 	m_Quad.RebuildBuffers();
 
 	m_Quad.SetPrimativeType( D3DPT_TRIANGLELIST );

@@ -43,12 +43,11 @@ private:
 
 	LPDIRECT3D9						m_pD3D;			// The Direct3d Object
 	IDirect3DDevice9*				m_pDevice;		// The Device
-	D3DPRESENT_PARAMETERS			m_PresentParams;	// Present Parameters
+	D3DPRESENT_PARAMETERS				m_PresentParams;	// Present Parameters
 
 	std::map< unsigned int, ATHVertexDecl* >	m_mapVertDecls;
 	std::map< std::string, ID3DXEffect* >		m_mapEffects;
 
-	IDirect3DVertexDeclaration9*			m_pvdPosNormUV;
 	CCamera*								m_pCamera;
 
 	std::list<ATHRenderNode*>				m_pNodeInventory;

@@ -226,6 +226,8 @@ void MemoryManager::DeAllocate(void * target)
 	Header*	Target = nullptr;
 	Header* BelowHeader = nullptr;
 
+	assert( target );
+
 	//CheckUp
 
 	//Save tracking data

@@ -1,6 +1,7 @@
 #include "ATHMesh.h"
 #include "ATHRenderer.h"
 #include "../ATHUtil/NewInclude.h"
+#include "ATHVertexDecl.h"
 
 ATHMesh::~ATHMesh()
 {
@@ -22,7 +23,7 @@ void ATHMesh::RebuildBuffers()
 	if( !m_vecVerts.size() )
 		return;
 
-	ATHRenderer::GetInstance()->GetDevice()->CreateVertexBuffer( m_vecVerts.size() * sizeof(sVertPosNormUV), 
+	ATHRenderer::GetInstance()->GetDevice()->CreateVertexBuffer( m_vecVerts.size() * m_pVertDecl->GetVertexSize(), 
 		D3DUSAGE_WRITEONLY, 0,
 		D3DPOOL_MANAGED, &m_vertBuff, 0);
 
@@ -30,17 +31,34 @@ void ATHMesh::RebuildBuffers()
 		D3DUSAGE_WRITEONLY, D3DFMT_INDEX32, 
 		D3DPOOL_MANAGED, &m_indexBuff, 0);
 
+	unsigned int unPosIndex = 0;
+	unsigned int unTexIndex = 0;
+
+	std::vector<ATHDeclElement>::const_iterator itrElems = m_pVertDecl->GetLongDecl().cbegin();
+	while( itrElems != m_pVertDecl->GetLongDecl().cend() )
+	{
+		if( itrElems->m_Element.Usage == D3DDECLUSAGE_POSITION )
+		{
+			unPosIndex = itrElems->m_unIndex;
+		}
+		if( itrElems->m_Element.Usage == D3DDECLUSAGE_TEXCOORD )
+		{
+			unTexIndex = itrElems->m_unIndex;
+		}
+
+		++itrElems;
+	}
+
 	// fill the buffers
 	// This is slow, it should never happen during gameplay.
-	sVertPosNormUV* pVertBuffer = nullptr;
+	char* pVertBuffer = nullptr;
 	m_vertBuff->Lock(0,0, (void**)&pVertBuffer, 0);
 
 	for( unsigned int i = 0; i < m_vecVerts.size(); ++i )
 	{
-		pVertBuffer->position = m_vecVerts[i].position;
-		pVertBuffer->normal = m_vecVerts[i].normal;
-		pVertBuffer->UV = m_vecVerts[i].UV;
-		pVertBuffer++;
+		m_pVertDecl->VertexSet( pVertBuffer + m_pVertDecl->GetVertexSize() * i );
+		m_pVertDecl->VertexSetVar( unPosIndex, m_vecVerts[i].position );
+		m_pVertDecl->VertexSetVar( unTexIndex, m_vecVerts[i].UV );	
 	}
 
 	m_vertBuff->Unlock();

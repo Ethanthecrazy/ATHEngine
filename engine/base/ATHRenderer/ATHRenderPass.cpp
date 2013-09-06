@@ -1,6 +1,8 @@
 #include "ATHRenderpass.h"
 #include <iostream>
 
+#include "ATHRenderer.h"
+
 ATHRenderPass::ATHRenderPass() :	m_Process( NULL ),
 									m_bDepthDirty( false )
 {
@@ -30,7 +32,8 @@ void ATHRenderPass::RemoveNodeFromPass( ATHRenderNode* _node )
 
 void ATHRenderPass::SortNodes()
 {
-	m_liNodes.sort();
+	// TODO: Add functionality for sorting nodes
+	m_bDepthDirty = false;
 }
 
 void ATHRenderPass::PreExecute()

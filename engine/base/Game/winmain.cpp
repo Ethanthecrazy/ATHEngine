@@ -331,6 +331,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	
 	theGame->Shutdown();
 
+	MemoryManager::GetInstance()->DebugString();
 	MemoryManager::FreeInstance();
 
 	/////////////////////////////////////////

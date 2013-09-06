@@ -10,6 +10,7 @@
 #include "ATHRenderNode.h"
 #include "../ATHUtil/NewInclude.h"
 #include "ATHAtlas.h"
+#include "ATHVertexDecl.h"
 
 ATHRenderer* ATHRenderer::m_pInstance = nullptr;
 // The sorting predicate for the ATHRenderPass pointers
@@ -27,7 +28,11 @@ ATHRenderNode* ATHRenderer::CreateNode()
 		return toReturn;
 	}
 	else
-		return new ATHRenderNode;
+	{
+		ATHRenderNode* pNewNode = new ATHRenderNode();
+		m_liNodeTotalList.push_back( pNewNode );
+		return pNewNode;
+	}
 }
 //================================================================================
 void ATHRenderer::DestroyNode( ATHRenderNode* _toDestroy )
@@ -39,16 +44,18 @@ void ATHRenderer::DestroyNode( ATHRenderNode* _toDestroy )
 	}
 }
 //================================================================================
-void ATHRenderer::ClearInventory()
+void ATHRenderer::DestoryAllNodes()
 {
-	while( m_pNodeInventory.size() )
+	while( m_liNodeTotalList.size() )
 	{
-		delete m_pNodeInventory.back();
-		m_pNodeInventory.pop_back();
+		delete m_liNodeTotalList.back();
+		m_liNodeTotalList.pop_back();
 	}
+
+	m_pNodeInventory.clear();
 }
 //================================================================================
-ATHRenderer::ATHRenderer() : m_Quad( "Quad", m_pvdPosNormUV, D3DPT_TRIANGLELIST )
+ATHRenderer::ATHRenderer() : m_Quad( "Quad", GetVertexDeclaration( ATH_VERTEXDECL_TEXTURED), D3DPT_TRIANGLELIST )
 {
 	m_FrameCounter		= 0;		// Frame Counter
 	m_unScreenWidth		= 0;
@@ -137,6 +144,8 @@ bool ATHRenderer::Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScre
 	m_pDevice->CreateVertexDeclaration(decl, &m_pvdPosNormUV);
 	m_pDevice->SetVertexDeclaration(m_pvdPosNormUV);
 
+	InitVertexDecls();
+
 	LoadShaders( SHADER_LOAD_PATH );
 
 	m_pCamera = new CCamera();
@@ -152,13 +161,47 @@ bool ATHRenderer::Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScre
 
 	return true;
 }
+
+void ATHRenderer::InitVertexDecls()
+{
+	ATHVertexDecl* pNewDecl = nullptr;
+
+	// Colored dcl
+	pNewDecl = new ATHVertexDecl();
+	pNewDecl->AddVertexElement( D3DDECLUSAGE_POSITION, D3DDECLTYPE_FLOAT3 );
+	pNewDecl->AddVertexElement( D3DDECLUSAGE_COLOR, D3DDECLTYPE_FLOAT4 );
+	pNewDecl->BuildDecl();
+	m_mapVertDecls.insert( std::pair< unsigned int, ATHVertexDecl* >( ATH_VERTEXDECL_COLORED, pNewDecl ) );
+
+	// Textured decl
+	pNewDecl = new ATHVertexDecl();
+	pNewDecl->AddVertexElement( D3DDECLUSAGE_POSITION, D3DDECLTYPE_FLOAT3 );
+	pNewDecl->AddVertexElement( D3DDECLUSAGE_TEXCOORD, D3DDECLTYPE_FLOAT2 );
+	pNewDecl->BuildDecl();
+	m_mapVertDecls.insert( std::pair< unsigned int, ATHVertexDecl* >( ATH_VERTEXDECL_TEXTURED, pNewDecl ) );
+
+}
+
 //================================================================================
 void ATHRenderer::Shutdown()
 {
+	std::map< unsigned int, ATHVertexDecl* >::iterator itrDecls = m_mapVertDecls.begin();
+	while( itrDecls != m_mapVertDecls.end() )
+	{
+		if( itrDecls->second != nullptr )
+		{
+			delete itrDecls->second;
+		}
+
+		itrDecls++;
+	}
+
 	if( m_pCamera )
 		delete m_pCamera;
 
-	ClearInventory();
+
+
+	DestoryAllNodes();
 
 	UnloadShaders();
 
@@ -339,6 +382,14 @@ void ATHRenderer::LoadTextures( char* _path )
 	FindClose(handle);
 }
 //================================================================================
+ATHVertexDecl*	ATHRenderer::GetVertexDeclaration( unsigned int _unHandle )
+{
+	if( m_mapVertDecls.count( _unHandle ) > 0 )
+		return m_mapVertDecls.at( _unHandle );
+	else
+		return nullptr;
+}
+//================================================================================
 void ATHRenderer::LoadShaders( char* _path )
 {
 	// Data for searching
@@ -498,14 +549,20 @@ void ATHRenderer::DestoryRenderNode( ATHRenderNode* _pDestroy )
 //================================================================================
 void ATHRenderer::DrawMesh( ATHMesh* _pMesh )
 {
-	m_pDevice->SetStreamSource( 0, _pMesh->GetVertexBuffer(), 0, sizeof( sVertPosNormUV ) );
+	m_pDevice->SetVertexDeclaration( _pMesh->GetVertexDecl()->GetShortDecl() );
+	m_pDevice->SetStreamSource( 0, _pMesh->GetVertexBuffer(), 0, _pMesh->GetVertexDecl()->GetVertexSize() );
 	m_pDevice->SetIndices( _pMesh->GetIndexBuffer() );
 	m_pDevice->DrawIndexedPrimitive( _pMesh->GetPrimativeType(), 0, 0, _pMesh->GetVertexCount(), 0, _pMesh->GetPrimativeCount() );
 }
 //================================================================================
-ATHMesh* ATHRenderer::BuildQuad()
+ATHMesh* ATHRenderer::GetQuad()
 {
-	m_Quad = ATHMesh( "Quad", m_pvdPosNormUV, D3DPT_TRIANGLELIST );
+	return &m_Quad;
+}
+//================================================================================
+void ATHRenderer::BuildQuad()
+{
+	m_Quad = ATHMesh( "Quad", GetVertexDeclaration( ATH_VERTEXDECL_TEXTURED ), D3DPT_TRIANGLELIST );
 
 	m_Quad.GetVerts().push_back( sVertPosNormUV( float3( -0.5f, 0.5f, -0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 0.0f, 0.0f ) ) );	// 0
 	m_Quad.GetVerts().push_back( sVertPosNormUV( float3( -0.5f, 0.5f, 0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 1.0f, 0.0f ) ) );		// 1
@@ -574,7 +631,5 @@ ATHMesh* ATHRenderer::BuildQuad()
 	m_Quad.RebuildBuffers();
 
 	m_Quad.SetPrimativeType( D3DPT_TRIANGLELIST );
-
-	return &m_Quad;
 
 }

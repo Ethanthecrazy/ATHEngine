@@ -20,6 +20,8 @@
 #define	TEXTURE_SEARCH_EXTENSION ".png"
 #define MESH_LOAD_PATH ".\\art\\meshes\\"
 
+enum { ATH_VERTEXDECL_COLORED, ATH_VERTEXDECL_TEXTURED, ATH_VERTEXDECL_ANIMATED };
+
 class CCamera;
 class ATHRenderNode;
 class ATHAtlas;
@@ -42,13 +44,15 @@ private:
 	LPDIRECT3D9						m_pD3D;			// The Direct3d Object
 	IDirect3DDevice9*				m_pDevice;		// The Device
 	D3DPRESENT_PARAMETERS			m_PresentParams;	// Present Parameters
-	
-	std::map< std::string, ID3DXEffect* >	m_mapEffects;
-	std::map< std::string, ATHVertexDecl* > m_mapVertexDecls;
+
+	std::map< unsigned int, ATHVertexDecl* >	m_mapVertDecls;
+	std::map< std::string, ID3DXEffect* >		m_mapEffects;
+
 	IDirect3DVertexDeclaration9*			m_pvdPosNormUV;
 	CCamera*								m_pCamera;
 
-	std::list<ATHRenderNode*>		m_pNodeInventory;
+	std::list<ATHRenderNode*>				m_pNodeInventory;
+	std::list<ATHRenderNode*>				m_liNodeTotalList;
 
 	ATHRenderer( const ATHRenderer&);
 	ATHRenderer& operator=(const ATHRenderer&);
@@ -57,7 +61,7 @@ private:
 	// Node inventory management
 	ATHRenderNode* CreateNode();
 	void DestroyNode( ATHRenderNode* _toDestroy );
-	void ClearInventory();
+	void DestoryAllNodes();
 
 	//Renderpass management
 	std::map< std::string, ATHRenderPass > m_mapRenderPasses;
@@ -79,6 +83,8 @@ public:
 
 	// Basic Functions
 	bool		Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScreenWidth, unsigned int nScreenHeight, bool bFullScreen, bool bVsync );
+	void		InitVertexDecls();
+
 	void		Shutdown();
 	inline		UINT GetFrameNumber(void){ return m_FrameCounter; }
 	inline void IncrementFrameCounter(void){ ++m_FrameCounter; }
@@ -100,10 +106,7 @@ public:
 	void	LoadTextures( char* _path );
 
 	// VertexDecl Management
-	void							LoadVertexDeclaration( char* _path );
-	void							LoadVertexDeclaration( ATHVertexDecl* _pToLoad );
-	void							UnloadVertexDeclarations();
-	IDirect3DVertexDeclaration9*	GetVertexDeclaration( char* _szName );
+	ATHVertexDecl*	GetVertexDeclaration( unsigned int _unHandle );
 	
 	// Shader Management
 	void			LoadShaders( char* _path );
@@ -122,8 +125,12 @@ public:
 
 	// Utility
 	void DrawMesh( ATHMesh* _pMesh );
-	ATHMesh* BuildQuad();
 
+	ATHMesh* GetQuad();
+
+private:
+
+	void BuildQuad();
 };
 
 #endif

@@ -24,13 +24,15 @@ private:
 public:
 };
 
+class ATHVertexDecl;
+
 class ATHMesh
 {
 private:
 
 	std::string				m_szMeshName;
 	
-	IDirect3DVertexDeclaration9*	m_pVertDecl;
+	ATHVertexDecl*					m_pVertDecl;
 	IDirect3DVertexBuffer9*			m_vertBuff;
 	IDirect3DIndexBuffer9*			m_indexBuff;
 	D3DPRIMITIVETYPE				m_PrimativeType;
@@ -45,7 +47,7 @@ private:
 public:
 
 	ATHMesh(	char* _szMeshName, 
-				IDirect3DVertexDeclaration9* _pVertexDecl, 
+				ATHVertexDecl* _pVertexDecl, 
 				D3DPRIMITIVETYPE _PrimativeType ) :	m_szMeshName( _szMeshName ),
 													m_pVertDecl( _pVertexDecl ),
 													m_vertBuff( nullptr ), 
@@ -57,8 +59,8 @@ public:
 
 	~ATHMesh();
 
-	void							SetVertexDecl( IDirect3DVertexDeclaration9* _pDecl ) { m_pVertDecl = _pDecl; }
-	IDirect3DVertexDeclaration9*	GetVertexDecl() { return m_pVertDecl; }
+	void							SetVertexDecl( ATHVertexDecl* _pDecl ) { m_pVertDecl = _pDecl; }
+	ATHVertexDecl*					GetVertexDecl() { return m_pVertDecl; }
 
 	std::vector< sVertPosNormUV >& GetVerts() { return m_vecVerts; }
 	std::vector< unsigned int >& GetIndicies() { return m_vecIndicies; }

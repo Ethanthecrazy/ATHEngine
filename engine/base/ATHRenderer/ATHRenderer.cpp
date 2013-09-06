@@ -66,7 +66,6 @@ ATHRenderer::ATHRenderer() : m_Quad( "Quad", GetVertexDeclaration( ATH_VERTEXDEC
 
 	m_pD3D				= nullptr;		// The Direct3d Object
 	m_pDevice			= nullptr;		// The Device
-	m_pvdPosNormUV		= nullptr;
 
 	ZeroMemory( &m_PresentParams, sizeof( D3DPRESENT_PARAMETERS ) );
 
@@ -120,8 +119,6 @@ bool ATHRenderer::Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScre
 	m_PresentParams.hDeviceWindow				= hWnd;
 	m_PresentParams.Flags						= D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
 	m_PresentParams.FullScreen_RefreshRateInHz	= D3DPRESENT_RATE_DEFAULT;
-
-
 	m_PresentParams.PresentationInterval		= (bVsync) ? D3DPRESENT_INTERVAL_DEFAULT : D3DPRESENT_INTERVAL_IMMEDIATE;
 
 	HRESULT hr = 0;
@@ -134,15 +131,17 @@ bool ATHRenderer::Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScre
 	}
 
 	InitVertexDecls();
-	LoadShaders( SHADER_LOAD_PATH );
+
+	m_pTextureAtlas = new ATHAtlas();
+	m_pTextureAtlas->Initialize( m_pDevice );
+
 	LoadTextures( TEXTURE_LOAD_PATH );
+	LoadShaders( SHADER_LOAD_PATH );
 
 	m_pCamera = new CCamera();
 	m_pCamera->BuildPerspective(D3DX_PI / 2.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.1f, 10000.0f);
 	m_pCamera->SetViewPosition(0.0f, 0.0f, 0.0f);
 
-	m_pTextureAtlas = new ATHAtlas();
-	m_pTextureAtlas->Initialize( m_pDevice );
 
 	BuildQuad();
 
@@ -196,7 +195,6 @@ void ATHRenderer::Shutdown()
 	delete m_pTextureAtlas;
 	m_pTextureAtlas = nullptr;
 
-	m_pvdPosNormUV->Release();
 	m_pDevice->Release();
 	m_pD3D->Release();
 }

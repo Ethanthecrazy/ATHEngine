@@ -133,20 +133,9 @@ bool ATHRenderer::Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScre
 		return false;
 	}
 
-	D3DVERTEXELEMENT9 decl[] = 
-	{ 
-		{0, 0,  D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
-		{0, 12,  D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0},
-		{0, 24,D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD,0},
-		D3DDECL_END()
-	};
-
-	m_pDevice->CreateVertexDeclaration(decl, &m_pvdPosNormUV);
-	m_pDevice->SetVertexDeclaration(m_pvdPosNormUV);
-
 	InitVertexDecls();
-
 	LoadShaders( SHADER_LOAD_PATH );
+	LoadTextures( TEXTURE_LOAD_PATH );
 
 	m_pCamera = new CCamera();
 	m_pCamera->BuildPerspective(D3DX_PI / 2.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.1f, 10000.0f);
@@ -154,8 +143,6 @@ bool ATHRenderer::Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScre
 
 	m_pTextureAtlas = new ATHAtlas();
 	m_pTextureAtlas->Initialize( m_pDevice );
-
-	LoadTextures( TEXTURE_LOAD_PATH );
 
 	BuildQuad();
 

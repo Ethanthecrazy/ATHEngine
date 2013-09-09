@@ -11,7 +11,7 @@ ATHMesh::~ATHMesh()
 	if( m_indexBuff )
 		m_indexBuff->Release();
 }
-
+//================================================================================
 void ATHMesh::RebuildBuffers()
 {
 	if( m_vertBuff )
@@ -51,6 +51,20 @@ void ATHMesh::RebuildBuffers()
 					m_pVertDecl->VertexSetVar( vecLongDecl[sub].m_unIndex, m_vecPositions[i] );
 					break;
 				}
+			case D3DDECLUSAGE_BLENDWEIGHT:
+				{
+					if( m_vecBlendweights.size() > i )
+					{
+						m_pVertDecl->VertexSetVar( vecLongDecl[sub].m_unIndex, m_vecBlendweights[i] );
+					}
+				}
+			case D3DDECLUSAGE_BLENDINDICES:
+				{
+					if( m_vecBlendIndicies.size() > i )
+					{
+						m_pVertDecl->VertexSetVar( vecLongDecl[sub].m_unIndex, m_vecBlendIndicies[i] );
+					}
+				}
 			case D3DDECLUSAGE_NORMAL:
 				{
 					if( m_vecNormals.size() > i )
@@ -65,6 +79,13 @@ void ATHMesh::RebuildBuffers()
 						m_pVertDecl->VertexSetVar( vecLongDecl[sub].m_unIndex, m_vecUVs[i] );
 					}
 					break;
+				}
+			case D3DDECLUSAGE_TANGENT:
+				{
+					if( m_vecTangents.size() > i )
+					{
+						m_pVertDecl->VertexSetVar( vecLongDecl[sub].m_unIndex, m_vecTangents[i] );
+					}
 				}
 			case D3DDECLUSAGE_COLOR:
 				{
@@ -91,44 +112,50 @@ void ATHMesh::RebuildBuffers()
 
 	m_indexBuff->Unlock();
 
-
+	int nPrimitiveCount = 0;
 	switch( m_PrimativeType )
 	{
 		case D3DPT_POINTLIST:
 			{
-				m_unPrimativeCount = m_vecIndicies.size();
+				nPrimitiveCount = m_vecIndicies.size();
 				break;
 			}
 		case D3DPT_LINELIST:
 			{
-				m_unPrimativeCount = m_vecIndicies.size() / 2;
+				nPrimitiveCount = m_vecIndicies.size() / 2;
 				break;
 			}
 		case D3DPT_LINESTRIP:
 			{
-				m_unPrimativeCount = 0;
+				nPrimitiveCount = m_vecIndicies.size() - 1;
 				break;
 			}
 		case D3DPT_TRIANGLELIST:  
 			{
-				m_unPrimativeCount = m_vecIndicies.size() / 3;
+				nPrimitiveCount = m_vecIndicies.size() / 3;
 				break;
 			}
 		case D3DPT_TRIANGLESTRIP:
 			{
-				m_unPrimativeCount = 0;
+				nPrimitiveCount =  m_vecIndicies.size() - 2;
 				break;
 			}
 		case D3DPT_TRIANGLEFAN:
 			{
-				m_unPrimativeCount = 0;
+				nPrimitiveCount = m_vecIndicies.size() - 2;
 				break;
 			}
 
 	}
 
-}
+	// Make sure that it cant underflow
+	if( nPrimitiveCount < 0 )
+		nPrimitiveCount = 0;
 
+	m_unPrimativeCount = nPrimitiveCount;
+
+}
+//================================================================================
 void ATHMesh::Clear()
 {
 	if( m_vertBuff )
@@ -144,8 +171,10 @@ void ATHMesh::Clear()
 	}
 
 	m_vecPositions.clear();
-	m_vecUVs.clear();
+	m_vecBlendweights.clear();
+	m_vecBlendIndicies.clear();
 	m_vecNormals.clear();
+	m_vecUVs.clear();
+	m_vecTangents.clear();
 	m_vecColors.clear();
-	m_vecIndicies.clear();
 }

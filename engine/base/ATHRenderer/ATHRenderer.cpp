@@ -154,15 +154,15 @@ void ATHRenderer::InitVertexDecls()
 
 	// Colored dcl
 	pNewDecl = new ATHVertexDecl();
-	pNewDecl->AddVertexElement( D3DDECLUSAGE_POSITION, D3DDECLTYPE_FLOAT3 );
-	pNewDecl->AddVertexElement( D3DDECLUSAGE_COLOR, D3DDECLTYPE_FLOAT4 );
+	pNewDecl->AddVertexElement( D3DDECLUSAGE_POSITION );
+	pNewDecl->AddVertexElement( D3DDECLUSAGE_COLOR );
 	pNewDecl->BuildDecl();
 	m_mapVertDecls.insert( std::pair< unsigned int, ATHVertexDecl* >( ATH_VERTEXDECL_COLORED, pNewDecl ) );
 
 	// Textured decl
 	pNewDecl = new ATHVertexDecl();
-	pNewDecl->AddVertexElement( D3DDECLUSAGE_POSITION, D3DDECLTYPE_FLOAT3 );
-	pNewDecl->AddVertexElement( D3DDECLUSAGE_TEXCOORD, D3DDECLTYPE_FLOAT2 );
+	pNewDecl->AddVertexElement( D3DDECLUSAGE_POSITION );
+	pNewDecl->AddVertexElement( D3DDECLUSAGE_TEXCOORD );
 	pNewDecl->BuildDecl();
 	m_mapVertDecls.insert( std::pair< unsigned int, ATHVertexDecl* >( ATH_VERTEXDECL_TEXTURED, pNewDecl ) );
 

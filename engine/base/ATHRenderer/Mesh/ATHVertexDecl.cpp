@@ -22,8 +22,9 @@ ATHVertexDecl::~ATHVertexDecl()
 	}
 }
 //================================================================================
-void ATHVertexDecl::AddVertexElement( D3DDECLUSAGE _Usage, D3DDECLTYPE _Type )
+void ATHVertexDecl::AddVertexElement( D3DDECLUSAGE _Usage )
 {
+	unsigned int _Type = g_VertexUsageTypes[ _Usage ];
 	// Size and offset setup
 	unsigned int unCurrAddSize = g_VertexTypeSizes[ _Type ];
 	unsigned int unPrevVertexSize = m_unVertexSize;

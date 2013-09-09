@@ -44,9 +44,14 @@ public:
 
 	// Vertex information. All sizes based off of the postion vector.
 	std::vector< float3 > m_vecPositions;
+	std::vector< float4 > m_vecBlendweights;
+	std::vector< float4 > m_vecBlendIndicies;
 	std::vector< float3 > m_vecNormals;
 	std::vector< float2 > m_vecUVs;
+	std::vector< float3 > m_vecTangents;
 	std::vector< float4 > m_vecColors;
+
+
 
 	std::vector< unsigned int > m_vecIndicies;
 

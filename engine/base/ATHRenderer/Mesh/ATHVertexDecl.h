@@ -4,6 +4,21 @@
 #include <d3dx9.h>
 #include <vector>
 
+static unsigned int g_VertexUsageTypes[ MAXD3DDECLUSAGEINDEX ] = {	D3DDECLTYPE_FLOAT3,		// D3DDECLUSAGE_POSITION = 0,
+																	D3DDECLTYPE_FLOAT4,		// D3DDECLUSAGE_BLENDWEIGHT,   // 1
+																	D3DDECLTYPE_FLOAT4,		// D3DDECLUSAGE_BLENDINDICES,  // 2
+																	D3DDECLTYPE_FLOAT3,		// D3DDECLUSAGE_NORMAL,        // 3
+																	D3DDECLTYPE_FLOAT2,		// D3DDECLUSAGE_PSIZE,         // 4
+																	D3DDECLTYPE_FLOAT2,		// D3DDECLUSAGE_TEXCOORD,      // 5
+																	D3DDECLTYPE_FLOAT3,		// D3DDECLUSAGE_TANGENT,       // 6
+																	D3DDECLTYPE_FLOAT3,		// D3DDECLUSAGE_BINORMAL,      // 7
+																	0,						// D3DDECLUSAGE_TESSFACTOR,    // 8
+																	D3DDECLTYPE_FLOAT3,		// D3DDECLUSAGE_POSITIONT,     // 9
+																	D3DDECLTYPE_D3DCOLOR,	// D3DDECLUSAGE_COLOR,         // 10
+																	D3DDECLTYPE_D3DCOLOR,	// D3DDECLUSAGE_FOG,           // 11
+																	D3DDECLTYPE_FLOAT1,		// D3DDECLUSAGE_DEPTH,         // 12
+																	0 };					// D3DDECLUSAGE_SAMPLE,        // 13
+
 // Sized in bytes
 static unsigned int g_VertexTypeSizes[ D3DDECLTYPE_UNUSED ] = {	4,	    // D3DDECLTYPE_FLOAT1    =  0,  	1D float expanded to (value, 0., 0., 1.)
 																8,		// D3DDECLTYPE_FLOAT2    =  1,  	2D float expanded to (value, value, 0., 1.)
@@ -51,7 +66,7 @@ public:
 
 	unsigned int GetVertexSize() { return m_unVertexSize; }
 
-	void AddVertexElement( D3DDECLUSAGE _Usage, D3DDECLTYPE _Type );
+	void AddVertexElement( D3DDECLUSAGE _Usage );
 	const std::vector< ATHDeclElement >& GetLongDecl();
 	IDirect3DVertexDeclaration9* GetShortDecl();
 

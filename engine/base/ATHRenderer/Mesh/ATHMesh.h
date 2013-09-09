@@ -36,15 +36,19 @@ private:
 	IDirect3DVertexBuffer9*			m_vertBuff;
 	IDirect3DIndexBuffer9*			m_indexBuff;
 	D3DPRIMITIVETYPE				m_PrimativeType;
-
-	std::vector< sVertPosNormUV > m_vecVerts;
-	std::vector< unsigned int > m_vecIndicies;
-
 	unsigned int m_unPrimativeCount;
 
 	ATHMesh();
 
 public:
+
+	// Vertex information. All sizes based off of the postion vector.
+	std::vector< float3 > m_vecPositions;
+	std::vector< float3 > m_vecNormals;
+	std::vector< float2 > m_vecUVs;
+	std::vector< float4 > m_vecColors;
+
+	std::vector< unsigned int > m_vecIndicies;
 
 	ATHMesh(	char* _szMeshName, 
 				ATHVertexDecl* _pVertexDecl, 
@@ -62,9 +66,6 @@ public:
 	void							SetVertexDecl( ATHVertexDecl* _pDecl ) { m_pVertDecl = _pDecl; }
 	ATHVertexDecl*					GetVertexDecl() { return m_pVertDecl; }
 
-	std::vector< sVertPosNormUV >& GetVerts() { return m_vecVerts; }
-	std::vector< unsigned int >& GetIndicies() { return m_vecIndicies; }
-
 	void RebuildBuffers();
 
 	IDirect3DVertexBuffer9* GetVertexBuffer() { return m_vertBuff; }
@@ -72,7 +73,7 @@ public:
 
 	std::string GetMeshName()			{return m_szMeshName;}
 
-	unsigned int			GetVertexCount() { return m_vecVerts.size(); }
+	unsigned int			GetVertexCount() { return m_vecPositions.size(); }
 	unsigned int			GetIndexCount() { return m_vecIndicies.size(); }
 
 	void					SetPrimativeType( D3DPRIMITIVETYPE _type ) { m_PrimativeType = _type; }

@@ -20,10 +20,10 @@ void ATHMesh::RebuildBuffers()
 	if( m_indexBuff )
 		m_indexBuff->Release();
 
-	if( !m_vecVerts.size() )
+	if( !m_vecPositions.size() )
 		return;
 
-	ATHRenderer::GetInstance()->GetDevice()->CreateVertexBuffer( m_vecVerts.size() * m_pVertDecl->GetVertexSize(), 
+	ATHRenderer::GetInstance()->GetDevice()->CreateVertexBuffer( m_vecPositions.size() * m_pVertDecl->GetVertexSize(), 
 		D3DUSAGE_WRITEONLY, 0,
 		D3DPOOL_MANAGED, &m_vertBuff, 0);
 
@@ -31,34 +31,51 @@ void ATHMesh::RebuildBuffers()
 		D3DUSAGE_WRITEONLY, D3DFMT_INDEX32, 
 		D3DPOOL_MANAGED, &m_indexBuff, 0);
 
-	unsigned int unPosIndex = 0;
-	unsigned int unTexIndex = 0;
-
-	std::vector<ATHDeclElement>::const_iterator itrElems = m_pVertDecl->GetLongDecl().cbegin();
-	while( itrElems != m_pVertDecl->GetLongDecl().cend() )
-	{
-		if( itrElems->m_Element.Usage == D3DDECLUSAGE_POSITION )
-		{
-			unPosIndex = itrElems->m_unIndex;
-		}
-		if( itrElems->m_Element.Usage == D3DDECLUSAGE_TEXCOORD )
-		{
-			unTexIndex = itrElems->m_unIndex;
-		}
-
-		++itrElems;
-	}
-
 	// fill the buffers
 	// This is slow, it should never happen during gameplay.
 	char* pVertBuffer = nullptr;
 	m_vertBuff->Lock(0,0, (void**)&pVertBuffer, 0);
 
-	for( unsigned int i = 0; i < m_vecVerts.size(); ++i )
+	for( unsigned int i = 0; i < m_vecPositions.size(); ++i )
 	{
+		std::vector< ATHDeclElement > vecLongDecl = m_pVertDecl->GetLongDecl();
 		m_pVertDecl->VertexSet( pVertBuffer + m_pVertDecl->GetVertexSize() * i );
-		m_pVertDecl->VertexSetVar( unPosIndex, m_vecVerts[i].position );
-		m_pVertDecl->VertexSetVar( unTexIndex, m_vecVerts[i].UV );	
+
+		for( unsigned int sub = 0; sub < vecLongDecl.size(); ++sub )
+		{
+			// Switch statement for packing
+			switch( m_pVertDecl->GetLongDecl()[sub].m_Element.Usage )
+			{
+			case D3DDECLUSAGE_POSITION:
+				{
+					m_pVertDecl->VertexSetVar( vecLongDecl[sub].m_unIndex, m_vecPositions[i] );
+					break;
+				}
+			case D3DDECLUSAGE_NORMAL:
+				{
+					if( m_vecNormals.size() > i )
+					{
+						m_pVertDecl->VertexSetVar( vecLongDecl[sub].m_unIndex, m_vecNormals[i] );
+					}
+				}
+			case D3DDECLUSAGE_TEXCOORD:
+				{
+					if( m_vecUVs.size() > i )
+					{
+						m_pVertDecl->VertexSetVar( vecLongDecl[sub].m_unIndex, m_vecUVs[i] );
+					}
+					break;
+				}
+			case D3DDECLUSAGE_COLOR:
+				{
+					if( m_vecColors.size() > i )
+					{
+						m_pVertDecl->VertexSetVar( vecLongDecl[sub].m_unIndex, m_vecColors[i] );
+					}
+				}
+			}
+			
+		}
 	}
 
 	m_vertBuff->Unlock();
@@ -126,6 +143,9 @@ void ATHMesh::Clear()
 		m_indexBuff = nullptr;
 	}
 
-	m_vecVerts.clear();
+	m_vecPositions.clear();
+	m_vecUVs.clear();
+	m_vecNormals.clear();
+	m_vecColors.clear();
 	m_vecIndicies.clear();
 }

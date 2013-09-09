@@ -549,69 +549,89 @@ void ATHRenderer::BuildQuad()
 {
 	m_Quad = ATHMesh( "Quad", GetVertexDeclaration( ATH_VERTEXDECL_TEXTURED ), D3DPT_TRIANGLELIST );
 
-	m_Quad.GetVerts().push_back( sVertPosNormUV( float3( -0.5f, 0.5f, -0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 0.0f, 0.0f ) ) );	// 0
-	m_Quad.GetVerts().push_back( sVertPosNormUV( float3( -0.5f, 0.5f, 0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 1.0f, 0.0f ) ) );		// 1
-	m_Quad.GetVerts().push_back( sVertPosNormUV( float3( 0.5f, 0.5f, 0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 0.0f, 0.0f ) ) );		// 2
-	m_Quad.GetVerts().push_back( sVertPosNormUV( float3( 0.5f, 0.5f, -0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 1.0f, 0.0f ) ) );		// 3
+	m_Quad.m_vecPositions.push_back( float3( -0.5f, 0.5f, -0.5f ) );
+	m_Quad.m_vecPositions.push_back( float3( -0.5f, 0.5f, 0.5f ) );
+	m_Quad.m_vecPositions.push_back( float3( 0.5f, 0.5f, 0.5f ) );
+	m_Quad.m_vecPositions.push_back( float3( 0.5f, 0.5f, -0.5f ) );
 
-	m_Quad.GetVerts().push_back( sVertPosNormUV( float3( -0.5f, -0.5f, -0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 0.0f, 1.0f ) ) );	// 4
-	m_Quad.GetVerts().push_back( sVertPosNormUV( float3( -0.5f, -0.5f, 0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 1.0f, 1.0f ) ) );	// 5
-	m_Quad.GetVerts().push_back( sVertPosNormUV( float3( 0.5f, -0.5f, 0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 0.0f, 1.0f ) ) );     // 6
-	m_Quad.GetVerts().push_back( sVertPosNormUV( float3( 0.5f, -0.5f, -0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 1.0f, 1.0f ) ) );	// 7
+	m_Quad.m_vecPositions.push_back( float3( -0.5f, -0.5f, -0.5f ) );
+	m_Quad.m_vecPositions.push_back( float3( -0.5f, -0.5f, 0.5f ) );
+	m_Quad.m_vecPositions.push_back( float3( 0.5f, -0.5f, 0.5f ) );
+	m_Quad.m_vecPositions.push_back( float3( 0.5f, -0.5f, -0.5f ) );
+
+	m_Quad.m_vecUVs.push_back( float2( 0.0f, 0.0f ) );
+	m_Quad.m_vecUVs.push_back( float2( 1.0f, 0.0f ) );
+	m_Quad.m_vecUVs.push_back( float2( 0.0f, 0.0f ) );
+	m_Quad.m_vecUVs.push_back( float2( 1.0f, 0.0f ) );
+
+	m_Quad.m_vecUVs.push_back( float2( 0.0f, 1.0f ) );
+	m_Quad.m_vecUVs.push_back( float2( 1.0f, 1.0f ) );
+	m_Quad.m_vecUVs.push_back( float2( 0.0f, 1.0f ) );
+	m_Quad.m_vecUVs.push_back( float2( 1.0f, 1.0f ) );
+
+	//m_Quad.GetVerts().push_back( sVertPosNormUV( float3( -0.5f, 0.5f, -0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 0.0f, 0.0f ) ) );	// 0
+	//m_Quad.GetVerts().push_back( sVertPosNormUV( float3( -0.5f, 0.5f, 0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 1.0f, 0.0f ) ) );		// 1
+	//m_Quad.GetVerts().push_back( sVertPosNormUV( float3( 0.5f, 0.5f, 0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 0.0f, 0.0f ) ) );		// 2
+	//m_Quad.GetVerts().push_back( sVertPosNormUV( float3( 0.5f, 0.5f, -0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 1.0f, 0.0f ) ) );		// 3
+
+	//m_Quad.GetVerts().push_back( sVertPosNormUV( float3( -0.5f, -0.5f, -0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 0.0f, 1.0f ) ) );	// 4
+	//m_Quad.GetVerts().push_back( sVertPosNormUV( float3( -0.5f, -0.5f, 0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 1.0f, 1.0f ) ) );	// 5
+	//m_Quad.GetVerts().push_back( sVertPosNormUV( float3( 0.5f, -0.5f, 0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 0.0f, 1.0f ) ) );     // 6
+	//m_Quad.GetVerts().push_back( sVertPosNormUV( float3( 0.5f, -0.5f, -0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 1.0f, 1.0f ) ) );	// 7
 
 	// TOP Indicies
-	m_Quad.GetIndicies().push_back( 0 );
-	m_Quad.GetIndicies().push_back( 2 );
-	m_Quad.GetIndicies().push_back( 3 );
+	m_Quad.m_vecIndicies.push_back( 0 );
+	m_Quad.m_vecIndicies.push_back( 2 );
+	m_Quad.m_vecIndicies.push_back( 3 );
 
-	m_Quad.GetIndicies().push_back( 0 );
-	m_Quad.GetIndicies().push_back( 1 );
-	m_Quad.GetIndicies().push_back( 2 );
+	m_Quad.m_vecIndicies.push_back( 0 );
+	m_Quad.m_vecIndicies.push_back( 1 );
+	m_Quad.m_vecIndicies.push_back( 2 );
 
-	// BOTTOM Indicies
-	m_Quad.GetIndicies().push_back( 4 );
-	m_Quad.GetIndicies().push_back( 6 );
-	m_Quad.GetIndicies().push_back( 5 );
+	// BOTTm_vecIndicies
+	m_Quad.m_vecIndicies.push_back( 4 );
+	m_Quad.m_vecIndicies.push_back( 6 );
+	m_Quad.m_vecIndicies.push_back( 5 );
 
-	m_Quad.GetIndicies().push_back( 4 );
-	m_Quad.GetIndicies().push_back( 7 );
-	m_Quad.GetIndicies().push_back( 6 );
+	m_Quad.m_vecIndicies.push_back( 4 );
+	m_Quad.m_vecIndicies.push_back( 7 );
+	m_Quad.m_vecIndicies.push_back( 6 );
 
-	// FRONT Indicies
-	m_Quad.GetIndicies().push_back( 0 );
-	m_Quad.GetIndicies().push_back( 7 );
-	m_Quad.GetIndicies().push_back( 4 );
+	// FRONm_vecIndicies
+	m_Quad.m_vecIndicies.push_back( 0 );
+	m_Quad.m_vecIndicies.push_back( 7 );
+	m_Quad.m_vecIndicies.push_back( 4 );
 
-	m_Quad.GetIndicies().push_back( 0 );
-	m_Quad.GetIndicies().push_back( 3 );
-	m_Quad.GetIndicies().push_back( 7 );
+	m_Quad.m_vecIndicies.push_back( 0 );
+	m_Quad.m_vecIndicies.push_back( 3 );
+	m_Quad.m_vecIndicies.push_back( 7 );
 
-	// RIGHT Indicies
-	m_Quad.GetIndicies().push_back( 3 );
-	m_Quad.GetIndicies().push_back( 6 );
-	m_Quad.GetIndicies().push_back( 7 );
+	// RIGHm_vecIndicies
+	m_Quad.m_vecIndicies.push_back( 3 );
+	m_Quad.m_vecIndicies.push_back( 6 );
+	m_Quad.m_vecIndicies.push_back( 7 );
 
-	m_Quad.GetIndicies().push_back( 3 );
-	m_Quad.GetIndicies().push_back( 2 );
-	m_Quad.GetIndicies().push_back( 6 );
-	
-	// BACK Indicies
-	m_Quad.GetIndicies().push_back( 2 );
-	m_Quad.GetIndicies().push_back( 1 );
-	m_Quad.GetIndicies().push_back( 5 );
+	m_Quad.m_vecIndicies.push_back( 3 );
+	m_Quad.m_vecIndicies.push_back( 2 );
+	m_Quad.m_vecIndicies.push_back( 6 );
 
-	m_Quad.GetIndicies().push_back( 2 );
-	m_Quad.GetIndicies().push_back( 5 );
-	m_Quad.GetIndicies().push_back( 6 );
+	// BACKm_vecIndicies
+	m_Quad.m_vecIndicies.push_back( 2 );
+	m_Quad.m_vecIndicies.push_back( 1 );
+	m_Quad.m_vecIndicies.push_back( 5 );
 
-	// LEFT Indicies
-	m_Quad.GetIndicies().push_back( 1 );
-	m_Quad.GetIndicies().push_back( 4 );
-	m_Quad.GetIndicies().push_back( 5 );
+	m_Quad.m_vecIndicies.push_back( 2 );
+	m_Quad.m_vecIndicies.push_back( 5 );
+	m_Quad.m_vecIndicies.push_back( 6 );
 
-	m_Quad.GetIndicies().push_back( 1 );
-	m_Quad.GetIndicies().push_back( 0 );
-	m_Quad.GetIndicies().push_back( 4 );
+	// LEFTm_vecIndicies
+	m_Quad.m_vecIndicies.push_back( 1 );
+	m_Quad.m_vecIndicies.push_back( 4 );
+	m_Quad.m_vecIndicies.push_back( 5 );
+
+	m_Quad.m_vecIndicies.push_back( 1 );
+	m_Quad.m_vecIndicies.push_back( 0 );
+	m_Quad.m_vecIndicies.push_back( 4 );
 
 	m_Quad.RebuildBuffers();
 

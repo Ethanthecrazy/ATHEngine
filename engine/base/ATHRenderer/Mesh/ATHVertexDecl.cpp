@@ -1,5 +1,5 @@
 #include "ATHVertexDecl.h"
-#include "ATHRenderer.h"
+#include "../ATHRenderer.h"
 
 void ATHVertexDecl::Rebuild()
 {

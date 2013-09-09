@@ -9,7 +9,7 @@
 #include <map>
 #include <list>
 
-#include "ATHMesh.h"
+#include "Mesh/ATHMesh.h"
 #include "ATHRenderpass.h"
 #include "Camera.h"
 

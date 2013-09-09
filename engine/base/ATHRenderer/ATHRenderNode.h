@@ -7,8 +7,8 @@
 #include <string>
 
 #include "../ATHUtil/hDataTypes.h"
-#include "ATHAtlas.h"
-#include "ATHMesh.h"
+#include "Texture/ATHAtlas.h"
+#include "Mesh/ATHMesh.h"
 
 // Forward declare the render node so that the function pointer can reference it
 // Then the node can contain a function pointer that references its own class.

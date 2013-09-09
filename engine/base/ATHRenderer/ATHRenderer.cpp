@@ -9,8 +9,8 @@
 #include "Camera.h"
 #include "ATHRenderNode.h"
 #include "../ATHUtil/NewInclude.h"
-#include "ATHAtlas.h"
-#include "ATHVertexDecl.h"
+#include "Texture/ATHAtlas.h"
+#include "Mesh/ATHVertexDecl.h"
 
 ATHRenderer* ATHRenderer::m_pInstance = nullptr;
 // The sorting predicate for the ATHRenderPass pointers

@@ -71,24 +71,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ATHAtlas.h" />
-    <ClInclude Include="ATHMesh.h" />
-    <ClInclude Include="ATHMeshManager.h" />
+    <ClInclude Include="Texture\ATHAtlas.h" />
+    <ClInclude Include="Mesh\ATHMesh.h" />
+    <ClInclude Include="Mesh\ATHMeshManager.h" />
     <ClInclude Include="ATHRenderer.h" />
     <ClInclude Include="ATHRenderNode.h" />
     <ClInclude Include="ATHRenderpass.h" />
-    <ClInclude Include="ATHVertexDecl.h" />
+    <ClInclude Include="Mesh\ATHVertexDecl.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="RenderFunctions.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ATHAtlas.cpp" />
-    <ClCompile Include="ATHMesh.cpp" />
-    <ClCompile Include="ATHMeshManager.cpp" />
+    <ClCompile Include="Texture\ATHAtlas.cpp" />
+    <ClCompile Include="Mesh\ATHMesh.cpp" />
+    <ClCompile Include="Mesh\ATHMeshManager.cpp" />
     <ClCompile Include="ATHRenderer.cpp" />
     <ClCompile Include="ATHRenderNode.cpp" />
     <ClCompile Include="ATHRenderPass.cpp" />
-    <ClCompile Include="ATHVertexDecl.cpp" />
+    <ClCompile Include="Mesh\ATHVertexDecl.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="RenderFunctions.cpp" />
   </ItemGroup>

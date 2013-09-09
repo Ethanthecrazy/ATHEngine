@@ -5,7 +5,7 @@
 #include <d3dx9.h>
 #include <vector>
 #include <map>
-#include "../ATHUtil/hDataTypes.h"
+#include "../../ATHUtil/hDataTypes.h"
 
 struct sVertPosNormUV
 {

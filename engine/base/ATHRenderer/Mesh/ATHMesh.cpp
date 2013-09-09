@@ -1,6 +1,6 @@
 #include "ATHMesh.h"
-#include "ATHRenderer.h"
-#include "../ATHUtil/NewInclude.h"
+#include "../ATHRenderer.h"
+#include "../../ATHUtil/NewInclude.h"
 #include "ATHVertexDecl.h"
 
 ATHMesh::~ATHMesh()

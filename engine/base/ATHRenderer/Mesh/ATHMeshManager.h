@@ -4,7 +4,7 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <vector>
-#include "../ATHUtil/hDataTypes.h"
+#include "../../ATHUtil/hDataTypes.h"
 #include "ATHMesh.h"
 
 class ATHMesh;

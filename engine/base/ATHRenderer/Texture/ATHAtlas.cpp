@@ -1,7 +1,7 @@
 #include "ATHAtlas.h"
-#include "ATHRenderer.h"
+#include "../ATHRenderer.h"
 
-#include "../ATHUtil/NewInclude.h"
+#include "../../ATHUtil/NewInclude.h"
 
 ATHAtlas::ATHAtlas()
 {

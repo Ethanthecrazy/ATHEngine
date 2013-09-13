@@ -7,13 +7,14 @@ using std::string;
 
 #include "../ATHUtil/MemoryManager.h"
 #include "../ATHRenderer/ATHRenderer.h"
+#include "../Objects/ATHObjectManager.h"
 
 // For testing purposes
 #include "../ATHRenderer/RenderFunctions.h"
 //////////
 
 // default constructor
-CGame::CGame()
+CGame::CGame() : m_pObjectManager( nullptr )
 {
 	bFullscreen = false;
 	bShutdown = false;
@@ -45,7 +46,14 @@ void CGame::Initialize(HWND _hWnd, HINSTANCE hInstance,
 	m_pRenderer = ATHRenderer::GetInstance();
 	m_pRenderer->Initialize( _hWnd, hInstance, nScreenWidth, nScreenHeight, false, true );
 
-	m_pRenderer->CreateRenderPass( "test", 1, RenderTest, "texture" );
+	m_pObjectManager = new ATHObjectManager();
+	m_pObjectManager->Init();
+
+	srand( unsigned int( time( 0 ) ) );
+
+
+	//// Testing Code ////
+	m_pRenderer->CreateRenderPass( "test", 1, RenderTest, "texture", true );
 
 	for( int i = 0; i < 50; ++i )
 	{
@@ -56,7 +64,7 @@ void CGame::Initialize(HWND _hWnd, HINSTANCE hInstance,
 		pTestNode->SetTexture( m_pRenderer->GetAtlas()->GetTexture( "wall" ) );
 
 		D3DXMATRIX matTrans;
-		D3DXMatrixTranslation( &matTrans, (rand() % 1000 / 100.0f ) - 5.0f, (rand() % 1000 / 100.0f ) - 5.0f, 5.0f + (rand() % 1000 / 150.0f ) );
+		D3DXMatrixTranslation( &matTrans, (rand() % 1000 / 100.0f ) - 5.0f, (rand() % 1000 / 100.0f ) - 5.0f, 0.0f );
 
 		D3DXMATRIX scale;
 		D3DXMatrixScaling( &scale, 2.0f, 2.0f, 2.0f );
@@ -66,7 +74,7 @@ void CGame::Initialize(HWND _hWnd, HINSTANCE hInstance,
 
 	//////////
 
-	srand( unsigned int( time( 0 ) ) );
+
 
 }
 
@@ -92,8 +100,8 @@ void CGame::PreUpdate( float fDT )
 bool CGame::Update( float fDT )
 {
 
-
-		return true;
+	m_pObjectManager->Update( fDT );
+	return true;
 
 }
 
@@ -103,6 +111,27 @@ void CGame::PostUpdate( float fDT )
 	Render();
 	//////////
 
+	if( GetAsyncKeyState( 'W' ) )
+	{
+		ATHRenderer::GetInstance()->GetCamera()->ViewTranslateLocalZ( 0.1f );
+	}
+	if( GetAsyncKeyState( 'S' ) )
+	{
+		ATHRenderer::GetInstance()->GetCamera()->ViewTranslateLocalZ( -0.1f );
+	}
+	if( GetAsyncKeyState( 'A' ) )
+	{
+		ATHRenderer::GetInstance()->GetCamera()->ViewRotateGlobalY( -0.05f );
+	}
+	if( GetAsyncKeyState( 'D' ) )
+	{
+		ATHRenderer::GetInstance()->GetCamera()->ViewRotateGlobalY( 0.05f );
+	}
+	if( GetAsyncKeyState( VK_F2 ) & 1 )
+	{
+		MemoryManager::GetInstance()->DebugString();
+	}
+
 	// File Manager Update Here
 	// 
 	//////////
@@ -110,7 +139,6 @@ void CGame::PostUpdate( float fDT )
 
 void CGame::Render()
 {
-	m_pRenderer->DRXClear( float3( 0.5f, 0.5f, 0.7f ) );
 	m_pRenderer->DRXBegin();
 
 	m_pRenderer->CommitDraws();
@@ -123,6 +151,9 @@ void CGame::Render()
 // cleanup
 void CGame::Shutdown()
 {
+	m_pObjectManager->Shutdown();
+	delete m_pObjectManager;
+
 	m_pRenderer->Shutdown();
 	m_pRenderer->DeleteInstance();
 }

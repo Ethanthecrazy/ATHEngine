@@ -11,14 +11,17 @@
 
 #include "Mesh/ATHMesh.h"
 #include "ATHRenderpass.h"
+#include "ATHRenderTarget.h"
 #include "Camera.h"
 
 #define NODE_LAYER_OFFSET (64.0f)
 #define SHADER_LOAD_PATH ".\\data\\shaders\\"
 #define SHADER_SEARCH_EXTENSION ".fx"
+#define SHADER_DEPTH_NAME "gbuffer"
 #define TEXTURE_LOAD_PATH ".\\art\\textures\\"
 #define	TEXTURE_SEARCH_EXTENSION ".png"
 #define MESH_LOAD_PATH ".\\art\\meshes\\"
+
 
 enum { ATH_VERTEXDECL_COLORED, ATH_VERTEXDECL_TEXTURED, ATH_VERTEXDECL_ANIMATED };
 
@@ -37,6 +40,7 @@ private:
 	unsigned int					m_FrameCounter;		// Frame Counter
 	unsigned int					m_unScreenWidth;
 	unsigned int					m_unScreenHeight;
+	float							m_fScreenDepth;
 
 	HWND							m_hWnd;				// Windows handle.
 	HINSTANCE						m_hInstance;
@@ -47,6 +51,9 @@ private:
 
 	std::map< unsigned int, ATHVertexDecl* >	m_mapVertDecls;
 	std::map< std::string, ID3DXEffect* >		m_mapEffects;
+
+	ID3DXEffect*								m_d3deffDepth;
+	ATHRenderTarget								m_rtDepth;
 
 	CCamera*								m_pCamera;
 
@@ -88,11 +95,15 @@ public:
 	inline		UINT GetFrameNumber(void){ return m_FrameCounter; }
 	inline void IncrementFrameCounter(void){ ++m_FrameCounter; }
 	ATHAtlas*	GetAtlas() { return m_pTextureAtlas; }
+	LPDIRECT3DTEXTURE9 GetDepthTexture() { return m_rtDepth.GetTexture(); }
 
 	// Graphics Management
 	
 	inline	LPDIRECT3DDEVICE9 GetDevice() { return m_pDevice; }
 	inline	CCamera* GetCamera() { return m_pCamera; }
+
+	void	RenderDepth();
+	void	RenderForward();
 	void	CommitDraws();
 	void	RasterTexture( LPDIRECT3DTEXTURE9 _texture, float _left = 0.0f, float _top = 0.0f, float _right = 1.0f, float _bottom = 1.0f );
 	void	DRXClear( float3 _color );
@@ -113,7 +124,7 @@ public:
 	ID3DXEffect*	GetShader( char* _szName );
 
 	// RenderPass Management
-	ATHRenderPass*	CreateRenderPass( char* _szName, unsigned int _unPriority, RenderFunc _function,  char* _szShaderName, char* _szTechnique = "Default" );
+	ATHRenderPass*	CreateRenderPass( char* _szName, unsigned int _unPriority, RenderFunc _function,  char* _szShaderName, bool _bRenderToDepth = false, char* _szTechnique = "Default" );
 	ATHRenderPass*	FindRenderPass( char* _szName );
 	bool			DestroyRenderPass( char* _szName );
 	void			ClearRenderPasses();

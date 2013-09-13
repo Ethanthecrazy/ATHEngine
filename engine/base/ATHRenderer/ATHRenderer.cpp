@@ -5,7 +5,6 @@
 #include <sstream>
 #include <string>
 
-
 #include "Camera.h"
 #include "ATHRenderNode.h"
 #include "../ATHUtil/NewInclude.h"
@@ -60,6 +59,7 @@ ATHRenderer::ATHRenderer() : m_Quad( "Quad", GetVertexDeclaration( ATH_VERTEXDEC
 	m_FrameCounter		= 0;		// Frame Counter
 	m_unScreenWidth		= 0;
 	m_unScreenHeight	= 0;
+	m_fScreenDepth		= 0;
 
 	m_hWnd;					// Windows handle.
 	m_hInstance;
@@ -72,6 +72,8 @@ ATHRenderer::ATHRenderer() : m_Quad( "Quad", GetVertexDeclaration( ATH_VERTEXDEC
 	m_pCamera			= nullptr;
 
 	m_pNodeInventory	= std::list<ATHRenderNode*>();
+
+	m_d3deffDepth = nullptr;
 
 }
 //================================================================================
@@ -130,17 +132,31 @@ bool ATHRenderer::Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScre
 		return false;
 	}
 
+	m_pDevice->SetRenderState( D3DRS_ZENABLE, D3DZB_TRUE );
+
 	InitVertexDecls();
 
 	m_pTextureAtlas = new ATHAtlas();
 	m_pTextureAtlas->Initialize( m_pDevice );
 
 	LoadTextures( TEXTURE_LOAD_PATH );
+
 	LoadShaders( SHADER_LOAD_PATH );
 
+	// Initialize the standard depth shader
+	ID3DXEffect* d3deffDepth = GetShader( SHADER_DEPTH_NAME );
+	if( d3deffDepth )
+		m_d3deffDepth = d3deffDepth;
+	else
+		std::cout << "[ERROR] ATHRenderer::Initialize() - Could not locate default depth shader " << SHADER_DEPTH_NAME << "\n"; 
+
+	m_rtDepth.Create( m_pDevice, m_unScreenWidth, m_unScreenHeight, D3DFMT_R32F );
+
+	m_fScreenDepth = 10.0f;
 	m_pCamera = new CCamera();
-	m_pCamera->BuildPerspective(D3DX_PI / 2.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.1f, 10000.0f);
+	m_pCamera->BuildPerspective(D3DX_PI / 2.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.1f, m_fScreenDepth );
 	m_pCamera->SetViewPosition(0.0f, 0.0f, 0.0f);
+
 
 
 	BuildQuad();
@@ -167,7 +183,6 @@ void ATHRenderer::InitVertexDecls()
 	m_mapVertDecls.insert( std::pair< unsigned int, ATHVertexDecl* >( ATH_VERTEXDECL_TEXTURED, pNewDecl ) );
 
 }
-
 //================================================================================
 void ATHRenderer::Shutdown()
 {
@@ -198,17 +213,77 @@ void ATHRenderer::Shutdown()
 	m_pDevice->Release();
 	m_pD3D->Release();
 }
-
 //================================================================================
-void ATHRenderer::CommitDraws()
+void ATHRenderer::RenderDepth()
 {
+	// Build the list of depth buffer nodes
+	std::list< ATHRenderNode* > liNodes;
+
+	std::map< std::string, ATHRenderPass >::iterator itrPass = m_mapRenderPasses.begin();
+	while( itrPass != m_mapRenderPasses.end() )
+	{
+		if( (*itrPass).second.GetRenderToDepth() )
+		{
+			const std::list<ATHRenderNode*> liCurrNodes = (*itrPass).second.GetNodeList();
+
+			std::list< ATHRenderNode* >::const_iterator itrNode = liCurrNodes.cbegin();
+			while( itrNode != liCurrNodes.cend() )
+			{
+				liNodes.push_back( (*itrNode) );
+				++itrNode;
+			}
+		}
+		++itrPass;
+	}
+
+	m_rtDepth.ActivateTarget( 0 );
+	DRXClear( float3( 1.0f ) );
+
+	m_d3deffDepth->SetTechnique("DepthPass");
+	m_d3deffDepth->SetFloat( "fFrustrumLength", m_fScreenDepth );
+	unsigned int passes(0);
+	m_d3deffDepth->Begin( &passes, 0 );
+	for( unsigned int pass = 0; pass < passes; ++pass )
+	{
+		m_d3deffDepth->BeginPass( pass );
+		{
+			
+			std::list< ATHRenderNode* >::iterator itrRenderNode = liNodes.begin();
+			while( itrRenderNode != liNodes.end() )
+			{
+
+				D3DXMATRIX matMVP = GetCamera()->GetViewMatrix() * GetCamera()->GetProjectionMatrix();
+				m_d3deffDepth->SetMatrix( "gWVP", &( (*itrRenderNode)->GetTrasform() * matMVP ) );
+
+				m_d3deffDepth->CommitChanges();
+
+				DrawMesh( (*itrRenderNode)->GetMesh() );
+				++itrRenderNode;
+			}
+		}
+		m_d3deffDepth->EndPass();
+	}
+
+	m_rtDepth.RevertTarget();
+}
+
+void ATHRenderer::RenderForward()
+{
+	DRXClear( float3( 0.5f, 0.5f, 0.7f ) );
 	std::list< ATHRenderPass* >::iterator itrPass = m_liSortedRenderPasses.begin();
 	while( itrPass != m_liSortedRenderPasses.end() )
 	{
 		(*itrPass)->PreExecute();
 		(*itrPass)->Execute( this );
+		(*itrPass)->PostExecute();
 		itrPass++;
 	}
+}
+//================================================================================
+void ATHRenderer::CommitDraws()
+{
+	RenderDepth();
+	RenderForward();
 }
 //================================================================================
 void ATHRenderer::RasterTexture( LPDIRECT3DTEXTURE9 _texture, float _left, float _top, float _right, float _bottom )
@@ -247,7 +322,7 @@ void ATHRenderer::RasterTexture( LPDIRECT3DTEXTURE9 _texture, float _left, float
 //================================================================================
 void ATHRenderer::DRXClear( float3 _color )
 {
-	//Cleat the current render target and the Z-Buffer
+	//Clear the current render target and the Z-Buffer
 	m_pDevice->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,  D3DCOLOR_COLORVALUE( _color.cR,  _color.cG,  _color.cB, 1.0f ), 1.0f, 0);
 
 	// Check for lost device (could happen from an ALT+TAB or ALT+ENTER).
@@ -462,7 +537,7 @@ ID3DXEffect* ATHRenderer::GetShader( char* _szName )
 }
 
 //================================================================================
-ATHRenderPass*	ATHRenderer::CreateRenderPass( char* _szName, unsigned int _unPriority, RenderFunc _function,  char* _szShaderName, char* _szTechnique )
+ATHRenderPass*	ATHRenderer::CreateRenderPass( char* _szName, unsigned int _unPriority, RenderFunc _function,  char* _szShaderName, bool _bRenderToDepth, char* _szTechnique )
 {
 	ATHRenderPass* pToReturn = nullptr;
 	std::string	idString = std::string( _szName );
@@ -470,7 +545,7 @@ ATHRenderPass*	ATHRenderer::CreateRenderPass( char* _szName, unsigned int _unPri
 	if( m_mapRenderPasses.count( idString ) == 0 )
 	{
 		// Get the address of the pass being constructed and inserted into the map
-		ATHRenderPass* pNewPass = &( m_mapRenderPasses[ idString ] = ATHRenderPass( _szName, _unPriority, GetShader( _szShaderName ), _function, _szTechnique ) );
+		ATHRenderPass* pNewPass = &( m_mapRenderPasses[ idString ] = ATHRenderPass( _szName, _unPriority, GetShader( _szShaderName ), _function, _bRenderToDepth, _szTechnique ) );
 		// Also add it to the sorted list.
 		m_liSortedRenderPasses.push_back( pNewPass );
 		m_liSortedRenderPasses.sort( compare_ATHRenderPass );

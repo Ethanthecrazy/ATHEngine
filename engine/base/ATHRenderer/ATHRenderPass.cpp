@@ -4,15 +4,23 @@
 #include "ATHRenderer.h"
 
 ATHRenderPass::ATHRenderPass() :	m_Process( NULL ),
-									m_bDepthDirty( false )
+									m_bDepthDirty( false ),
+									m_bRenderDepth( false )
 {
 
 }
 
-ATHRenderPass::ATHRenderPass( char* _szName, unsigned int _unPriority, ID3DXEffect* _pShader, RenderFunc _function, char* _szTechnique ) :	m_szPassName( _szName ),
-																														m_unPriority( _unPriority ),
-																								m_pShader( _pShader ),
-																								m_Process( _function )
+ATHRenderPass::ATHRenderPass(	char* _szName, 
+								unsigned int _unPriority, 
+								ID3DXEffect* _pShader, 
+								RenderFunc _function, 
+								bool _bRenderToDepth,
+								char* _szTechnique ) :	
+									m_szPassName( _szName ),
+									m_unPriority( _unPriority ),
+									m_pShader( _pShader ),
+									m_Process( _function ),
+									m_bRenderDepth( _bRenderToDepth )
 {
 	strcpy_s( m_szTechnique, 24, _szTechnique );  
 }
@@ -71,5 +79,10 @@ void ATHRenderPass::Execute( ATHRenderer* _pRenderer )
 		}
 		m_pShader->EndPass();
 	}
+
+}
+
+void ATHRenderPass::PostExecute()
+{
 
 }

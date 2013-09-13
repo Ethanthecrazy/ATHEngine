@@ -10,13 +10,12 @@ MemoryManager::MemoryManager()
 	mPool = nullptr;
 	memset( &m_Usages, 0, sizeof( AllocCounter ) * MM_NUM_ALLOC_COUNTERS );
 }
-
+//================================================================================
 MemoryManager::~MemoryManager()
 {
 	free( mPool );
 }
-
-
+//================================================================================
 unsigned int MemoryManager::AdjustUsage( char* _szUsage, int _amount )
 {
 	unsigned int unUsageIndex = 0;
@@ -44,7 +43,7 @@ unsigned int MemoryManager::AdjustUsage( char* _szUsage, int _amount )
 				if( strcmp( "", m_Usages[nCounter].m_szName ) == 0 )
 				{
 					unUsageIndex = nCounter;
-					strcpy_s( m_Usages[unUsageIndex].m_szName, 16, _szUsage );
+					strcpy_s( m_Usages[unUsageIndex].m_szName, MM_NAME_LENGTH, _szUsage );
 					break;
 				}
 			}
@@ -53,12 +52,13 @@ unsigned int MemoryManager::AdjustUsage( char* _szUsage, int _amount )
 
 	m_Usages[unUsageIndex].m_unAmount += _amount;
 
-	//DebugString();
+	// system("cls");
+	// DebugString();
 
 	return unUsageIndex;
 
 }
-
+//================================================================================
 MemoryManager* MemoryManager::GetInstance()
 {
 	if( mInstance == nullptr )
@@ -68,7 +68,7 @@ MemoryManager* MemoryManager::GetInstance()
 
 	return mInstance;
 }
-
+//================================================================================
 void MemoryManager::FreeInstance()
 {
 	if( mInstance )
@@ -78,7 +78,7 @@ void MemoryManager::FreeInstance()
 		mInstance = nullptr;
 	}
 }
-
+//================================================================================
 void MemoryManager::Init(unsigned int poolSizeInBytes)
 {
 
@@ -106,7 +106,7 @@ void MemoryManager::Init(unsigned int poolSizeInBytes)
 	std::cout << "MemoryManager: Initialized with " << poolSizeInBytes << " bytes\n";
 
 }
-
+//================================================================================
 char * MemoryManager::Allocate(unsigned int allocSize, char* _usage )
 {
 
@@ -185,7 +185,7 @@ char * MemoryManager::Allocate(unsigned int allocSize, char* _usage )
 	return nullptr;
 
 }
-
+//================================================================================
 MemoryManager::Header * MemoryManager::FirstAvailable(unsigned int allocSize)
 {
 	Header* stuff;
@@ -215,7 +215,7 @@ MemoryManager::Header * MemoryManager::FirstAvailable(unsigned int allocSize)
 		stuff = stuff->next;
 	}
 }
-
+//================================================================================
 void MemoryManager::DeAllocate(void * target)
 {
 	char* data = (char*)target;
@@ -326,7 +326,7 @@ void MemoryManager::DeAllocate(void * target)
 
 
 }
-
+//================================================================================
 //void MemoryManager::TrackDeAllocate( char* data )
 //{
 //
@@ -350,7 +350,7 @@ void MemoryManager::DeAllocate(void * target)
 //	DeAllocate( data );
 //
 //}
-
+//================================================================================
 void MemoryManager::Glom( Header* freeMemory, Header* ToBeFree )
 {
 
@@ -369,21 +369,28 @@ void MemoryManager::Glom( Header* freeMemory, Header* ToBeFree )
 	((Footer*)(parser))->size = freeMemory->size;
 
 }
-
+//================================================================================
 void MemoryManager::DebugString()
 {
+
+	unsigned int unTotalUsage = 0;
+
 	char buffer[64];
 
-	std::cout << "\nName\tAllocation\t\n";
-	std::cout << "--------------------\n";
+	std::cout << "\nName\t\t\t\tAllocation\t\n";
+	std::cout << "--------------------------------------------\n";
 
 	for( int i = 0; i < MM_NUM_ALLOC_COUNTERS; ++i )
 	{
 		if( m_Usages[i].m_unAmount > 0 )
 		{
 			std::cout << m_Usages[i].m_szName;
-			std::cout << "\t";
 
+			unsigned int strLen = MM_NAME_LENGTH - strlen( m_Usages[i].m_szName );
+			for( unsigned int i = 0; i < strLen; i += 8 )
+				std::cout << "\t";
+
+			unTotalUsage += m_Usages[i].m_unAmount;
 			sprintf_s( buffer, 64, "%d", m_Usages[i].m_unAmount );
 
 			std::cout << buffer;
@@ -391,6 +398,11 @@ void MemoryManager::DebugString()
 		}
 	}
 
+	std::cout << "--------------------------------------------\n";
+	float fPercentUsage = unTotalUsage / (float)mTotalPoolSize;
+	sprintf_s( buffer, 64, "%d ( %3.3f )\n", unTotalUsage, fPercentUsage );
+	std::cout << "TotalUsage\t\t\t";
+	std::cout << buffer;
 	std::cout << "\n";
 }
 

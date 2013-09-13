@@ -42,7 +42,7 @@ private:
 
 public:
 
-	// Vertex information. All sizes based off of the postion vector.
+	// Vertex information. All size counts are based off of the postion vector.
 	std::vector< float3 > m_vecPositions;
 	std::vector< float4 > m_vecBlendweights;
 	std::vector< float4 > m_vecBlendIndicies;

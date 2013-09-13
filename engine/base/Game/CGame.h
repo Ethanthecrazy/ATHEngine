@@ -9,6 +9,7 @@ using std::string;
 using namespace std;
 
 class ATHRenderer;
+class ATHObjectManager;
 
 class CGame
 {
@@ -22,7 +23,8 @@ class CGame
 	int m_nScreenWidth;
 	int m_nScreenHeight;
 
-	ATHRenderer*	m_pRenderer;
+	ATHRenderer*		m_pRenderer;
+	ATHObjectManager*	m_pObjectManager;
 
 	////////////////////
 

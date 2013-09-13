@@ -8,10 +8,12 @@ const int MM_NUM_ALLOC_COUNTERS = 32;
 
 static int MM_ALLOCATED = 0;
 static int MM_DEALLOCATED = 0;
+const unsigned int MM_NAME_LENGTH = 32;
+
 
 struct AllocCounter
 {
-	char m_szName[24];
+	char m_szName[MM_NAME_LENGTH];
 	unsigned int m_unAmount;
 };
 

@@ -20,12 +20,13 @@ private:
 	char			m_szTechnique[24];
 	std::list<ATHRenderNode*> m_liNodes;
 	bool			m_bDepthDirty;
+	bool			m_bRenderDepth;
 	
 
 public:
 
 	ATHRenderPass();
-	ATHRenderPass( char* _szName, unsigned int _unPriority, ID3DXEffect* _pShader, RenderFunc _function,  char* _szTechnique );
+	ATHRenderPass( char* _szName, unsigned int _unPriority, ID3DXEffect* _pShader, RenderFunc _function, bool _bRenderToDepth,  char* _szTechnique );
 
 	// Functionality
 	void AddNodeToPass( ATHRenderNode* _node, unsigned int _priority );
@@ -33,10 +34,15 @@ public:
 	void SortNodes();
 	void PreExecute();
 	void Execute( ATHRenderer* _pRenderer );
+	void PostExecute();
 	
-
 	// Accessors 
+	void SetRenderToDepth( bool _render ) { m_bRenderDepth = _render; }
+	bool GetRenderToDepth() { return m_bRenderDepth; }
+
 	inline unsigned int GetPriority() { return m_unPriority; }
+
+	const std::list<ATHRenderNode*>& GetNodeList() { return m_liNodes; }
 
 };
 

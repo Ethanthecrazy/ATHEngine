@@ -1,7 +1,3 @@
-/*****************************************
-* Texture.fx - handles a single texture
-******************************************/
-
 // globals
 float4x4	gWVP;
 texture		tex1;

@@ -53,9 +53,16 @@ void CGame::Initialize(HWND _hWnd, HINSTANCE hInstance,
 
 
 	//// Testing Code ////
+	TestInit();
+	//////////
+
+}
+
+void CGame::TestInit()
+{
 	m_pRenderer->CreateRenderPass( "test", 1, RenderTest, "texture", true );
 
-	for( int i = 0; i < 50; ++i )
+	for( int i = 0; i < 10; ++i )
 	{
 
 		ATHRenderNode* pTestNode = m_pRenderer->CreateRenderNode( "test", 0 );
@@ -72,10 +79,7 @@ void CGame::Initialize(HWND _hWnd, HINSTANCE hInstance,
 		pTestNode->SetTransform( scale * matTrans ); 
 	}
 
-	//////////
-
-
-
+	m_pRenderer->DebugLinesAdd( float3( 0.0f ), float3( 0.0f, 5.0f, 0.0f ), float4( 1.0f, 0.0f, 0.0f, 1.0f ) );
 }
 
 // execution

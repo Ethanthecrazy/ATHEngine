@@ -77,6 +77,7 @@ private:
 	ATHAtlas*	m_pTextureAtlas;
 
 	ATHMesh		m_Quad;
+	ATHMesh		m_meshDebugLines;
 
 	ATHRenderer();
 
@@ -90,6 +91,7 @@ public:
 	// Basic Functions
 	bool		Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScreenWidth, unsigned int nScreenHeight, bool bFullScreen, bool bVsync );
 	void		InitVertexDecls();
+	void		InitStandardRendering();
 
 	void		Shutdown();
 	inline		UINT GetFrameNumber(void){ return m_FrameCounter; }
@@ -137,6 +139,8 @@ public:
 	void DrawMesh( ATHMesh* _pMesh );
 
 	ATHMesh* GetQuad();
+
+	void DebugLinesAdd( float3 _fStart, float3 _fEnd, float4 _fColor );
 
 private:
 

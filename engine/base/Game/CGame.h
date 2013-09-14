@@ -48,8 +48,8 @@ public:
 
 	static CGame* GetInstance();
 
-	void Initialize(HWND hWnd, HINSTANCE hInstance, 
-		int nScreenWidth, int nScreenHeight, bool bIsWindowed);
+	void Initialize(HWND hWnd, HINSTANCE hInstance, int nScreenWidth, int nScreenHeight, bool bIsWindowed);
+	void TestInit();
 
 	bool Main();
 	void Shutdown();

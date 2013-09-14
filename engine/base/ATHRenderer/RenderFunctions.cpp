@@ -22,3 +22,14 @@ void RenderTest( ATHRenderer* pRenderer, ID3DXEffect* _pShader, ATHRenderNode* p
 	pRenderer->DrawMesh( pNode->GetMesh() );
 
 }
+
+void DebugLineRender( ATHRenderer* pRenderer, ID3DXEffect* _pShader, ATHRenderNode* pNode )
+{
+	D3DXMATRIX matMVP = pRenderer->GetCamera()->GetViewMatrix() * pRenderer->GetCamera()->GetProjectionMatrix();
+
+	pNode->SetTransform( pNode->GetTrasform() );
+	_pShader->SetMatrix( "gWVP", &( pNode->GetTrasform() * matMVP ) );
+	_pShader->CommitChanges();
+
+	pRenderer->DrawMesh( pNode->GetMesh() );
+}

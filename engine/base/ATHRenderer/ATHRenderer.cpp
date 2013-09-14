@@ -11,6 +11,8 @@
 #include "Texture/ATHAtlas.h"
 #include "Mesh/ATHVertexDecl.h"
 
+#include "RenderFunctions.h"
+
 ATHRenderer* ATHRenderer::m_pInstance = nullptr;
 // The sorting predicate for the ATHRenderPass pointers
 bool compare_ATHRenderPass( ATHRenderPass* _first, ATHRenderPass* _second )
@@ -54,7 +56,8 @@ void ATHRenderer::DestoryAllNodes()
 	m_pNodeInventory.clear();
 }
 //================================================================================
-ATHRenderer::ATHRenderer() : m_Quad( "Quad", GetVertexDeclaration( ATH_VERTEXDECL_TEXTURED), D3DPT_TRIANGLELIST )
+ATHRenderer::ATHRenderer() :	m_Quad( "Quad", GetVertexDeclaration( ATH_VERTEXDECL_TEXTURED), D3DPT_TRIANGLELIST ),
+	m_meshDebugLines( "DebugLines", GetVertexDeclaration( ATH_VERTEXDECL_COLORED ), D3DPT_LINELIST )
 {
 	m_FrameCounter		= 0;		// Frame Counter
 	m_unScreenWidth		= 0;
@@ -160,6 +163,7 @@ bool ATHRenderer::Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScre
 
 
 	BuildQuad();
+	InitStandardRendering();
 
 	return true;
 }
@@ -181,6 +185,23 @@ void ATHRenderer::InitVertexDecls()
 	pNewDecl->AddVertexElement( D3DDECLUSAGE_TEXCOORD );
 	pNewDecl->BuildDecl();
 	m_mapVertDecls.insert( std::pair< unsigned int, ATHVertexDecl* >( ATH_VERTEXDECL_TEXTURED, pNewDecl ) );
+
+}
+//================================================================================
+void ATHRenderer::InitStandardRendering()
+{
+
+	//Setup the debug line rendering
+	m_meshDebugLines.SetVertexDecl( GetVertexDeclaration( ATH_VERTEXDECL_COLORED ) );
+
+	CreateRenderPass( "debugline", 0, DebugLineRender, "coloredline" );
+	ATHRenderNode* pNode =  CreateRenderNode( "debugline", 0 );
+	pNode->SetMesh( &m_meshDebugLines );
+	
+	D3DXMATRIX mat;
+	D3DXMatrixIdentity( &mat );
+	pNode->SetTransform( mat );
+
 
 }
 //================================================================================
@@ -618,6 +639,17 @@ void ATHRenderer::DrawMesh( ATHMesh* _pMesh )
 ATHMesh* ATHRenderer::GetQuad()
 {
 	return &m_Quad;
+}
+//================================================================================
+void ATHRenderer::DebugLinesAdd( float3 _fStart, float3 _fEnd, float4 _fColor )
+{
+	m_meshDebugLines.m_vecPositions.push_back( _fStart );
+	m_meshDebugLines.m_vecPositions.push_back( _fEnd );
+	m_meshDebugLines.m_vecColors.push_back( _fColor );
+	m_meshDebugLines.m_vecColors.push_back( _fColor );
+	m_meshDebugLines.m_vecIndicies.push_back( m_meshDebugLines.m_vecIndicies.size() );
+	m_meshDebugLines.m_vecIndicies.push_back( m_meshDebugLines.m_vecIndicies.size() );
+	m_meshDebugLines.RebuildBuffers();
 }
 //================================================================================
 void ATHRenderer::BuildQuad()

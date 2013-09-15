@@ -71,6 +71,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ATHBox2DRenderer.h" />
     <ClInclude Include="ATHRenderTarget.h" />
     <ClInclude Include="Texture\ATHAtlas.h" />
     <ClInclude Include="Mesh\ATHMesh.h" />
@@ -83,6 +84,7 @@
     <ClInclude Include="RenderFunctions.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ATHBox2DRenderer.cpp" />
     <ClCompile Include="ATHRenderTarget.cpp" />
     <ClCompile Include="Texture\ATHAtlas.cpp" />
     <ClCompile Include="Mesh\ATHMesh.cpp" />

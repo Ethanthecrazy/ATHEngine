@@ -56,35 +56,29 @@ void CGame::Initialize(HWND _hWnd, HINSTANCE hInstance,
 	TestInit();
 	//////////
 
+	m_Timer.Reset();
+	m_Timer.Start();
+
 }
 
 void CGame::TestInit()
 {
-	m_pRenderer->CreateRenderPass( "test", 1, RenderTest, "texture", true );
-
-	for( int i = 0; i < 10; ++i )
-	{
-
-		ATHRenderNode* pTestNode = m_pRenderer->CreateRenderNode( "test", 0 );
-
-		pTestNode->SetMesh( m_pRenderer->GetQuad() );
-		pTestNode->SetTexture( m_pRenderer->GetAtlas()->GetTexture( "wall" ) );
-
-		D3DXMATRIX matTrans;
-		D3DXMatrixTranslation( &matTrans, (rand() % 1000 / 100.0f ) - 5.0f, (rand() % 1000 / 100.0f ) - 5.0f, 0.0f );
-
-		D3DXMATRIX scale;
-		D3DXMatrixScaling( &scale, 2.0f, 2.0f, 2.0f );
-
-		pTestNode->SetTransform( scale * matTrans ); 
-	}
-
-	m_pRenderer->DebugLinesAdd( float3( 0.0f ), float3( 0.0f, 5.0f, 0.0f ), float4( 1.0f, 0.0f, 0.0f, 1.0f ) );
+	//m_pRenderer->CreateRenderPass( "test", 1, RenderTest, "texture", true );
+	//ATHRenderNode* pTestNode = m_pRenderer->CreateRenderNode( "test", 0 );
+	//pTestNode->SetMesh( m_pRenderer->GetQuad() );
+	//pTestNode->SetTexture( m_pRenderer->GetAtlas()->GetTexture( "wall" ) );
+	//D3DXMATRIX matTrans;
+	//D3DXMatrixTranslation( &matTrans, (rand() % 1000 / 100.0f ) - 5.0f, (rand() % 1000 / 100.0f ) - 5.0f, 0.0f );
+	//D3DXMATRIX scale;
+	//D3DXMatrixScaling( &scale, 2.0f, 2.0f, 2.0f );
+	//pTestNode->SetTransform( scale * matTrans ); 
 }
 
 // execution
 bool CGame::Main()
 {
+	m_fElapsedTime = (float)m_Timer.GetElapsedTime();
+	m_Timer.Reset();
 
 	PreUpdate( m_fElapsedTime );
 	
@@ -103,7 +97,6 @@ void CGame::PreUpdate( float fDT )
 
 bool CGame::Update( float fDT )
 {
-
 	m_pObjectManager->Update( fDT );
 	return true;
 

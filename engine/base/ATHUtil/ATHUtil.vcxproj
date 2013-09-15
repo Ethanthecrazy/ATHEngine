@@ -73,12 +73,14 @@
   <ItemGroup>
     <ClCompile Include="MemoryManager.cpp" />
     <ClCompile Include="OverloadedNew.cpp" />
+    <ClCompile Include="UTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="hDataTypes.h" />
     <ClInclude Include="MemoryManager.h" />
     <ClInclude Include="NewInclude.h" />
     <ClInclude Include="OverloadedNew.h" />
+    <ClInclude Include="UTimer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -25,6 +25,8 @@ void RenderTest( ATHRenderer* pRenderer, ID3DXEffect* _pShader, ATHRenderNode* p
 
 void DebugLineRender( ATHRenderer* pRenderer, ID3DXEffect* _pShader, ATHRenderNode* pNode )
 {
+	pNode->GetMesh()->RebuildBuffers();
+
 	D3DXMATRIX matMVP = pRenderer->GetCamera()->GetViewMatrix() * pRenderer->GetCamera()->GetProjectionMatrix();
 
 	pNode->SetTransform( pNode->GetTrasform() );

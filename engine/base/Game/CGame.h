@@ -2,6 +2,7 @@
 #define CGame_h__
 
 #include <Windows.h>
+#include "../ATHUtil/UTimer.h"
 
 #include <vector>
 #include <string>
@@ -22,6 +23,8 @@ class CGame
 
 	int m_nScreenWidth;
 	int m_nScreenHeight;
+
+	CTimer m_Timer;
 
 	ATHRenderer*		m_pRenderer;
 	ATHObjectManager*	m_pObjectManager;

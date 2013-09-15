@@ -12,6 +12,7 @@
 #include "Mesh/ATHMesh.h"
 #include "ATHRenderpass.h"
 #include "ATHRenderTarget.h"
+#include "ATHBox2DRenderer.h"
 #include "Camera.h"
 
 #define NODE_LAYER_OFFSET (64.0f)
@@ -76,8 +77,8 @@ private:
 	// Since the atlas is so entwined with the renderer, it is now a subset of the rederer.
 	ATHAtlas*	m_pTextureAtlas;
 
-	ATHMesh		m_Quad;
 	ATHMesh		m_meshDebugLines;
+	ATHBox2DRenderer m_DebugRenderer;
 
 	ATHRenderer();
 
@@ -138,13 +139,10 @@ public:
 	// Utility
 	void DrawMesh( ATHMesh* _pMesh );
 
-	ATHMesh* GetQuad();
-
+	// Debug Rendering
 	void DebugLinesAdd( float3 _fStart, float3 _fEnd, float4 _fColor );
-
-private:
-
-	void BuildQuad();
+	void DebugLinesCleanup();
+	ATHBox2DRenderer* GetDebugRenderer() { return &m_DebugRenderer; }
 };
 
 #endif

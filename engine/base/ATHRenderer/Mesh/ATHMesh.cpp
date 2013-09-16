@@ -14,6 +14,7 @@ ATHMesh::~ATHMesh()
 //================================================================================
 void ATHMesh::RebuildBuffers()
 {
+
 	if( m_vertBuff )
 		m_vertBuff->Release();
 
@@ -171,6 +172,7 @@ void ATHMesh::Clear()
 	}
 
 	m_vecPositions.clear();
+	m_vecIndicies.clear();
 	m_vecBlendweights.clear();
 	m_vecBlendIndicies.clear();
 	m_vecNormals.clear();

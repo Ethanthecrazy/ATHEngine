@@ -4,7 +4,7 @@
 #include "../Box2D/Box2D.h"
 
 const unsigned int	NUM_VELOCITY_ITERATIONS = 8;
-const unsigned int	NUM_POSITION_ITERATIONS = 3;
+const unsigned int	NUM_POSITION_ITERATIONS = 5;
 const float			TIMESTEP_LENGTH = (1.0f/20.0f);
 const float			MAX_TIMEBUFFER = 1.0f;
 
@@ -22,7 +22,7 @@ void ATHObjectManager::Init()
 	uint32 flags = 0;
 	flags += b2Draw::e_shapeBit;
 	flags += b2Draw::e_jointBit;
-	flags += b2Draw::e_aabbBit;
+	//flags += b2Draw::e_aabbBit;
 	flags += b2Draw::e_pairBit;
 	flags += b2Draw::e_centerOfMassBit;
 	pDebugRenderer->SetFlags(flags);

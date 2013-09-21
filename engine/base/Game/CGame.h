@@ -25,6 +25,8 @@ class CGame
 	int m_nScreenHeight;
 
 	CTimer m_Timer;
+	float			m_fFrameTime;
+	unsigned int	m_unFrameCounter;
 
 	ATHRenderer*		m_pRenderer;
 	ATHObjectManager*	m_pObjectManager;

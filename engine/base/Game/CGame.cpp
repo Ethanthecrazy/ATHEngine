@@ -14,7 +14,9 @@ using std::string;
 //////////
 
 // default constructor
-CGame::CGame() : m_pObjectManager( nullptr )
+CGame::CGame() :	m_pObjectManager( nullptr ),
+					m_fFrameTime( 0.0f ), 
+					m_unFrameCounter( 0 )
 {
 	bFullscreen = false;
 	bShutdown = false;
@@ -44,7 +46,7 @@ void CGame::Initialize(HWND _hWnd, HINSTANCE hInstance,
 	m_nScreenHeight = nScreenHeight;
 
 	m_pRenderer = ATHRenderer::GetInstance();
-	m_pRenderer->Initialize( _hWnd, hInstance, nScreenWidth, nScreenHeight, false, true );
+	m_pRenderer->Initialize( _hWnd, hInstance, nScreenWidth, nScreenHeight, false, false );
 
 	m_pObjectManager = new ATHObjectManager();
 	m_pObjectManager->Init();
@@ -80,6 +82,15 @@ bool CGame::Main()
 	m_fElapsedTime = (float)m_Timer.GetElapsedTime();
 	m_Timer.Reset();
 
+	m_fFrameTime += m_fElapsedTime;
+	m_unFrameCounter++;
+	if( m_fFrameTime >= 1.0f )
+	{
+		std::cout << "FPS: " << m_unFrameCounter << "\n";
+		m_fFrameTime = 0.0f;
+		m_unFrameCounter = 0;
+	}
+
 	PreUpdate( m_fElapsedTime );
 	
 	if( !Update( m_fElapsedTime ) )
@@ -104,9 +115,13 @@ bool CGame::Update( float fDT )
 
 void CGame::PostUpdate( float fDT )
 {
+
+
 	// Do Render Processing
 	Render();
 	//////////
+
+
 
 	if( GetAsyncKeyState( 'W' ) )
 	{

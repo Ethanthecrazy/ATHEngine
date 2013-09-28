@@ -227,6 +227,8 @@ namespace WindowsFormsApplication1
 
                                 objectManager.AddObject(t_object);
                                 ++objOpend;
+
+                                saved = Saved_State.NOTSAVED;
                             }
                             else
                                 MessageBox.Show("ERROR: XML file has an object with a bad image file path.", "ERROR: Bad File Path", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -234,17 +236,14 @@ namespace WindowsFormsApplication1
 
                     }
                     
-                    if (objOpend > 0 || wrldOpend > 0)
+                    if (saved == Saved_State.NEVERSAVED && wrldOpend == 1)
+                        saved = Saved_State.SAVED;
+                    else
                         saved = Saved_State.NOTSAVED;
-                    //else if (objOpend == 0 && wrldOpend == 0)
-                    //    saved = Saved_State.SAVED;
-                    //else
-                    //    saved = Saved_State.NEVERSAVED;
-                    //PBUG^ ? (Why would I need this here?)
                 }
 
                 FindCanvasSize();
-                objectManager.SelectedObject = null;//objectManager.ObjectList.ElementAt(objectManager.ObjectList.Count - 1);
+                objectManager.SelectedObject = null;
                 ButtonsEnabled(false);                
                 Invalidate();
             }

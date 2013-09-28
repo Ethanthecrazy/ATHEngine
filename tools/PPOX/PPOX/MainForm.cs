@@ -17,11 +17,12 @@ namespace WindowsFormsApplication1
     //EXTRAS:
     // ability to give layer number to the objects for rendering and selecting priority
 
-    //NOTE: any references to "Form1" such as "Form1_Resize" is refering to the MainForm
-    
+    //NOTE: any references to "Form1" such as "Form1_Resize" is referring to the MainForm
 
     public partial class MainForm : Form
     {
+        public static string VERSION = "1.0.0.0";
+
         private Point lastMouse = new Point();
         private bool isConvex = true;
         private int greatestWidth = 0;
@@ -99,23 +100,42 @@ namespace WindowsFormsApplication1
             Invalidate();
         }
 
+        /// <summary>
+        /// Creates a relative path from one file or folder to another.
+        /// </summary>
+        /// <param name="fromPath">Contains the directory that defines the start of the relative path.</param>
+        /// <param name="toPath">Contains the path that defines the endpoint of the relative path.</param>
+        /// <returns>The relative path from the start directory to the end path.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static String MakeRelativePath(String fromPath, String toPath)
+        {
+            if (String.IsNullOrEmpty(fromPath)) throw new ArgumentNullException("fromPath");
+            if (String.IsNullOrEmpty(toPath)) throw new ArgumentNullException("toPath");
+
+            Uri fromUri = new Uri(fromPath);
+            Uri toUri = new Uri(toPath);
+
+            Uri relativeUri = fromUri.MakeRelativeUri(toUri);
+            String relativePath = Uri.UnescapeDataString(relativeUri.ToString());
+
+            return relativePath.Replace('/', Path.DirectorySeparatorChar);
+        }
+
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "Image Files (*.bmp, *.gif, *.jpeg, *.jpg, *.png, *.tiff)|*.bmp;*.gif;*.jpeg;*.jpg;*.png;*.tiff|XML Files (*.xml)|*.xml";
             ofd.Multiselect = true;
-            
+
             if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 if (ofd.FilterIndex == 1)
                 {
                     foreach (string s in ofd.FileNames)
                     {
-                        System.Uri uri1 = new Uri(s);
-                        System.Uri uri2 = new Uri(Application.ExecutablePath);
-                        Uri relativeUri = uri2.MakeRelativeUri(uri1);
+                        string relativePath = MakeRelativePath(Application.ExecutablePath, s);
 
-                        cObject t_object = new cObject(new Bitmap(s), relativeUri.ToString());
+                        cObject t_object = new cObject(new Bitmap(s), relativePath);
 
                         objectManager.AddObject(t_object);
                         saved = Saved_State.NOTSAVED;
@@ -123,74 +143,78 @@ namespace WindowsFormsApplication1
                 }
                 else
                 {
-                    XmlTextReader textReader = null;
+                    XmlDocument xmlDoc = new XmlDocument(); // Create an XML document object
                     int objOpend = 0;
                     int wrldOpend = 0;
 
                     foreach (string s in ofd.FileNames)
                     {
-                        textReader = new XmlTextReader(s);
+                        xmlDoc.Load(s); // Load the XML document from the specified file
 
-                        textReader.ReadStartElement();
-                        string start = textReader.Name;
-
-                        if (start == "Image_Path")
+                        XmlNode versionNode = xmlDoc.SelectSingleNode("/World");
+                        if (null == versionNode)
                         {
-                            string path = textReader.ReadElementString();
-                            path = Path.GetFullPath(path);
-                            System.Uri uri1 = new Uri(path);
-                            System.Uri uri2 = new Uri(Application.ExecutablePath);
-                            Uri relativeUri = uri2.MakeRelativeUri(uri1);
-
-                            cObject t_object = new cObject(new Bitmap(path), relativeUri.ToString());
-
-                            t_object.LoadXML(textReader);                            
-
-                            objectManager.AddObject(t_object);
-                            objOpend++;
+                            MessageBox.Show("ERROR: Cannot find root World.", "ERROR: Bad File", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
                         }
-                        else if (start == "Number_of_Objects")
+
+                        if (null == versionNode.Attributes["Version"])
                         {
-                            fileName = s;
+                            MessageBox.Show("ERROR: XML file is does not contain version number.", "ERROR: Bad Version", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                        string worldVersion = versionNode.Attributes["Version"].Value;
+                        
+                        
+                        if (0 != String.Compare(worldVersion, VERSION))
+                        {
+                            MessageBox.Show("ERROR: XML file is using a version different from the Editor.", "ERROR: Old Version", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
 
-                            int numObj = int.Parse(textReader.ReadElementString());
-                            textReader.Read();
-                            for (int i = 0; i < numObj; ++i)
+
+                        XmlNode objectsNode = xmlDoc.SelectSingleNode("/World/Objects");
+                        int numOfObjects = int.Parse(objectsNode.Attributes["Number_of_Objects"].Value);
+
+
+                        XmlNodeList objectChildren = objectsNode.ChildNodes;
+                        XmlNode objectNode;
+                        for(int i = 0; i < numOfObjects; ++i)
+                        {
+                            objectNode = objectChildren[i];
+
+                            if (null != objectNode.Attributes["Image_Path"])
                             {
-                                string path = textReader.ReadElementString();
+                                string path = objectNode.Attributes["Image_Path"].Value;
                                 path = Path.GetFullPath(path);
-                                System.Uri uri1 = new Uri(path);
-                                System.Uri uri2 = new Uri(Application.ExecutablePath);
-                                Uri relativeUri = uri2.MakeRelativeUri(uri1);
+                                string relativePath = MakeRelativePath(Application.ExecutablePath, path);
 
-                                cObject t_object = new cObject(new Bitmap(path), relativeUri.ToString());
+                                cObject t_object = new cObject(new Bitmap(path), relativePath);
 
-                                t_object.LoadXML(textReader);
+                                t_object.LoadXML(objectNode);
 
                                 objectManager.AddObject(t_object);
+                                ++objOpend;
                             }
+                            else
+                                MessageBox.Show("ERROR: XML file has an object with a bad image file path.", "ERROR: Bad File Path", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
 
-                            wrldOpend++;
-                        }
-                        else
-                        {
-                            MessageBox.Show("This XML file is neither an object or a world file.", "ERROR: Bad File", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
+                        ++wrldOpend;
                     }
                     
-                    textReader.Close();
-
-                    if (objOpend > 0 && wrldOpend == 1)
+                    if (objOpend > 0 || wrldOpend > 0)
                         saved = Saved_State.NOTSAVED;
-                    else if (objOpend == 0 && wrldOpend == 1)
-                        saved = Saved_State.SAVED;
-                    else
-                        saved = Saved_State.NEVERSAVED;
+                    //else if (objOpend == 0 && wrldOpend == 0)
+                    //    saved = Saved_State.SAVED;
+                    //else
+                    //    saved = Saved_State.NEVERSAVED;
+                    //PBUG^ ? (Why would I need this here?)
                 }
 
                 FindCanvasSize();
-                objectManager.SelectedObject = objectManager.ObjectList.ElementAt(objectManager.ObjectList.Count - 1);
-                ButtonsEnabled(false);
+                objectManager.SelectedObject = null;//objectManager.ObjectList.ElementAt(objectManager.ObjectList.Count - 1);
+                ButtonsEnabled(false);                
                 Invalidate();
             }
         }
@@ -222,20 +246,19 @@ namespace WindowsFormsApplication1
 
             XmlTextWriter textWriter = new XmlTextWriter(_fileName, null);
             textWriter.WriteStartDocument();
+
             textWriter.WriteStartElement("World");
+            textWriter.WriteAttributeString("Version", VERSION);
 
-            textWriter.WriteStartElement("Number_of_Objects", "");
-            textWriter.WriteString(objectManager.ObjectList.Count.ToString());
-            textWriter.WriteEndElement();
 
-            
             textWriter.WriteStartElement("Objects");
+            textWriter.WriteAttributeString("Number_of_Objects", objectManager.ObjectList.Count.ToString());
             foreach (cObject obj in objectManager.ObjectList)
             {
                 obj.SaveXML(textWriter);
                 textWriter.WriteEndElement();
             }
-            textWriter.WriteEndElement();
+            //textWriter.WriteEndElement();
 
             textWriter.WriteEndDocument();
             textWriter.Close();

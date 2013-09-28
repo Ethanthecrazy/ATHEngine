@@ -112,71 +112,62 @@ namespace WindowsFormsApplication1
         }
 
         //should be only calling this function after already creating the object
-        public void LoadXML(XmlTextReader textReader)
+        public void LoadXML(XmlNode objectNode)
         {
+            XmlNode objSize = objectNode.FirstChild;            
+
             //reading width and height
-            int width = int.Parse(textReader.ReadElementString());
-            int height = int.Parse(textReader.ReadElementString());
-            textReader.ReadEndElement();
+            int width = int.Parse(objSize.Attributes["Width"].Value);
+            int height = int.Parse(objSize.Attributes["Height"].Value);
+
 
             //reading position
-            Position = new Point(int.Parse(textReader.ReadElementString()) - (width / 2), int.Parse(textReader.ReadElementString()) - (height / 2));
-            textReader.ReadEndElement();
+            XmlNode objPos = objSize.NextSibling; 
+            Position = new Point(int.Parse(objPos.Attributes["X"].Value) - (width / 2), int.Parse(objPos.Attributes["Y"].Value) - (height / 2));
+
 
             //reading properties
-            int numProp = int.Parse(textReader.ReadElementString());
+            XmlNode objProperties = objPos.NextSibling;
+            int numProp = int.Parse(objProperties.Attributes["Number_of_Properties"].Value);
+
+            XmlNodeList propertiesChildren = objProperties.ChildNodes;
             for (int i = 0; i < numProp; ++i)
-                Properties.Add(new Property(textReader.Name, textReader.ReadElementString()));
-            textReader.ReadEndElement();
+                Properties.Add(new Property(propertiesChildren[i].Name, propertiesChildren[i].FirstChild.Value));
+
 
             //reading collision points
-            int numVerts = int.Parse(textReader.ReadElementString());
+            XmlNode objVerts = objProperties.NextSibling;
+            int numVerts = int.Parse(objVerts.Attributes["Number_of_Verts"].Value);
+
+            XmlNodeList vertsChildren = objVerts.ChildNodes;
             for (int i = 0; i < numVerts; ++i)
             {
-                CollisionPoints.Add(
+                 CollisionPoints.Add(
                     new Point(
-                        (Position.X + int.Parse(textReader.ReadElementString())),
-                        (Position.Y + int.Parse(textReader.ReadElementString()))));
-                textReader.ReadEndElement();
+                        (Position.X + int.Parse(vertsChildren[i].Attributes["X"].Value)),
+                        (Position.Y + int.Parse(vertsChildren[i].Attributes["Y"].Value))
+                        ));
             }
-            textReader.ReadEndElement();
-
-            //end of the object
-            textReader.ReadEndElement();
         }
 
         public void SaveXML(XmlTextWriter textWriter)
-        {           
+        {
             textWriter.WriteStartElement("Object");
-
-            textWriter.WriteStartElement("Image_Path", "");
-            textWriter.WriteString(FilePath);
-            textWriter.WriteEndElement();
+            textWriter.WriteAttributeString("Image_Path", FilePath);
 
             textWriter.WriteStartElement("Size");
-            textWriter.WriteStartElement("Width", "");
-            textWriter.WriteString(Image.Size.Width.ToString());
+            textWriter.WriteAttributeString("Height", Image.Size.Height.ToString());
+            textWriter.WriteAttributeString("Width", Image.Size.Width.ToString());
             textWriter.WriteEndElement();
 
-            textWriter.WriteStartElement("Height", "");
-            textWriter.WriteString(Image.Size.Height.ToString());
-            textWriter.WriteEndElement();
-            textWriter.WriteEndElement();
 
             textWriter.WriteStartElement("Position");
-            textWriter.WriteStartElement("X", "");
-            textWriter.WriteString((Position.X + (Image.Size.Width / 2)).ToString());
-            textWriter.WriteEndElement();
-
-            textWriter.WriteStartElement("Y", "");
-            textWriter.WriteString((Position.Y + (Image.Size.Height / 2)).ToString());
-            textWriter.WriteEndElement();
+            textWriter.WriteAttributeString("Y", (Position.Y + (Image.Size.Height / 2)).ToString());
+            textWriter.WriteAttributeString("X", (Position.X + (Image.Size.Width / 2)).ToString());
             textWriter.WriteEndElement();
 
             textWriter.WriteStartElement("Properties");
-            textWriter.WriteStartElement("Number_of_Properties", "");
-            textWriter.WriteString(Properties.Count.ToString());
-            textWriter.WriteEndElement();
+            textWriter.WriteAttributeString("Number_of_Properties", Properties.Count.ToString());
             foreach (Property p in Properties)
             {
                 textWriter.WriteStartElement(p.Name, "");
@@ -186,23 +177,16 @@ namespace WindowsFormsApplication1
             textWriter.WriteEndElement();
 
             textWriter.WriteStartElement("Collision_Geometry");
-            textWriter.WriteStartElement("Number_of_Verts", "");
-            textWriter.WriteString(CollisionPoints.Count.ToString());
-            textWriter.WriteEndElement();
+            textWriter.WriteAttributeString("Number_of_Verts", CollisionPoints.Count.ToString());
             foreach (PointF p in CollisionPoints)
             {
                 textWriter.WriteStartElement("Vertex");
-
-                textWriter.WriteStartElement("X", "");
-                textWriter.WriteString((p.X - (Position.X)).ToString());
-                textWriter.WriteEndElement();
-
-                textWriter.WriteStartElement("Y", "");
-                textWriter.WriteString((p.Y - (Position.Y)).ToString());
-                textWriter.WriteEndElement();
-
+                textWriter.WriteAttributeString("Y", (p.Y - (Position.Y)).ToString());
+                textWriter.WriteAttributeString("X", (p.X - (Position.X)).ToString());
                 textWriter.WriteEndElement();
             }
+            textWriter.WriteEndElement();
+
             textWriter.WriteEndElement();
         }
 

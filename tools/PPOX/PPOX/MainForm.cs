@@ -150,12 +150,19 @@ namespace WindowsFormsApplication1
                     foreach (string s in ofd.FileNames)
                     {
                         xmlDoc.Load(s); // Load the XML document from the specified file
+                        bool exportedObject = false;
 
                         XmlNode versionNode = xmlDoc.SelectSingleNode("/World");
                         if (null == versionNode)
                         {
-                            MessageBox.Show("ERROR: Cannot find root World.", "ERROR: Bad File", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            return;
+                            versionNode = xmlDoc.SelectSingleNode("/Exported_Object");
+                            if (null == versionNode)
+                            {
+                                MessageBox.Show("ERROR: Cannot find root \"World\" or \"Exported_Object\".", "ERROR: Bad File", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                return;
+                            }
+                            else
+                                exportedObject = true;
                         }
 
                         if (null == versionNode.Attributes["Version"])
@@ -173,15 +180,40 @@ namespace WindowsFormsApplication1
                         }
 
 
-                        XmlNode objectsNode = xmlDoc.SelectSingleNode("/World/Objects");
-                        int numOfObjects = int.Parse(objectsNode.Attributes["Number_of_Objects"].Value);
-
-
-                        XmlNodeList objectChildren = objectsNode.ChildNodes;
-                        XmlNode objectNode;
-                        for(int i = 0; i < numOfObjects; ++i)
+                        if (!exportedObject)
                         {
-                            objectNode = objectChildren[i];
+                            XmlNode objectsNode = xmlDoc.SelectSingleNode("/World/Objects");
+                            int numOfObjects = int.Parse(objectsNode.Attributes["Number_of_Objects"].Value);
+
+
+                            XmlNodeList objectChildren = objectsNode.ChildNodes;
+                            XmlNode objectNode;
+                            for (int i = 0; i < numOfObjects; ++i)
+                            {
+                                objectNode = objectChildren[i];
+
+                                if (null != objectNode.Attributes["Image_Path"])
+                                {
+                                    string path = objectNode.Attributes["Image_Path"].Value;
+                                    path = Path.GetFullPath(path);
+                                    string relativePath = MakeRelativePath(Application.ExecutablePath, path);
+
+                                    cObject t_object = new cObject(new Bitmap(path), relativePath);
+
+                                    t_object.LoadXML(objectNode);
+
+                                    objectManager.AddObject(t_object);
+                                    ++objOpend;
+                                }
+                                else
+                                    MessageBox.Show("ERROR: XML file has an object with a bad image file path.", "ERROR: Bad File Path", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+
+                            ++wrldOpend;
+                        }
+                        else
+                        {
+                            XmlNode objectNode = xmlDoc.SelectSingleNode("/Exported_Object/Object");
 
                             if (null != objectNode.Attributes["Image_Path"])
                             {
@@ -200,7 +232,6 @@ namespace WindowsFormsApplication1
                                 MessageBox.Show("ERROR: XML file has an object with a bad image file path.", "ERROR: Bad File Path", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
 
-                        ++wrldOpend;
                     }
                     
                     if (objOpend > 0 || wrldOpend > 0)
@@ -256,9 +287,8 @@ namespace WindowsFormsApplication1
             foreach (cObject obj in objectManager.ObjectList)
             {
                 obj.SaveXML(textWriter);
-                textWriter.WriteEndElement();
             }
-            //textWriter.WriteEndElement();
+            textWriter.WriteEndElement();
 
             textWriter.WriteEndDocument();
             textWriter.Close();

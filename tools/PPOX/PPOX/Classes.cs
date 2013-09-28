@@ -201,7 +201,13 @@ namespace WindowsFormsApplication1
                     //save
                     XmlTextWriter textWriter = new XmlTextWriter(_fileName, null);
                     textWriter.WriteStartDocument();
+
+                    textWriter.WriteStartElement("Exported_Object");
+                    textWriter.WriteAttributeString("Version", MainForm.VERSION);
+
                     SaveXML(textWriter);
+
+                    textWriter.WriteEndElement();
                     textWriter.WriteEndDocument();
                     textWriter.Close();
                 }
@@ -215,7 +221,13 @@ namespace WindowsFormsApplication1
                     //save
                     XmlTextWriter textWriter = new XmlTextWriter(_fileName, null);
                     textWriter.WriteStartDocument();
+
+                    textWriter.WriteStartElement("Exported_Object");
+                    textWriter.WriteAttributeString("Version", MainForm.VERSION);
+
                     SaveXML(textWriter);
+
+                    textWriter.WriteEndElement();
                     textWriter.WriteEndDocument();
                     textWriter.Close();
                 }
@@ -225,7 +237,13 @@ namespace WindowsFormsApplication1
                 //save
                 XmlTextWriter textWriter = new XmlTextWriter(_fileName, null);
                 textWriter.WriteStartDocument();
+
+                textWriter.WriteStartElement("Exported_Object");
+                textWriter.WriteAttributeString("Version", MainForm.VERSION);
+
                 SaveXML(textWriter);
+
+                textWriter.WriteEndElement();
                 textWriter.WriteEndDocument();
                 textWriter.Close();
             }

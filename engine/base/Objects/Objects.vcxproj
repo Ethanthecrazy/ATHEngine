@@ -76,6 +76,7 @@
     <ClInclude Include="ATHObjectManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ATHObject.cpp" />
     <ClCompile Include="ATHObjectManager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

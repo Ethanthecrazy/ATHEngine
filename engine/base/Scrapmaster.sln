@@ -28,6 +28,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Objects", "Objects\Objects.
 		{994C58BD-9E62-4403-9ABF-5729C5D8BA97} = {994C58BD-9E62-4403-9ABF-5729C5D8BA97}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ATHScriptLoader", "ATHScriptLoader\ATHScriptLoader.vcxproj", "{DC24C0F3-1BCD-48C3-88AD-3AA84EB4333E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -54,6 +56,10 @@ Global
 		{058E8870-4464-4FF2-98FC-4E24053402F5}.Debug|Win32.Build.0 = Debug|Win32
 		{058E8870-4464-4FF2-98FC-4E24053402F5}.Release|Win32.ActiveCfg = Release|Win32
 		{058E8870-4464-4FF2-98FC-4E24053402F5}.Release|Win32.Build.0 = Release|Win32
+		{DC24C0F3-1BCD-48C3-88AD-3AA84EB4333E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DC24C0F3-1BCD-48C3-88AD-3AA84EB4333E}.Debug|Win32.Build.0 = Debug|Win32
+		{DC24C0F3-1BCD-48C3-88AD-3AA84EB4333E}.Release|Win32.ActiveCfg = Release|Win32
+		{DC24C0F3-1BCD-48C3-88AD-3AA84EB4333E}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

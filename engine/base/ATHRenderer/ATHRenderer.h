@@ -84,7 +84,7 @@ private:
 
 public:
 
-
+	ATHMesh		m_Quad;
 
 	static		ATHRenderer* GetInstance();
 	static void DeleteInstance();
@@ -143,6 +143,8 @@ public:
 	void DebugLinesAdd( float3 _fStart, float3 _fEnd, float4 _fColor );
 	void DebugLinesCleanup();
 	ATHBox2DRenderer* GetDebugRenderer() { return &m_DebugRenderer; }
+
+	void BuildQuad();
 };
 
 #endif

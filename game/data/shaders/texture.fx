@@ -162,7 +162,8 @@ technique Default
 		// turn on alpha testing     
 		// AlphaBlendEnable = true;
 		SrcBlend = srcAlpha;
-		ZFunc = ALWAYS;
+		ZFunc = LESS;
+		//ZFunc = ALWAYS;
 		//DestBlend = One;
 
 		/*AlphaTestEnable = true;

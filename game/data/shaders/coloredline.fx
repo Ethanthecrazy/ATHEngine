@@ -34,5 +34,6 @@ technique Default
     {
         vertexShader = compile vs_3_0 TransformVS();
         pixelShader  = compile ps_3_0 TransformPS();
+		ZFunc = ALWAYS;
     }
 }

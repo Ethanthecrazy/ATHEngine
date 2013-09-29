@@ -2,6 +2,7 @@
 #include "../ATHRenderer/ATHRenderer.h"
 #include "../ATHUtil/NewInclude.h"
 #include "../Box2D/Box2D.h"
+#include "ATHObject.h"
 
 const unsigned int	NUM_VELOCITY_ITERATIONS = 8;
 const unsigned int	NUM_POSITION_ITERATIONS = 5;
@@ -37,16 +38,6 @@ void ATHObjectManager::Init()
 	b2PolygonShape polygon;
 	b2BodyDef bodyDef;
 
-	for( unsigned int i = 0; i < 10; ++i )
-	{
-		polygon.Set(vertices, count);
-		bodyDef.type = b2_dynamicBody;
-		bodyDef.position = b2Vec2( 0.0f, i * 2.0f + 3.0f );
-
-		b2Body* pBody = m_pWorld->CreateBody( &bodyDef );
-		pBody->CreateFixture( &polygon, 1.0f );
-	}
-
 	bodyDef.type = b2_staticBody;
 	bodyDef.position = b2Vec2( 0.0f, 0.0f );
 	polygon.SetAsBox( 10.0f, 1.0f, b2Vec2( 0.0f, 0.0f ), 0.0f );
@@ -68,9 +59,62 @@ void ATHObjectManager::Update( float _fDT )
 	}
 
 	m_pWorld->DrawDebugData();
+
+	std::list<ATHObject*>::iterator itrObjects = m_liObjects.begin();
+	std::list<ATHObject*>::iterator itrObjectsEnd = m_liObjects.end();
+	while( itrObjects != itrObjectsEnd )
+	{
+		ATHObject* pCurrObj = (*itrObjects);
+		if( pCurrObj->GetAlive() )
+		{
+			if( pCurrObj->GetActive() )
+				pCurrObj->Update( _fDT );
+		}
+		else
+			m_liToRemove.push_back( pCurrObj );
+
+		++itrObjects;
+	}
+
+	itrObjects = m_liToRemove.begin();
+	itrObjectsEnd = m_liToRemove.end();
+	while( itrObjects != itrObjectsEnd )
+	{
+		m_liObjects.remove( (*itrObjects) );
+		delete (*itrObjects);
+		itrObjects = m_liToRemove.erase( itrObjects );
+	}
 }
 //================================================================================
 void ATHObjectManager::Shutdown()
 {
+	std::list<ATHObject*>::iterator itrObjects = m_liObjects.begin();
+	std::list<ATHObject*>::iterator itrObjectsEnd = m_liObjects.end();
+	while( itrObjects != itrObjectsEnd )
+	{
+		delete (*itrObjects);
+		itrObjects = m_liObjects.erase( itrObjects );
+	}
+
+	itrObjects = m_liStaticObjects.begin();
+	itrObjectsEnd = m_liStaticObjects.end();
+	while( itrObjects != itrObjectsEnd )
+	{
+		delete (*itrObjects);
+		itrObjects = m_liObjects.erase( itrObjects );
+	}
+
 	delete m_pWorld;
+}
+
+void ATHObjectManager::AddObject( ATHObject* pObject )
+{
+	if( pObject )
+		m_liObjects.push_back( pObject );
+}
+
+void ATHObjectManager::AddObjectStatic( ATHObject* pObject )
+{
+	if( pObject )
+		m_liStaticObjects.push_back( pObject );
 }

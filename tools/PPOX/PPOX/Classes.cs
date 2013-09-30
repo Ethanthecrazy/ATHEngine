@@ -162,8 +162,8 @@ namespace WindowsFormsApplication1
 
 
             textWriter.WriteStartElement("Position");
-            textWriter.WriteAttributeString("Y", (Position.Y + (Image.Size.Height / 2)).ToString());
-            textWriter.WriteAttributeString("X", (Position.X + (Image.Size.Width / 2)).ToString());
+            textWriter.WriteAttributeString("Y", (Center.Y).ToString());
+            textWriter.WriteAttributeString("X", (Center.X).ToString());
             textWriter.WriteEndElement();
 
             textWriter.WriteStartElement("Properties");
@@ -178,15 +178,40 @@ namespace WindowsFormsApplication1
 
             textWriter.WriteStartElement("Collision_Geometry");
             textWriter.WriteAttributeString("Number_of_Verts", CollisionPoints.Count.ToString());
-            foreach (PointF p in CollisionPoints)
-            {
-                textWriter.WriteStartElement("Vertex");
-                textWriter.WriteAttributeString("Y", (p.Y - (Position.Y)).ToString());
-                textWriter.WriteAttributeString("X", (p.X - (Position.X)).ToString());
-                textWriter.WriteEndElement();
-            }
-            textWriter.WriteEndElement();
 
+            int i, j;
+            float sum = 0;
+            for (i = 0; i < CollisionPoints.Count; ++i)
+            {
+                j = i + 1;
+                if (j > CollisionPoints.Count - 1)
+                    j = 0;
+
+                sum += (CollisionPoints[j].X - CollisionPoints[i].X) * (CollisionPoints[j].Y + CollisionPoints[i].Y);
+            }
+
+            if (sum < 0) //if counter-clock-wise
+            {
+                for (int v = 0; v < CollisionPoints.Count; ++v)
+                {
+                    textWriter.WriteStartElement("Vertex");
+                    textWriter.WriteAttributeString("Y", (CollisionPoints[v].Y - (Center.Y)).ToString());
+                    textWriter.WriteAttributeString("X", (CollisionPoints[v].X - (Center.X)).ToString());
+                    textWriter.WriteEndElement();
+                }
+            }
+            else
+            {
+                for (int v = CollisionPoints.Count - 1; v > -1; --v)
+                {
+                    textWriter.WriteStartElement("Vertex");
+                    textWriter.WriteAttributeString("Y", (CollisionPoints[v].Y - (Center.Y)).ToString());
+                    textWriter.WriteAttributeString("X", (CollisionPoints[v].X - (Center.X)).ToString());
+                    textWriter.WriteEndElement();
+                }
+            }
+
+            textWriter.WriteEndElement();
             textWriter.WriteEndElement();
         }
 
@@ -199,17 +224,7 @@ namespace WindowsFormsApplication1
                     == System.Windows.Forms.DialogResult.Yes)
                 {
                     //save
-                    XmlTextWriter textWriter = new XmlTextWriter(_fileName, null);
-                    textWriter.WriteStartDocument();
-
-                    textWriter.WriteStartElement("Exported_Object");
-                    textWriter.WriteAttributeString("Version", MainForm.VERSION);
-
-                    SaveXML(textWriter);
-
-                    textWriter.WriteEndElement();
-                    textWriter.WriteEndDocument();
-                    textWriter.Close();
+                    Export_Helper(_fileName);
                 }
             }
             else if (CollisionPoints.Count < 3)
@@ -219,34 +234,30 @@ namespace WindowsFormsApplication1
                         == System.Windows.Forms.DialogResult.Yes)
                 {
                     //save
-                    XmlTextWriter textWriter = new XmlTextWriter(_fileName, null);
-                    textWriter.WriteStartDocument();
-
-                    textWriter.WriteStartElement("Exported_Object");
-                    textWriter.WriteAttributeString("Version", MainForm.VERSION);
-
-                    SaveXML(textWriter);
-
-                    textWriter.WriteEndElement();
-                    textWriter.WriteEndDocument();
-                    textWriter.Close();
+                    Export_Helper(_fileName);
                 }
             }
             else
             {
                 //save
-                XmlTextWriter textWriter = new XmlTextWriter(_fileName, null);
-                textWriter.WriteStartDocument();
-
-                textWriter.WriteStartElement("Exported_Object");
-                textWriter.WriteAttributeString("Version", MainForm.VERSION);
-
-                SaveXML(textWriter);
-
-                textWriter.WriteEndElement();
-                textWriter.WriteEndDocument();
-                textWriter.Close();
+                Export_Helper(_fileName);
             }
         }
+
+        private void Export_Helper(string _fileName)
+        {
+            XmlTextWriter textWriter = new XmlTextWriter(_fileName, null);
+            textWriter.WriteStartDocument();
+
+            textWriter.WriteStartElement("Exported_Object");
+            textWriter.WriteAttributeString("Version", MainForm.VERSION);
+
+            SaveXML(textWriter);
+
+            textWriter.WriteEndElement();
+            textWriter.WriteEndDocument();
+            textWriter.Close();
+        }
+
     }
 }

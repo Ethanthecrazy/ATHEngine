@@ -130,7 +130,7 @@ namespace WindowsFormsApplication1
             if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 if (ofd.FilterIndex == 1)
-                {
+                {                    
                     foreach (string s in ofd.FileNames)
                     {
                         string relativePath = MakeRelativePath(Application.ExecutablePath, s);

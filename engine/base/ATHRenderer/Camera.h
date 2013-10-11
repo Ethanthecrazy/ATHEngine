@@ -43,6 +43,12 @@ public:
                           float _fAspect,
                           float _fZNear,
                           float _fZFar);
+
+	void BuildOrthoPerspective(	float _fPerspectiveHeight,
+							float _fAspect,
+							float _fZNear,
+							float _fZFar
+							);
     
 /*=====================================================================
     View Matrix Functions

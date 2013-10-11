@@ -46,6 +46,15 @@ void CCamera::BuildPerspective(float _fFieldOfView,
                                _fZFar);
 }
 
+void CCamera::BuildOrthoPerspective( float _fPerspectiveHeight,
+							float _fAspect,
+							float _fZNear,
+							float _fZFar )
+{
+	//D3DXMatrixOrthoOffCenterLH( &this->m_mProjectionMatrix, 0.0f,1280,720,0.0f,0.0f,100.0f);
+	D3DXMatrixOrthoLH( &this->m_mProjectionMatrix,  _fPerspectiveHeight * _fAspect, _fPerspectiveHeight, _fZNear, _fZFar );
+}
+
 D3DXMATRIX CCamera::GetViewMatrix(bool _bTranslate)
 {
     D3DXMATRIX _mRotation(this->m_mViewMatrix), _mTransform;

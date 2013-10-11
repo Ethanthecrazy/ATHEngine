@@ -14,6 +14,7 @@
     <ProjectGuid>{DC24C0F3-1BCD-48C3-88AD-3AA84EB4333E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>ATHScriptLoader</RootNamespace>
+    <ProjectName>ATHScriptManager</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -69,7 +70,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
+    <ClInclude Include="ATHScript.h" />
+    <ClInclude Include="ATHScriptManager.h" />
+    <ClInclude Include="ATHScriptXML.h" />
+    <ClInclude Include="rapidxml.hpp" />
+    <ClInclude Include="rapidxml_iterators.hpp" />
+    <ClInclude Include="rapidxml_print.hpp" />
+    <ClInclude Include="rapidxml_utils.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ATHScriptManager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

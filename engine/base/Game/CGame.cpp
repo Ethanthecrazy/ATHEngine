@@ -12,6 +12,7 @@ using std::string;
 // For testing purposes
 #include "../ATHRenderer/RenderFunctions.h"
 #include "../Objects/ATHObject.h"
+#include "../ATHScriptLoader/ATHScriptManager.h"
 //////////
 
 // default constructor
@@ -78,35 +79,38 @@ void CGame::TestInit()
 	
 	m_pRenderer->CreateRenderPass( "test", 1, RenderTest, "texture", true );
 
-	b2Vec2 vertices[4];
-	vertices[0].Set(0.5f, 0.5f);
-	vertices[1].Set(-0.5f, 0.5f);
-	vertices[2].Set(-0.5f, -0.5f);
-	vertices[3].Set(0.5f, -0.5f);
+	//b2Vec2 vertices[4];
+	//vertices[0].Set(0.5f, 0.5f);
+	//vertices[1].Set(-0.5f, 0.5f);
+	//vertices[2].Set(-0.5f, -0.5f);
+	//vertices[3].Set(0.5f, -0.5f);
 
-	int32 count = 4;
-	b2PolygonShape polygon;
-	b2BodyDef bodyDef;
+	//int32 count = 4;
+	//b2PolygonShape polygon;
+	//b2BodyDef bodyDef;
 
-	polygon.Set(vertices, count);
-	bodyDef.type = b2_dynamicBody;
-	
-	for( unsigned int i = 0; i < 50; ++i )
-	{
-		bodyDef.position = b2Vec2( 0.0f, i * 2.0f + 3.0f );
+	//polygon.Set(vertices, count);
+	//bodyDef.type = b2_dynamicBody;
+	//
+	//for( unsigned int i = 0; i < 50; ++i )
+	//{
+	//	bodyDef.position = b2Vec2( 0.0f, i * 2.0f + 3.0f );
 
-		b2Body* pBody = m_pObjectManager->m_pWorld->CreateBody( &bodyDef );
-		pBody->CreateFixture( &polygon, 1.0f );
+	//	b2Body* pBody = m_pObjectManager->m_pWorld->CreateBody( &bodyDef );
+	//	pBody->CreateFixture( &polygon, 1.0f );
 
-		ATHRenderNode* pTestNode = m_pRenderer->CreateRenderNode( "test", 0 );
-		pTestNode->SetMesh( &m_pRenderer->m_Quad );
-		pTestNode->SetTexture( m_pRenderer->GetAtlas()->GetTexture( "wall" ) );
+	//	ATHRenderNode* pTestNode = m_pRenderer->CreateRenderNode( "test", 0 );
+	//	pTestNode->SetMesh( &m_pRenderer->m_Quad );
+	//	pTestNode->SetTexture( m_pRenderer->GetAtlas()->GetTexture( "wall" ) );
 
-		ATHObject* testObject = new ATHObject();
-		testObject->Init( pTestNode, pBody );
+	//	ATHObject* testObject = new ATHObject();
+	//	testObject->Init( pTestNode, pBody );
 
-		m_pObjectManager->AddObject( testObject );
-	}
+	//	m_pObjectManager->AddObject( testObject );
+	//}
+
+	ATHScriptManager man;
+	man.LoadXMLScript( m_pObjectManager, "data\\pot.xml" );
 }
 
 // execution
@@ -148,13 +152,9 @@ bool CGame::Update( float fDT )
 
 void CGame::PostUpdate( float fDT )
 {
-
-
 	// Do Render Processing
 	Render();
 	//////////
-
-
 
 	if( GetAsyncKeyState( 'W' ) )
 	{
@@ -166,11 +166,11 @@ void CGame::PostUpdate( float fDT )
 	}
 	if( GetAsyncKeyState( 'A' ) )
 	{
-		ATHRenderer::GetInstance()->GetCamera()->ViewRotateGlobalY( -0.05f );
+		
 	}
 	if( GetAsyncKeyState( 'D' ) )
 	{
-		ATHRenderer::GetInstance()->GetCamera()->ViewRotateGlobalY( 0.05f );
+		
 	}
 	if( GetAsyncKeyState( VK_F2 ) & 1 )
 	{

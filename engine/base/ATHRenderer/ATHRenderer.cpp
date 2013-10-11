@@ -156,7 +156,9 @@ bool ATHRenderer::Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScre
 
 	m_fScreenDepth = 100.0f;
 	m_pCamera = new CCamera();
-	m_pCamera->BuildPerspective(D3DX_PI / 2.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.1f, m_fScreenDepth );
+	//m_pCamera->BuildPerspective(D3DX_PI / 2.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.1f, m_fScreenDepth );
+
+	m_pCamera->BuildOrthoPerspective( 500.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.01f, m_fScreenDepth );
 	m_pCamera->SetViewPosition(0.0f, 0.0f, -5.0f);
 
 	InitStandardRendering();
@@ -657,89 +659,99 @@ void ATHRenderer::BuildQuad()
 {
 	m_Quad = ATHMesh( "Quad", GetVertexDeclaration( ATH_VERTEXDECL_TEXTURED ), D3DPT_TRIANGLELIST );
 
-	m_Quad.m_vecPositions.push_back( float3( -0.5f, 0.5f, -0.5f ) );
-	m_Quad.m_vecPositions.push_back( float3( -0.5f, 0.5f, 0.5f ) );
-	m_Quad.m_vecPositions.push_back( float3( 0.5f, 0.5f, 0.5f ) );
-	m_Quad.m_vecPositions.push_back( float3( 0.5f, 0.5f, -0.5f ) );
+	m_Quad.m_vecPositions.push_back( float3( -0.5f, 0.5f, 0.0f ) );
+	m_Quad.m_vecPositions.push_back( float3( 0.5f, 0.5f, 0.0f ) );
+	m_Quad.m_vecPositions.push_back( float3( 0.5f, -0.5f, 0.0f ) );
+	m_Quad.m_vecPositions.push_back( float3( -0.5f, -0.5f, 0.0f ) );
 
-	m_Quad.m_vecPositions.push_back( float3( -0.5f, -0.5f, -0.5f ) );
-	m_Quad.m_vecPositions.push_back( float3( -0.5f, -0.5f, 0.5f ) );
-	m_Quad.m_vecPositions.push_back( float3( 0.5f, -0.5f, 0.5f ) );
-	m_Quad.m_vecPositions.push_back( float3( 0.5f, -0.5f, -0.5f ) );
+	//m_Quad.m_vecPositions.push_back( float3( -0.5f, 0.5f, -0.5f ) );
+	//m_Quad.m_vecPositions.push_back( float3( -0.5f, 0.5f, 0.5f ) );
+	//m_Quad.m_vecPositions.push_back( float3( 0.5f, 0.5f, 0.5f ) );
+	//m_Quad.m_vecPositions.push_back( float3( 0.5f, 0.5f, -0.5f ) );
 
+	//m_Quad.m_vecPositions.push_back( float3( -0.5f, -0.5f, -0.5f ) );
+	//m_Quad.m_vecPositions.push_back( float3( -0.5f, -0.5f, 0.5f ) );
+	//m_Quad.m_vecPositions.push_back( float3( 0.5f, -0.5f, 0.5f ) );
+	//m_Quad.m_vecPositions.push_back( float3( 0.5f, -0.5f, -0.5f ) );
+	
 	m_Quad.m_vecUVs.push_back( float2( 0.0f, 0.0f ) );
 	m_Quad.m_vecUVs.push_back( float2( 1.0f, 0.0f ) );
-	m_Quad.m_vecUVs.push_back( float2( 0.0f, 0.0f ) );
-	m_Quad.m_vecUVs.push_back( float2( 1.0f, 0.0f ) );
-
-	m_Quad.m_vecUVs.push_back( float2( 0.0f, 1.0f ) );
 	m_Quad.m_vecUVs.push_back( float2( 1.0f, 1.0f ) );
 	m_Quad.m_vecUVs.push_back( float2( 0.0f, 1.0f ) );
-	m_Quad.m_vecUVs.push_back( float2( 1.0f, 1.0f ) );
 
-	//m_Quad.GetVerts().push_back( sVertPosNormUV( float3( -0.5f, 0.5f, -0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 0.0f, 0.0f ) ) );	// 0
-	//m_Quad.GetVerts().push_back( sVertPosNormUV( float3( -0.5f, 0.5f, 0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 1.0f, 0.0f ) ) );		// 1
-	//m_Quad.GetVerts().push_back( sVertPosNormUV( float3( 0.5f, 0.5f, 0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 0.0f, 0.0f ) ) );		// 2
-	//m_Quad.GetVerts().push_back( sVertPosNormUV( float3( 0.5f, 0.5f, -0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 1.0f, 0.0f ) ) );		// 3
+	//m_Quad.m_vecUVs.push_back( float2( 0.0f, 0.0f ) );
+	//m_Quad.m_vecUVs.push_back( float2( 1.0f, 0.0f ) );
+	//m_Quad.m_vecUVs.push_back( float2( 0.0f, 0.0f ) );
+	//m_Quad.m_vecUVs.push_back( float2( 1.0f, 0.0f ) );
 
-	//m_Quad.GetVerts().push_back( sVertPosNormUV( float3( -0.5f, -0.5f, -0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 0.0f, 1.0f ) ) );	// 4
-	//m_Quad.GetVerts().push_back( sVertPosNormUV( float3( -0.5f, -0.5f, 0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 1.0f, 1.0f ) ) );	// 5
-	//m_Quad.GetVerts().push_back( sVertPosNormUV( float3( 0.5f, -0.5f, 0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 0.0f, 1.0f ) ) );     // 6
-	//m_Quad.GetVerts().push_back( sVertPosNormUV( float3( 0.5f, -0.5f, -0.5f ), float3( 0.0f, 0.0f, 0.0f ), float2( 1.0f, 1.0f ) ) );	// 7
+	//m_Quad.m_vecUVs.push_back( float2( 0.0f, 1.0f ) );
+	//m_Quad.m_vecUVs.push_back( float2( 1.0f, 1.0f ) );
+	//m_Quad.m_vecUVs.push_back( float2( 0.0f, 1.0f ) );
+	//m_Quad.m_vecUVs.push_back( float2( 1.0f, 1.0f ) );
 
-	// TOP Indicies
-	m_Quad.m_vecIndicies.push_back( 0 );
-	m_Quad.m_vecIndicies.push_back( 2 );
-	m_Quad.m_vecIndicies.push_back( 3 );
+
 
 	m_Quad.m_vecIndicies.push_back( 0 );
 	m_Quad.m_vecIndicies.push_back( 1 );
 	m_Quad.m_vecIndicies.push_back( 2 );
 
-	// BOTTm_vecIndicies
-	m_Quad.m_vecIndicies.push_back( 4 );
-	m_Quad.m_vecIndicies.push_back( 6 );
-	m_Quad.m_vecIndicies.push_back( 5 );
-
-	m_Quad.m_vecIndicies.push_back( 4 );
-	m_Quad.m_vecIndicies.push_back( 7 );
-	m_Quad.m_vecIndicies.push_back( 6 );
-
-	// FRONm_vecIndicies
 	m_Quad.m_vecIndicies.push_back( 0 );
-	m_Quad.m_vecIndicies.push_back( 7 );
-	m_Quad.m_vecIndicies.push_back( 4 );
-
-	m_Quad.m_vecIndicies.push_back( 0 );
-	m_Quad.m_vecIndicies.push_back( 3 );
-	m_Quad.m_vecIndicies.push_back( 7 );
-
-	// RIGHm_vecIndicies
-	m_Quad.m_vecIndicies.push_back( 3 );
-	m_Quad.m_vecIndicies.push_back( 6 );
-	m_Quad.m_vecIndicies.push_back( 7 );
-
-	m_Quad.m_vecIndicies.push_back( 3 );
 	m_Quad.m_vecIndicies.push_back( 2 );
-	m_Quad.m_vecIndicies.push_back( 6 );
+	m_Quad.m_vecIndicies.push_back( 3 );
 
-	// BACKm_vecIndicies
-	m_Quad.m_vecIndicies.push_back( 2 );
-	m_Quad.m_vecIndicies.push_back( 1 );
-	m_Quad.m_vecIndicies.push_back( 5 );
+	//// TOP Indicies
+	//m_Quad.m_vecIndicies.push_back( 0 );
+	//m_Quad.m_vecIndicies.push_back( 2 );
+	//m_Quad.m_vecIndicies.push_back( 3 );
 
-	m_Quad.m_vecIndicies.push_back( 2 );
-	m_Quad.m_vecIndicies.push_back( 5 );
-	m_Quad.m_vecIndicies.push_back( 6 );
+	//m_Quad.m_vecIndicies.push_back( 0 );
+	//m_Quad.m_vecIndicies.push_back( 1 );
+	//m_Quad.m_vecIndicies.push_back( 2 );
 
-	// LEFTm_vecIndicies
-	m_Quad.m_vecIndicies.push_back( 1 );
-	m_Quad.m_vecIndicies.push_back( 4 );
-	m_Quad.m_vecIndicies.push_back( 5 );
+	//// BOTTm_vecIndicies
+	//m_Quad.m_vecIndicies.push_back( 4 );
+	//m_Quad.m_vecIndicies.push_back( 6 );
+	//m_Quad.m_vecIndicies.push_back( 5 );
 
-	m_Quad.m_vecIndicies.push_back( 1 );
-	m_Quad.m_vecIndicies.push_back( 0 );
-	m_Quad.m_vecIndicies.push_back( 4 );
+	//m_Quad.m_vecIndicies.push_back( 4 );
+	//m_Quad.m_vecIndicies.push_back( 7 );
+	//m_Quad.m_vecIndicies.push_back( 6 );
+
+	//// FRONm_vecIndicies
+	//m_Quad.m_vecIndicies.push_back( 0 );
+	//m_Quad.m_vecIndicies.push_back( 7 );
+	//m_Quad.m_vecIndicies.push_back( 4 );
+
+	//m_Quad.m_vecIndicies.push_back( 0 );
+	//m_Quad.m_vecIndicies.push_back( 3 );
+	//m_Quad.m_vecIndicies.push_back( 7 );
+
+	//// RIGHm_vecIndicies
+	//m_Quad.m_vecIndicies.push_back( 3 );
+	//m_Quad.m_vecIndicies.push_back( 6 );
+	//m_Quad.m_vecIndicies.push_back( 7 );
+
+	//m_Quad.m_vecIndicies.push_back( 3 );
+	//m_Quad.m_vecIndicies.push_back( 2 );
+	//m_Quad.m_vecIndicies.push_back( 6 );
+
+	//// BACKm_vecIndicies
+	//m_Quad.m_vecIndicies.push_back( 2 );
+	//m_Quad.m_vecIndicies.push_back( 1 );
+	//m_Quad.m_vecIndicies.push_back( 5 );
+
+	//m_Quad.m_vecIndicies.push_back( 2 );
+	//m_Quad.m_vecIndicies.push_back( 5 );
+	//m_Quad.m_vecIndicies.push_back( 6 );
+
+	//// LEFTm_vecIndicies
+	//m_Quad.m_vecIndicies.push_back( 1 );
+	//m_Quad.m_vecIndicies.push_back( 4 );
+	//m_Quad.m_vecIndicies.push_back( 5 );
+
+	//m_Quad.m_vecIndicies.push_back( 1 );
+	//m_Quad.m_vecIndicies.push_back( 0 );
+	//m_Quad.m_vecIndicies.push_back( 4 );
 
 	m_Quad.RebuildBuffers();
 

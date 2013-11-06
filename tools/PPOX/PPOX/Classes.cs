@@ -123,7 +123,7 @@ namespace WindowsFormsApplication1
 
             //reading position
             XmlNode objPos = objSize.NextSibling; 
-            Position = new Point(int.Parse(objPos.Attributes["X"].Value) - (width / 2), int.Parse(objPos.Attributes["Y"].Value) - (height / 2));
+            Position = new Point( (width / 2) + int.Parse(objPos.Attributes["X"].Value), (height / 2) + int.Parse(objPos.Attributes["Y"].Value) );
 
 
             //reading properties

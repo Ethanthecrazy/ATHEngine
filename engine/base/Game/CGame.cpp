@@ -12,7 +12,6 @@ using std::string;
 // For testing purposes
 #include "../ATHRenderer/RenderFunctions.h"
 #include "../Objects/ATHObject.h"
-#include "../ATHScriptLoader/ATHScriptManager.h"
 //////////
 
 // default constructor
@@ -109,8 +108,7 @@ void CGame::TestInit()
 	//	m_pObjectManager->AddObject( testObject );
 	//}
 
-	ATHScriptManager man;
-	man.LoadXMLScript( m_pObjectManager, "data\\pot.xml" );
+	m_pObjectManager->LoadObjectsFromXML();
 }
 
 // execution

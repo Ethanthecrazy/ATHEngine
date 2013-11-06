@@ -7,6 +7,8 @@
 #include "../Objects/ATHObjectManager.h"
 #include "../Objects/ATHObject.h"
 
+const float GLOBAL_LOAD_SCALE = 0.01f;
+
 void ATHScriptManager::LoadXMLScript( ATHObjectManager* _pManager, char* _szFilepath )
 {
 
@@ -51,8 +53,8 @@ void ATHScriptManager::LoadXMLScript( ATHObjectManager* _pManager, char* _szFile
 		rapidxml::xml_attribute<>* nodePosAttrX = nodePos->first_attribute("X");
 		rapidxml::xml_attribute<>* nodePosAttrY = nodePos->first_attribute("Y");
 
-		int unObjectPositionX = 0;//atoi( nodePosAttrX->value() );
-		int unObjectPositionY = atoi( nodePosAttrY->value() );
+		float fObjectPosX = 0.0f;//atoi( nodePosAttrX->value() );
+		float fObjectPosY = (float)atof( nodePosAttrY->value() ) * GLOBAL_LOAD_SCALE;
 
 
 		rapidxml::xml_node<>* nodeCollGeo = currObject->first_node( "Collision_Geometry" );
@@ -69,12 +71,12 @@ void ATHScriptManager::LoadXMLScript( ATHObjectManager* _pManager, char* _szFile
 			while( currVertex )
 			{
 				rapidxml::xml_attribute<>* attrX = currVertex->first_attribute( "X" );
-				int posX = atoi( attrX->value() );
+				float posX = (float)atof( attrX->value() ) * GLOBAL_LOAD_SCALE;
 
 				rapidxml::xml_attribute<>* attrY = currVertex->first_attribute( "Y" );
-				int posY = atoi( attrY->value() );
+				float posY = (float)atof( attrY->value() ) * GLOBAL_LOAD_SCALE;
 
-				vertices[ unCurrentVertex ].Set( float( unObjectPositionX + posX ), float ( unObjectPositionY + posY ) );
+				vertices[ unCurrentVertex ].Set( fObjectPosX + posX, fObjectPosY + posY );
 
 				unCurrentVertex++;
 				currVertex = currVertex->next_sibling();
@@ -83,11 +85,10 @@ void ATHScriptManager::LoadXMLScript( ATHObjectManager* _pManager, char* _szFile
 			b2PolygonShape polygon;
 			b2BodyDef bodyDef;
 			polygon.Set(vertices, unVertexCount);
-			//polygon.SetAsBox( 10.0f, 1.0f, b2Vec2( 0.0f, 0.0f ), 0.0f );
 
 			bodyDef.type = b2_dynamicBody;
 
-			bodyDef.position = b2Vec2( unObjectPositionX, unObjectPositionY );
+			bodyDef.position = b2Vec2( fObjectPosX, fObjectPosY );
 
 			b2Body* pBody = _pManager->m_pWorld->CreateBody( &bodyDef );
 			pBody->CreateFixture( &polygon, 1.0f );

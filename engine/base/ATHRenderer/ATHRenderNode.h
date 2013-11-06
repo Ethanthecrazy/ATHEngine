@@ -27,6 +27,7 @@ private:
 
 	ATHAtlas::ATHTextureHandle	m_pTexture[RENDERNODE_TEXTURE_COUNT];
 	ATHMesh*					m_pMesh;
+	D3DXMATRIX					m_matLocalTransform;
 	D3DXMATRIX					m_matTransform;
 
 	bool						m_bDirty;
@@ -54,8 +55,9 @@ public:
 
 	void						SetTexture( ATHAtlas::ATHTextureHandle _texture, int _index = 0 ) { m_pTexture[_index] = _texture; }
 	ATHAtlas::ATHTextureHandle	GetTexture( unsigned int _nIndex = 0 ) { return m_pTexture[ _nIndex ]; }
+	void						SetLocalTransform( D3DXMATRIX _transform ) { m_matLocalTransform = _transform; }
 	void						SetTransform( D3DXMATRIX _transform ){ m_matTransform = _transform; }
-	D3DXMATRIX					GetTrasform() { return m_matTransform; }
+	D3DXMATRIX					GetTrasform() { return m_matLocalTransform * m_matTransform; }
 	void						SetMesh( ATHMesh* _pMesh ) { m_pMesh = _pMesh; }
 	ATHMesh*					GetMesh() { return m_pMesh; }
 

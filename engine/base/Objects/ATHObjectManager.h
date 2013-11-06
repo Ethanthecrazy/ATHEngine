@@ -2,9 +2,13 @@
 #define ATHOBJECTMANAGER_H
 
 #include <list>
+#include "RapidXML\rapidxml.hpp"
 
 class b2World;
+class b2Body;
+class ATHRenderNode;
 class ATHObject;
+
 
 class ATHObjectManager
 {
@@ -28,6 +32,12 @@ public:
 
 	void AddObject( ATHObject* pObject );
 	void AddObjectStatic( ATHObject* pObject );
+
+	void LoadObjectsFromXML();
+	void LoadXML( const char* _szPath );
+
+	b2Body* GenerateBody( rapidxml::xml_node<>* pNodeObject );
+	ATHRenderNode* GenerateRenderNode( rapidxml::xml_node<>* pNodeObject );
 };
 
 #endif;

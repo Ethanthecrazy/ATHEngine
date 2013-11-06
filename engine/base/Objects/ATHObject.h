@@ -1,7 +1,7 @@
 #ifndef ATHOBJECT_H
 #define ATHOBJECT_H
 
-#include <d3d9.h>
+#include <d3dx9.h>
 #include <list>
 #include "../ATHUtil/hDataTypes.h"
 
@@ -17,7 +17,7 @@ private:
 	// If the object is currently being updated
 	bool m_bActive;
 
-	D3DMATRIX m_matTransform;
+	D3DXMATRIX m_matTransform;
 	ATHRenderNode* m_pRenderNode;
 	b2Body* m_pBody;
 
@@ -29,7 +29,7 @@ public:
 	bool GetActive() { return m_bActive; }
 	void SetAtive( bool _bActive ) { m_bActive = _bActive; }
 
-	D3DMATRIX		GetTransform();
+	D3DXMATRIX		GetTransform();
 	ATHRenderNode*	GetRenderNode();
 	b2Body*			GetBody();
 	

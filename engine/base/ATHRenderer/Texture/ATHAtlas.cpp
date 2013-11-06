@@ -19,6 +19,7 @@ void ATHAtlas::Shutdown()
 	Clear();
 }
 
+//TODO: ADD LOAD FAILURE HANDELING!
 void ATHAtlas::LoadTexture( char* _szHandle, char* _szFilepath )
 {
 	if( strlen( _szHandle ) < 3 || strlen( _szFilepath ) < 4 )
@@ -90,6 +91,7 @@ ATHAtlas::ATHTextureHandle ATHAtlas::GetTexture( char* _szHandle )
 		return ATHTextureHandle( m_mapTextures[ szHandleString ] );
 	}
 
+	//TODO: Returning nullptr!?
 	return nullptr;
 }
 

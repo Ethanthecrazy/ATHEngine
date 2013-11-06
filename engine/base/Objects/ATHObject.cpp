@@ -1,9 +1,10 @@
 #include "ATHObject.h"
 
 #include "../Box2D/Box2D.h"
+#include "../ATHRenderer/ATHRenderer.h"
 #include "../ATHRenderer/ATHRenderNode.h"
 
-D3DMATRIX ATHObject::GetTransform()
+D3DXMATRIX ATHObject::GetTransform()
 {
 	return m_matTransform;
 }
@@ -29,6 +30,8 @@ void ATHObject::Init( ATHRenderNode* _pRenderNode, b2Body* _pBody )
 
 	if( m_pBody )
 		m_pBody->SetUserData( this );
+
+	D3DXMatrixIdentity( &m_matTransform );
 }
 
 void ATHObject::Update( float _fDT )
@@ -54,6 +57,9 @@ void ATHObject::Shutdown()
 {
 	if( m_pBody )
 		m_pBody->SetUserData( nullptr );
+
+	if( m_pRenderNode )
+		ATHRenderer::GetInstance()->DestoryRenderNode( m_pRenderNode );
 
 	m_pBody = nullptr;
 	m_pRenderNode = nullptr;

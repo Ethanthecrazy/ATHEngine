@@ -158,7 +158,7 @@ bool ATHRenderer::Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScre
 	m_pCamera = new CCamera();
 	//m_pCamera->BuildPerspective(D3DX_PI / 2.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.1f, m_fScreenDepth );
 
-	m_pCamera->BuildOrthoPerspective( 500.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.01f, m_fScreenDepth );
+	m_pCamera->BuildOrthoPerspective( 20.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.01f, m_fScreenDepth );
 	m_pCamera->SetViewPosition(0.0f, 0.0f, -5.0f);
 
 	InitStandardRendering();
@@ -271,11 +271,6 @@ void ATHRenderer::RenderDepth()
 			std::list< ATHRenderNode* >::iterator itrRenderNode = liNodes.begin();
 			while( itrRenderNode != liNodes.end() )
 			{
-
-				D3DXMATRIX rot;
-				D3DXMatrixRotationY( &rot, 0.01f );
-
-				(*itrRenderNode)->SetTransform( rot * (*itrRenderNode)->GetTrasform() );
 
 				D3DXMATRIX matMVP = GetCamera()->GetViewMatrix() * GetCamera()->GetProjectionMatrix();
 				m_d3deffDepth->SetMatrix( "gWVP", &( (*itrRenderNode)->GetTrasform() * matMVP ) );
@@ -436,25 +431,26 @@ void ATHRenderer::LoadTextures( char* _path )
 		{
 			// Get the filename of the file
 			std::string szFilename = search_data.cFileName;
-			
+
 			// Get the file extension
 			unsigned int unExtenPos = szFilename.find_last_of( "." );
 			std::string szFileExtension = szFilename.substr( unExtenPos );
 
 			// Make sure that it is the correct filetype
-			if( strcmp( szFileExtension.c_str(), TEXTURE_SEARCH_EXTENSION ) == 0 )
+			if( strcmp( szFileExtension.c_str(), TEXTURE_SEARCH_EXTENSION ) == 0 || strcmp( szFileExtension.c_str(), ".jpg" ) == 0 )
 			{
-				//Generate the filepath to the effect file
+				//Generate the filepath to the image
 				std::string pathToFile = std::string( _path );
 				pathToFile += szFilename;
 
-				//Generate the name of the shader
+				// Remove the leading ".\"
+				unsigned int unStartPos = pathToFile.find_first_of( "\\" );
+				pathToFile = pathToFile.substr( unStartPos + 1 );
+
+				//Generate the name of the texture
 				std::string szName = szFilename.substr( 0, unExtenPos);
 
-				ID3DXEffect* pCurrEffect(NULL);
-				ID3DXBuffer	*errors(NULL);
-
-				GetAtlas()->LoadTexture( (char*)szName.c_str(), (char*)pathToFile.c_str() );
+				GetAtlas()->LoadTexture( (char*)pathToFile.c_str(), (char*)pathToFile.c_str() );
 				std::cout << "Loaded Texture: " << pathToFile << "\n";
 
 			}

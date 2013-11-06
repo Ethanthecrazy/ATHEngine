@@ -4,8 +4,7 @@
 ATHRenderNode::ATHRenderNode() : m_bDirty( false )
 {	
 	D3DXMatrixIdentity( &m_matTransform );
-
-
+	D3DXMatrixIdentity( &m_matLocalTransform );
 }
 
 ATHRenderNode::~ATHRenderNode()

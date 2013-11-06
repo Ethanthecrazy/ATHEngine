@@ -122,8 +122,8 @@ namespace WindowsFormsApplication1
 
 
             //reading position
-            XmlNode objPos = objSize.NextSibling; 
-            Position = new Point( (width / 2) + int.Parse(objPos.Attributes["X"].Value), (height / 2) + int.Parse(objPos.Attributes["Y"].Value) );
+            XmlNode objPos = objSize.NextSibling;
+            Position = new Point(int.Parse(objPos.Attributes["X"].Value) - (width / 2), int.Parse(objPos.Attributes["Y"].Value) - (height / 2));
 
 
             //reading properties
@@ -144,8 +144,8 @@ namespace WindowsFormsApplication1
             {
                  CollisionPoints.Add(
                     new Point(
-                        (Position.X + int.Parse(vertsChildren[i].Attributes["X"].Value)),
-                        (Position.Y + int.Parse(vertsChildren[i].Attributes["Y"].Value))
+                        (Position.X + (width / 2) + int.Parse(vertsChildren[i].Attributes["X"].Value)),
+                        (Position.Y + (height / 2) + int.Parse(vertsChildren[i].Attributes["Y"].Value))
                         ));
             }
         }

@@ -94,6 +94,24 @@ void ATHObjectManager::Update( float _fDT )
 //================================================================================
 void ATHObjectManager::Shutdown()
 {
+	ClearObjects();
+	delete m_pWorld;
+}
+
+void ATHObjectManager::AddObject( ATHObject* pObject )
+{
+	if( pObject )
+		m_liObjects.push_back( pObject );
+}
+
+void ATHObjectManager::AddObjectStatic( ATHObject* pObject )
+{
+	if( pObject )
+		m_liStaticObjects.push_back( pObject );
+}
+
+void ATHObjectManager::ClearObjects()
+{
 	std::list<ATHObject*>::iterator itrObjects = m_liObjects.begin();
 	std::list<ATHObject*>::iterator itrObjectsEnd = m_liObjects.end();
 	while( itrObjects != itrObjectsEnd )
@@ -109,20 +127,6 @@ void ATHObjectManager::Shutdown()
 		delete (*itrObjects);
 		itrObjects = m_liObjects.erase( itrObjects );
 	}
-
-	delete m_pWorld;
-}
-
-void ATHObjectManager::AddObject( ATHObject* pObject )
-{
-	if( pObject )
-		m_liObjects.push_back( pObject );
-}
-
-void ATHObjectManager::AddObjectStatic( ATHObject* pObject )
-{
-	if( pObject )
-		m_liStaticObjects.push_back( pObject );
 }
 
 void ATHObjectManager::LoadObjectsFromXML()
@@ -161,6 +165,7 @@ void ATHObjectManager::LoadXML( const char* _szPath )
 	rapidxml::xml_node<>* currObject = nodeObjects->first_node();
 	while( currObject )
 	{
+
 		ATHObject* testObject = new ATHObject();
 
 		ATHRenderNode* pRenderNode = GenerateRenderNode( currObject );

@@ -33,6 +33,8 @@ public:
 	void AddObject( ATHObject* pObject );
 	void AddObjectStatic( ATHObject* pObject );
 
+	void ClearObjects();
+
 	void LoadObjectsFromXML();
 	void LoadXML( const char* _szPath );
 

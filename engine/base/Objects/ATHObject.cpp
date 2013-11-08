@@ -4,6 +4,26 @@
 #include "../ATHRenderer/ATHRenderer.h"
 #include "../ATHRenderer/ATHRenderNode.h"
 
+ATHObject::ATHObject()
+{
+
+}
+
+ATHObject::~ATHObject()
+{
+	if( m_pBody )
+	{
+		m_pBody->GetWorld()->DestroyBody( m_pBody );
+		m_pBody->SetUserData( nullptr );
+	}
+
+	if( m_pRenderNode )
+		ATHRenderer::GetInstance()->DestoryRenderNode( m_pRenderNode );
+
+	m_pBody = nullptr;
+	m_pRenderNode = nullptr;
+}
+
 D3DXMATRIX ATHObject::GetTransform()
 {
 	return m_matTransform;
@@ -52,17 +72,3 @@ void ATHObject::Update( float _fDT )
 		m_pRenderNode->SetTransform( m_matTransform );
 	}
 }
-
-void ATHObject::Shutdown()
-{
-	if( m_pBody )
-		m_pBody->SetUserData( nullptr );
-
-	if( m_pRenderNode )
-		ATHRenderer::GetInstance()->DestoryRenderNode( m_pRenderNode );
-
-	m_pBody = nullptr;
-	m_pRenderNode = nullptr;
-
-}
-

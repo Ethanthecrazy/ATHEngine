@@ -145,7 +145,7 @@ namespace WindowsFormsApplication1
                  CollisionPoints.Add(
                     new Point(
                         (Position.X + (width / 2) + int.Parse(vertsChildren[i].Attributes["X"].Value)),
-                        (Position.Y + (height / 2) + int.Parse(vertsChildren[i].Attributes["Y"].Value))
+                        (Position.Y + (height / 2) - int.Parse(vertsChildren[i].Attributes["Y"].Value))
                         ));
             }
         }
@@ -190,12 +190,12 @@ namespace WindowsFormsApplication1
                 sum += (CollisionPoints[j].X - CollisionPoints[i].X) * (CollisionPoints[j].Y + CollisionPoints[i].Y);
             }
 
-            if (sum < 0) //if counter-clock-wise
+            if (sum > 0) //if counter-clock-wise
             {
                 for (int v = 0; v < CollisionPoints.Count; ++v)
                 {
                     textWriter.WriteStartElement("Vertex");
-                    textWriter.WriteAttributeString("Y", (CollisionPoints[v].Y - (Center.Y)).ToString());
+                    textWriter.WriteAttributeString("Y", (-(CollisionPoints[v].Y - (Center.Y))).ToString());
                     textWriter.WriteAttributeString("X", (CollisionPoints[v].X - (Center.X)).ToString());
                     textWriter.WriteEndElement();
                 }
@@ -205,7 +205,7 @@ namespace WindowsFormsApplication1
                 for (int v = CollisionPoints.Count - 1; v > -1; --v)
                 {
                     textWriter.WriteStartElement("Vertex");
-                    textWriter.WriteAttributeString("Y", (CollisionPoints[v].Y - (Center.Y)).ToString());
+                    textWriter.WriteAttributeString("Y", (-(CollisionPoints[v].Y - (Center.Y))).ToString());
                     textWriter.WriteAttributeString("X", (CollisionPoints[v].X - (Center.X)).ToString());
                     textWriter.WriteEndElement();
                 }

@@ -174,6 +174,11 @@ void CGame::PostUpdate( float fDT )
 	{
 		MemoryManager::GetInstance()->DebugString();
 	}
+	if( GetAsyncKeyState( VK_F3 ) & 1 )
+	{
+		m_pObjectManager->ClearObjects();
+		m_pObjectManager->LoadObjectsFromXML();
+	}
 
 	// File Manager Update Here
 	// 

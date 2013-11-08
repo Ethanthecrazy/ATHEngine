@@ -23,6 +23,9 @@ private:
 
 public:
 	
+	ATHObject();
+	~ATHObject();
+
 	bool GetAlive() { return m_bAlive; }
 	void SetAlive( bool _bAlive ) { m_bAlive = _bAlive; }
 
@@ -35,7 +38,6 @@ public:
 	
 	virtual void Init( ATHRenderNode* m_pRenderNode = nullptr, b2Body* m_pBody = nullptr );
 	virtual void Update( float _fDT );
-	virtual void Shutdown();
 
 
 };

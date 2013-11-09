@@ -8,7 +8,7 @@ ATHObject::ATHObject()
 {
 
 }
-
+//================================================================================
 ATHObject::~ATHObject()
 {
 	if( m_pBody )
@@ -23,23 +23,22 @@ ATHObject::~ATHObject()
 	m_pBody = nullptr;
 	m_pRenderNode = nullptr;
 }
-
+//================================================================================
 D3DXMATRIX ATHObject::GetTransform()
 {
 	return m_matTransform;
 }
-
+//================================================================================
 ATHRenderNode* ATHObject::GetRenderNode()
 {
 	return m_pRenderNode;
 }
-
+//================================================================================
 b2Body*	ATHObject::GetBody()
 {
 	return m_pBody;
 }
-
-
+//================================================================================
 void ATHObject::Init( ATHRenderNode* _pRenderNode, b2Body* _pBody )
 {
 	m_bAlive = true;
@@ -53,7 +52,7 @@ void ATHObject::Init( ATHRenderNode* _pRenderNode, b2Body* _pBody )
 
 	D3DXMatrixIdentity( &m_matTransform );
 }
-
+//================================================================================
 void ATHObject::Update( float _fDT )
 {
 	if( m_pBody )
@@ -72,3 +71,4 @@ void ATHObject::Update( float _fDT )
 		m_pRenderNode->SetTransform( m_matTransform );
 	}
 }
+//================================================================================

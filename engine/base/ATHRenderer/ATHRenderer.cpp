@@ -145,22 +145,6 @@ bool ATHRenderer::Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScre
 
 	LoadShaders( SHADER_LOAD_PATH );
 
-	// Initialize the standard depth shader
-	ID3DXEffect* d3deffDepth = GetShader( SHADER_DEPTH_NAME );
-	if( d3deffDepth )
-		m_d3deffDepth = d3deffDepth;
-	else
-		std::cout << "[ERROR] ATHRenderer::Initialize() - Could not locate default depth shader " << SHADER_DEPTH_NAME << "\n"; 
-
-	m_rtDepth.Create( m_pDevice, m_unScreenWidth, m_unScreenHeight, D3DFMT_R32F );
-
-	m_fScreenDepth = 100.0f;
-	m_pCamera = new CCamera();
-	//m_pCamera->BuildPerspective(D3DX_PI / 2.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.1f, m_fScreenDepth );
-
-	m_pCamera->BuildOrthoPerspective( 20.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.01f, m_fScreenDepth );
-	m_pCamera->SetViewPosition(0.0f, 0.0f, -5.0f);
-
 	InitStandardRendering();
 
 	return true;
@@ -188,6 +172,22 @@ void ATHRenderer::InitVertexDecls()
 //================================================================================
 void ATHRenderer::InitStandardRendering()
 {
+
+	// Initialize the standard depth shader
+	ID3DXEffect* d3deffDepth = GetShader( SHADER_DEPTH_NAME );
+	if( d3deffDepth )
+		m_d3deffDepth = d3deffDepth;
+	else
+		std::cout << "[ERROR] ATHRenderer::Initialize() - Could not locate default depth shader " << SHADER_DEPTH_NAME << "\n"; 
+
+	m_rtDepth.Create( m_pDevice, m_unScreenWidth, m_unScreenHeight, D3DFMT_R32F );
+
+	m_fScreenDepth = 100.0f;
+	m_pCamera = new CCamera();
+	//m_pCamera->BuildPerspective(D3DX_PI / 2.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.1f, m_fScreenDepth );
+
+	m_pCamera->BuildOrthoPerspective( 20.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.01f, m_fScreenDepth );
+	m_pCamera->SetViewPosition(0.0f, 0.0f, -5.0f);
 
 	//Setup the debug line rendering
 	m_meshDebugLines.SetVertexDecl( GetVertexDeclaration( ATH_VERTEXDECL_COLORED ) );
@@ -219,8 +219,6 @@ void ATHRenderer::Shutdown()
 
 	if( m_pCamera )
 		delete m_pCamera;
-
-
 
 	DestoryAllNodes();
 
@@ -286,7 +284,7 @@ void ATHRenderer::RenderDepth()
 
 	m_rtDepth.RevertTarget();
 }
-
+//================================================================================
 void ATHRenderer::RenderForward()
 {
 	DRXClear( float3( 1.0f, 1.0f, 1.0f ) );
@@ -307,6 +305,7 @@ void ATHRenderer::CommitDraws()
 	DebugLinesCleanup();
 }
 //================================================================================
+// TODO: REIMPLEMENT RASTER TEXTURE
 void ATHRenderer::RasterTexture( LPDIRECT3DTEXTURE9 _texture, float _left, float _top, float _right, float _bottom )
 {
 	D3DXMATRIX _matProj;
@@ -546,7 +545,7 @@ void ATHRenderer::UnloadShaders()
 	}
 
 }
-
+//================================================================================
 ID3DXEffect* ATHRenderer::GetShader( char* _szName )
 {
 	std::string strName = _szName;
@@ -646,6 +645,7 @@ void ATHRenderer::DebugLinesAdd( float3 _fStart, float3 _fEnd, float4 _fColor )
 	m_meshDebugLines.m_vecIndicies.push_back( m_meshDebugLines.m_vecIndicies.size() );
 	m_meshDebugLines.m_vecIndicies.push_back( m_meshDebugLines.m_vecIndicies.size() );
 }
+//================================================================================
 void ATHRenderer::DebugLinesCleanup()
 {
 	m_meshDebugLines.Clear();
@@ -660,32 +660,10 @@ void ATHRenderer::BuildQuad()
 	m_Quad.m_vecPositions.push_back( float3( 0.5f, -0.5f, 0.0f ) );
 	m_Quad.m_vecPositions.push_back( float3( -0.5f, -0.5f, 0.0f ) );
 
-	//m_Quad.m_vecPositions.push_back( float3( -0.5f, 0.5f, -0.5f ) );
-	//m_Quad.m_vecPositions.push_back( float3( -0.5f, 0.5f, 0.5f ) );
-	//m_Quad.m_vecPositions.push_back( float3( 0.5f, 0.5f, 0.5f ) );
-	//m_Quad.m_vecPositions.push_back( float3( 0.5f, 0.5f, -0.5f ) );
-
-	//m_Quad.m_vecPositions.push_back( float3( -0.5f, -0.5f, -0.5f ) );
-	//m_Quad.m_vecPositions.push_back( float3( -0.5f, -0.5f, 0.5f ) );
-	//m_Quad.m_vecPositions.push_back( float3( 0.5f, -0.5f, 0.5f ) );
-	//m_Quad.m_vecPositions.push_back( float3( 0.5f, -0.5f, -0.5f ) );
-	
 	m_Quad.m_vecUVs.push_back( float2( 0.0f, 0.0f ) );
 	m_Quad.m_vecUVs.push_back( float2( 1.0f, 0.0f ) );
 	m_Quad.m_vecUVs.push_back( float2( 1.0f, 1.0f ) );
 	m_Quad.m_vecUVs.push_back( float2( 0.0f, 1.0f ) );
-
-	//m_Quad.m_vecUVs.push_back( float2( 0.0f, 0.0f ) );
-	//m_Quad.m_vecUVs.push_back( float2( 1.0f, 0.0f ) );
-	//m_Quad.m_vecUVs.push_back( float2( 0.0f, 0.0f ) );
-	//m_Quad.m_vecUVs.push_back( float2( 1.0f, 0.0f ) );
-
-	//m_Quad.m_vecUVs.push_back( float2( 0.0f, 1.0f ) );
-	//m_Quad.m_vecUVs.push_back( float2( 1.0f, 1.0f ) );
-	//m_Quad.m_vecUVs.push_back( float2( 0.0f, 1.0f ) );
-	//m_Quad.m_vecUVs.push_back( float2( 1.0f, 1.0f ) );
-
-
 
 	m_Quad.m_vecIndicies.push_back( 0 );
 	m_Quad.m_vecIndicies.push_back( 1 );
@@ -695,62 +673,9 @@ void ATHRenderer::BuildQuad()
 	m_Quad.m_vecIndicies.push_back( 2 );
 	m_Quad.m_vecIndicies.push_back( 3 );
 
-	//// TOP Indicies
-	//m_Quad.m_vecIndicies.push_back( 0 );
-	//m_Quad.m_vecIndicies.push_back( 2 );
-	//m_Quad.m_vecIndicies.push_back( 3 );
-
-	//m_Quad.m_vecIndicies.push_back( 0 );
-	//m_Quad.m_vecIndicies.push_back( 1 );
-	//m_Quad.m_vecIndicies.push_back( 2 );
-
-	//// BOTTm_vecIndicies
-	//m_Quad.m_vecIndicies.push_back( 4 );
-	//m_Quad.m_vecIndicies.push_back( 6 );
-	//m_Quad.m_vecIndicies.push_back( 5 );
-
-	//m_Quad.m_vecIndicies.push_back( 4 );
-	//m_Quad.m_vecIndicies.push_back( 7 );
-	//m_Quad.m_vecIndicies.push_back( 6 );
-
-	//// FRONm_vecIndicies
-	//m_Quad.m_vecIndicies.push_back( 0 );
-	//m_Quad.m_vecIndicies.push_back( 7 );
-	//m_Quad.m_vecIndicies.push_back( 4 );
-
-	//m_Quad.m_vecIndicies.push_back( 0 );
-	//m_Quad.m_vecIndicies.push_back( 3 );
-	//m_Quad.m_vecIndicies.push_back( 7 );
-
-	//// RIGHm_vecIndicies
-	//m_Quad.m_vecIndicies.push_back( 3 );
-	//m_Quad.m_vecIndicies.push_back( 6 );
-	//m_Quad.m_vecIndicies.push_back( 7 );
-
-	//m_Quad.m_vecIndicies.push_back( 3 );
-	//m_Quad.m_vecIndicies.push_back( 2 );
-	//m_Quad.m_vecIndicies.push_back( 6 );
-
-	//// BACKm_vecIndicies
-	//m_Quad.m_vecIndicies.push_back( 2 );
-	//m_Quad.m_vecIndicies.push_back( 1 );
-	//m_Quad.m_vecIndicies.push_back( 5 );
-
-	//m_Quad.m_vecIndicies.push_back( 2 );
-	//m_Quad.m_vecIndicies.push_back( 5 );
-	//m_Quad.m_vecIndicies.push_back( 6 );
-
-	//// LEFTm_vecIndicies
-	//m_Quad.m_vecIndicies.push_back( 1 );
-	//m_Quad.m_vecIndicies.push_back( 4 );
-	//m_Quad.m_vecIndicies.push_back( 5 );
-
-	//m_Quad.m_vecIndicies.push_back( 1 );
-	//m_Quad.m_vecIndicies.push_back( 0 );
-	//m_Quad.m_vecIndicies.push_back( 4 );
-
 	m_Quad.RebuildBuffers();
 
 	m_Quad.SetPrimativeType( D3DPT_TRIANGLELIST );
 
 }
+//================================================================================

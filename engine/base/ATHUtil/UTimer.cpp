@@ -7,7 +7,7 @@ CTimer::CTimer(void)
 
 	m_bRunning = false;
 }
-
+//================================================================================
 void CTimer::Start( void )
 {
 	if( !m_bRunning )
@@ -17,13 +17,13 @@ void CTimer::Start( void )
 		QueryPerformanceCounter((LARGE_INTEGER*)&m_llStartTick);
 	}
 }
-
+//================================================================================
 void CTimer::Reset(void)
 {
 	m_dElapsedTime = 0;
 	QueryPerformanceCounter((LARGE_INTEGER*)&m_llStartTick);
 }
-
+//================================================================================
 double CTimer::GetElapsedTime(void)
 {
 	double dElapsed = 0;
@@ -38,3 +38,4 @@ double CTimer::GetElapsedTime(void)
 
 	return dElapsed;
 }
+//================================================================================

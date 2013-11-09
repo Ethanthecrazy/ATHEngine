@@ -46,7 +46,7 @@ void ATHObjectManager::Init()
 
 	bodyDef.type = b2_staticBody;
 	bodyDef.position = b2Vec2( 0.0f, 0.0f );
-	polygon.SetAsBox( 20.0f, 1.0f, b2Vec2( 0.0f, 0.0f ), 0.0f );
+	polygon.SetAsBox( 20.0f, 1.0f, b2Vec2( 0.0f, -10.0f ), 0.0f );
 	m_pWorld->CreateBody( &bodyDef )->CreateFixture( &polygon, 1.0f );
 }
 //================================================================================
@@ -97,19 +97,19 @@ void ATHObjectManager::Shutdown()
 	ClearObjects();
 	delete m_pWorld;
 }
-
+//================================================================================
 void ATHObjectManager::AddObject( ATHObject* pObject )
 {
 	if( pObject )
 		m_liObjects.push_back( pObject );
 }
-
+//================================================================================
 void ATHObjectManager::AddObjectStatic( ATHObject* pObject )
 {
 	if( pObject )
 		m_liStaticObjects.push_back( pObject );
 }
-
+//================================================================================
 void ATHObjectManager::ClearObjects()
 {
 	std::list<ATHObject*>::iterator itrObjects = m_liObjects.begin();
@@ -128,12 +128,12 @@ void ATHObjectManager::ClearObjects()
 		itrObjects = m_liObjects.erase( itrObjects );
 	}
 }
-
+//================================================================================
 void ATHObjectManager::LoadObjectsFromXML()
 {
 	LoadXML( DEFAULT_XML_LOAD_PATH );
 }
-
+//================================================================================
 void ATHObjectManager::LoadXML( const char* _szPath )
 {
 	std::string line;
@@ -165,7 +165,6 @@ void ATHObjectManager::LoadXML( const char* _szPath )
 	rapidxml::xml_node<>* currObject = nodeObjects->first_node();
 	while( currObject )
 	{
-
 		ATHObject* testObject = new ATHObject();
 
 		ATHRenderNode* pRenderNode = GenerateRenderNode( currObject );
@@ -175,13 +174,14 @@ void ATHObjectManager::LoadXML( const char* _szPath )
 
 		AddObject( testObject );
 
+
 		currObject = currObject->next_sibling();
 	}
 
 	delete[] pString;
 
 }
-
+//================================================================================
 b2Body* ATHObjectManager::GenerateBody( rapidxml::xml_node<>* pNodeObject )
 {
 	b2Body* pReturnBody =  nullptr;
@@ -235,7 +235,7 @@ b2Body* ATHObjectManager::GenerateBody( rapidxml::xml_node<>* pNodeObject )
 
 	return pReturnBody;
 }
-
+//================================================================================
 ATHRenderNode* ATHObjectManager::GenerateRenderNode( rapidxml::xml_node<>* pNodeObject )
 {
 	ATHRenderNode* pReturnNode = nullptr;
@@ -268,3 +268,4 @@ ATHRenderNode* ATHObjectManager::GenerateRenderNode( rapidxml::xml_node<>* pNode
 
 	return pReturnNode;
 }
+//================================================================================

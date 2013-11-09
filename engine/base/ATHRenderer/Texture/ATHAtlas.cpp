@@ -8,27 +8,26 @@ ATHAtlas::ATHAtlas()
 	m_pDevice = nullptr;
 	m_pLastTex = nullptr;
 }
-
+//================================================================================
 void ATHAtlas::Initialize( LPDIRECT3DDEVICE9 _device )
 {
 	m_pDevice = _device;
 }
-
+//================================================================================
 void ATHAtlas::Shutdown()
 {
 	Clear();
 }
-
-//TODO: ADD LOAD FAILURE HANDELING!
-void ATHAtlas::LoadTexture( char* _szHandle, char* _szFilepath )
+//================================================================================
+bool ATHAtlas::LoadTexture( char* _szHandle, char* _szFilepath )
 {
 	if( strlen( _szHandle ) < 3 || strlen( _szFilepath ) < 4 )
-		return;
+		return false;
 
 	std::string szHandleString = _szHandle;
 
 	if( m_mapTextures.count( szHandleString ) )
-		return;
+		return false;
 
 	sTexNode* pNewTex = new sTexNode();
 
@@ -51,7 +50,7 @@ void ATHAtlas::LoadTexture( char* _szHandle, char* _szFilepath )
 	if( FAILED( result ) )
 	{
 		delete pNewTex;
-		return;
+		return false;
 	}
 
 	pNewTex->m_szName = szHandleString;
@@ -59,11 +58,18 @@ void ATHAtlas::LoadTexture( char* _szHandle, char* _szFilepath )
 	ZeroMemory( &pNewTex->m_SurfDesc, sizeof(pNewTex->m_SurfDesc) );
 	pNewTex->m_lpTexture->GetLevelDesc( 0, &pNewTex->m_SurfDesc );
 
+	if( m_mapTextures.count( szHandleString ) > 0 )
+	{
+		delete pNewTex;
+		return false;
+	}
+
 	m_mapTextures[ szHandleString ] = pNewTex;
 
+	return true;
 
 }
-
+//================================================================================
 void ATHAtlas::UnloadTexture( LPDIRECT3DTEXTURE9 _texture )
 {
 	std::map< std::string, sTexNode* >::iterator itrCurr = m_mapTextures.begin();
@@ -81,7 +87,7 @@ void ATHAtlas::UnloadTexture( LPDIRECT3DTEXTURE9 _texture )
 		itrCurr++;
 	}
 }
-
+//================================================================================
 ATHAtlas::ATHTextureHandle ATHAtlas::GetTexture( char* _szHandle )
 {
 	std::string szHandleString = _szHandle;
@@ -91,10 +97,9 @@ ATHAtlas::ATHTextureHandle ATHAtlas::GetTexture( char* _szHandle )
 		return ATHTextureHandle( m_mapTextures[ szHandleString ] );
 	}
 
-	//TODO: Returning nullptr!?
 	return nullptr;
 }
-
+//================================================================================
 float2 ATHAtlas::GetTexDimensions( char* _szHandle )
 {
 	float2 toReturn;
@@ -109,7 +114,7 @@ float2 ATHAtlas::GetTexDimensions( char* _szHandle )
 
 	return toReturn;
 }
-
+//================================================================================
 void ATHAtlas::Clear()
 {
 	std::map< std::string, sTexNode* >::iterator itrCurr = m_mapTextures.begin();
@@ -124,3 +129,4 @@ void ATHAtlas::Clear()
 
 	m_mapTextures.clear();
 }
+//================================================================================

@@ -179,10 +179,11 @@ void CGame::PostUpdate( float fDT )
 		m_pObjectManager->ClearObjects();
 		m_pObjectManager->LoadObjectsFromXML();
 	}
+	if( GetAsyncKeyState( VK_F4 ) & 1 )
+	{ 
+		m_pObjectManager->LoadObjectsFromXML();
+	}
 
-	// File Manager Update Here
-	// 
-	//////////
 }
 
 void CGame::Render()

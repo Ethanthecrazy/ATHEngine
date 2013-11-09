@@ -9,7 +9,7 @@ ATHRenderPass::ATHRenderPass() :	m_Process( NULL ),
 {
 
 }
-
+//================================================================================
 ATHRenderPass::ATHRenderPass(	char* _szName, 
 								unsigned int _unPriority, 
 								ID3DXEffect* _pShader, 
@@ -24,26 +24,26 @@ ATHRenderPass::ATHRenderPass(	char* _szName,
 {
 	strcpy_s( m_szTechnique, 24, _szTechnique );  
 }
-
+//================================================================================
 void ATHRenderPass::AddNodeToPass( ATHRenderNode* _node, unsigned int _priority )
 {
 	_node->AddPassName( m_szPassName );
 	m_liNodes.push_back( _node );
 	m_bDepthDirty = true;
 }
-
+//================================================================================
 void ATHRenderPass::RemoveNodeFromPass( ATHRenderNode* _node )
 {
 	_node->RemovePassname( m_szPassName );
 	m_liNodes.remove( _node );
 }
-
+//================================================================================
 void ATHRenderPass::SortNodes()
 {
 	// TODO: Add functionality for sorting nodes
 	m_bDepthDirty = false;
 }
-
+//================================================================================
 void ATHRenderPass::PreExecute()
 {
 	if( m_bDepthDirty )
@@ -51,6 +51,7 @@ void ATHRenderPass::PreExecute()
 		SortNodes();
 	}
 }
+//================================================================================
 void ATHRenderPass::Execute( ATHRenderer* _pRenderer )
 {
 	if( m_pShader == nullptr )
@@ -81,7 +82,7 @@ void ATHRenderPass::Execute( ATHRenderer* _pRenderer )
 	}
 
 }
-
+//================================================================================
 void ATHRenderPass::PostExecute()
 {
 

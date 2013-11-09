@@ -63,7 +63,7 @@ public:
 	void Initialize( LPDIRECT3DDEVICE9 _device ); 
 	void Shutdown();
 
-	void LoadTexture( char* _szHandle, char* _szFilepath );
+	bool LoadTexture( char* _szHandle, char* _szFilepath );
 	void UnloadTexture( LPDIRECT3DTEXTURE9 _texture );
 
 	ATHTextureHandle GetTexture( char* _szHandle );

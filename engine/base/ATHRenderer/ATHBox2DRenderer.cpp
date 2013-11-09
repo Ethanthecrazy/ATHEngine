@@ -20,7 +20,6 @@
 
 #include "ATHRenderer.h"
 
-
 void ATHBox2DRenderer::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color)
 {
 	ATHRenderer* pRenderer = ATHRenderer::GetInstance();
@@ -31,7 +30,7 @@ void ATHBox2DRenderer::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, co
 
 	pRenderer->DebugLinesAdd( float3( vertices[0].x, vertices[0].y, 0.0f ), float3( vertices[vertexCount-1].x, vertices[vertexCount-1].y, 0.0f ), float4( color.r, color.g, color.b, 1.0f ) );
 }
-
+//================================================================================
 void ATHBox2DRenderer::DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color)
 {
 	ATHRenderer* pRenderer = ATHRenderer::GetInstance();
@@ -43,6 +42,7 @@ void ATHBox2DRenderer::DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCoun
 	pRenderer->DebugLinesAdd( float3( vertices[0].x, vertices[0].y, 0.0f ), float3( vertices[vertexCount-1].x, vertices[vertexCount-1].y, 0.0f ), float4( color.r, color.g, color.b, 1.0f ) );
 
 }
+//================================================================================
 void ATHBox2DRenderer::DrawCircle(const b2Vec2& center, float32 radius, const b2Color& color)
 {
 	const float32 k_segments = 16.0f;
@@ -51,37 +51,37 @@ void ATHBox2DRenderer::DrawCircle(const b2Vec2& center, float32 radius, const b2
 	for (int32 i = 0; i < k_segments; ++i)
 	{
 		b2Vec2 v = center + radius * b2Vec2(cosf(theta), sinf(theta));
-		//glVertex2f(v.x, v.y);
 		theta += k_increment;
 	}
 }
-
+//================================================================================
 void ATHBox2DRenderer::DrawSolidCircle(const b2Vec2& center, float32 radius, const b2Vec2& axis, const b2Color& color)
 {
 
 }
-
+//================================================================================
 void ATHBox2DRenderer::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& color)
 {
 	ATHRenderer::GetInstance()->DebugLinesAdd( float3( p1.x, p1.y, 0.0f ), float3( p2.x, p2.y, 0.0f ), float4( color.r, color.b, color.g, 1.0f ) );
 }
-
+//================================================================================
 void ATHBox2DRenderer::DrawTransform(const b2Transform& xf)
 {
 
 }
-
+//================================================================================
 void ATHBox2DRenderer::DrawPoint(const b2Vec2& p, float32 size, const b2Color& color)
 {
 
 }
-
+//================================================================================
 void ATHBox2DRenderer::DrawString(int x, int y, const char *string, ...)
 {
 
 }
-
+//================================================================================
 void ATHBox2DRenderer::DrawAABB(b2AABB* aabb, const b2Color& c)
 {
 
 }
+//================================================================================

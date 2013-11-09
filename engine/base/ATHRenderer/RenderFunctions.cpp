@@ -19,7 +19,7 @@ void RenderTest( ATHRenderer* pRenderer, ID3DXEffect* _pShader, ATHRenderNode* p
 	pRenderer->DrawMesh( pNode->GetMesh() );
 
 }
-
+//================================================================================
 void DebugLineRender( ATHRenderer* pRenderer, ID3DXEffect* _pShader, ATHRenderNode* pNode )
 {
 	pNode->GetMesh()->RebuildBuffers();
@@ -32,3 +32,4 @@ void DebugLineRender( ATHRenderer* pRenderer, ID3DXEffect* _pShader, ATHRenderNo
 
 	pRenderer->DrawMesh( pNode->GetMesh() );
 }
+//================================================================================

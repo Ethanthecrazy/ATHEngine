@@ -76,3 +76,4 @@ void ATHRenderTarget::DeleteTarget(void)
 		m_pTargetTexture = nullptr;
 	}
 }
+//================================================================================

@@ -29,12 +29,4 @@ public:
 
 };
 
-
-
-
-
-
-
-
-
 #endif //ATHRenderTarget_H_

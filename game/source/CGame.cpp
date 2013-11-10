@@ -5,13 +5,13 @@
 #include <time.h>
 using std::string;
 
-#include "../ATHUtil/MemoryManager.h"
-#include "../ATHRenderer/ATHRenderer.h"
-#include "../Objects/ATHObjectManager.h"
+#include "../../engine/ATHUtil/MemoryManager.h"
+#include "../../engine/ATHRenderer/ATHRenderer.h"
+#include "../../engine/Objects/ATHObjectManager.h"
 
 // For testing purposes
-#include "../ATHRenderer/RenderFunctions.h"
-#include "../Objects/ATHObject.h"
+#include "../../engine/ATHRenderer/RenderFunctions.h"
+#include "../../engine/Objects/ATHObject.h"
 //////////
 
 // default constructor

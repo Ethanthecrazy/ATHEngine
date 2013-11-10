@@ -387,7 +387,7 @@ void MemoryManager::DebugString()
 			std::cout << m_Usages[i].m_szName;
 
 			unsigned int strLen = MM_NAME_LENGTH - strlen( m_Usages[i].m_szName );
-			for( unsigned int i = 0; i < strLen; i += 8 )
+			for( unsigned int unTabs = 0; unTabs < strLen; unTabs += 8 )
 				std::cout << "\t";
 
 			unTotalUsage += m_Usages[i].m_unAmount;

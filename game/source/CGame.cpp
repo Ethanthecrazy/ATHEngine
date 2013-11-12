@@ -8,9 +8,9 @@ using std::string;
 #include "../../engine/ATHUtil/MemoryManager.h"
 #include "../../engine/ATHRenderer/ATHRenderer.h"
 #include "../../engine/Objects/ATHObjectManager.h"
+#include "RenderFunctions.h"
 
 // For testing purposes
-#include "../../engine/ATHRenderer/RenderFunctions.h"
 #include "../../engine/Objects/ATHObject.h"
 //////////
 
@@ -66,48 +66,8 @@ void CGame::Initialize(HWND _hWnd, HINSTANCE hInstance,
 
 void CGame::TestInit()
 {
-	
-	//ATHRenderNode* pTestNode = m_pRenderer->CreateRenderNode( "test", 0 );
-	//pTestNode->SetMesh( m_pRenderer->GetQuad() );
-	//pTestNode->SetTexture( m_pRenderer->GetAtlas()->GetTexture( "wall" ) );
-	//D3DXMATRIX matTrans;
-	//D3DXMatrixTranslation( &matTrans, (rand() % 1000 / 100.0f ) - 5.0f, (rand() % 1000 / 100.0f ) - 5.0f, 0.0f );
-	//D3DXMATRIX scale;
-	//D3DXMatrixScaling( &scale, 2.0f, 2.0f, 2.0f );
-	//pTestNode->SetTransform( scale * matTrans ); 
-	
+		
 	m_pRenderer->CreateRenderPass( "test", 1, RenderTest, "texture", true );
-
-	//b2Vec2 vertices[4];
-	//vertices[0].Set(0.5f, 0.5f);
-	//vertices[1].Set(-0.5f, 0.5f);
-	//vertices[2].Set(-0.5f, -0.5f);
-	//vertices[3].Set(0.5f, -0.5f);
-
-	//int32 count = 4;
-	//b2PolygonShape polygon;
-	//b2BodyDef bodyDef;
-
-	//polygon.Set(vertices, count);
-	//bodyDef.type = b2_dynamicBody;
-	//
-	//for( unsigned int i = 0; i < 50; ++i )
-	//{
-	//	bodyDef.position = b2Vec2( 0.0f, i * 2.0f + 3.0f );
-
-	//	b2Body* pBody = m_pObjectManager->m_pWorld->CreateBody( &bodyDef );
-	//	pBody->CreateFixture( &polygon, 1.0f );
-
-	//	ATHRenderNode* pTestNode = m_pRenderer->CreateRenderNode( "test", 0 );
-	//	pTestNode->SetMesh( &m_pRenderer->m_Quad );
-	//	pTestNode->SetTexture( m_pRenderer->GetAtlas()->GetTexture( "wall" ) );
-
-	//	ATHObject* testObject = new ATHObject();
-	//	testObject->Init( pTestNode, pBody );
-
-	//	m_pObjectManager->AddObject( testObject );
-	//}
-
 	m_pObjectManager->LoadObjectsFromXML();
 }
 

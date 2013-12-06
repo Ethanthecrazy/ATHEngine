@@ -1,1 +1,28 @@
-<?xml version="1.0"?><World Version="1.0.0.0"><Objects Number_of_Objects="1"><Object Image_Path="art\textures\sean.png"><Size Height="686" Width="588" /><Position Y="343" X="294" /><Properties Number_of_Properties="0" /><Collision_Geometry Number_of_Verts="16"><Vertex Y="-140" X="-244" /><Vertex Y="-292" X="-123" /><Vertex Y="-332" X="-48" /><Vertex Y="-326" X="41" /><Vertex Y="-284" X="117" /><Vertex Y="-132" X="245" /><Vertex Y="1" X="280" /><Vertex Y="79" X="282" /><Vertex Y="167" X="258" /><Vertex Y="253" X="198" /><Vertex Y="292" X="110" /><Vertex Y="333" X="11" /><Vertex Y="325" X="-74" /><Vertex Y="288" X="-145" /><Vertex Y="209" X="-239" /><Vertex Y="56" X="-289" /></Collision_Geometry></Object></Objects></World>
+<?xml version="1.0"?>
+<World Version="1.0.0.0">
+  <Objects Number_of_Objects="1">
+    <Object Image_Path="art\textures\sean.png">
+      <Size Height="512" Width="512" />
+      <Position Y="256" X="256" />
+      <Properties Number_of_Properties="0" />
+      <Collision_Geometry Number_of_Verts="16">
+        <Vertex Y="-227" X="-206" />
+        <Vertex Y="-379" X="-85" />
+        <Vertex Y="-419" X="-10" />
+        <Vertex Y="-413" X="79" />
+        <Vertex Y="-371" X="155" />
+        <Vertex Y="-219" X="283" />
+        <Vertex Y="-86" X="318" />
+        <Vertex Y="-8" X="320" />
+        <Vertex Y="80" X="296" />
+        <Vertex Y="166" X="236" />
+        <Vertex Y="205" X="148" />
+        <Vertex Y="246" X="49" />
+        <Vertex Y="238" X="-36" />
+        <Vertex Y="201" X="-107" />
+        <Vertex Y="122" X="-201" />
+        <Vertex Y="-31" X="-251" />
+      </Collision_Geometry>
+    </Object>
+  </Objects>
+</World>

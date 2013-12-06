@@ -2,6 +2,7 @@
 #define ATHRENDERPASS_H
 
 #include "ATHRenderNode.h"
+#include "ATHRenderFunction.h"
 
 #include <map>
 #include <list>

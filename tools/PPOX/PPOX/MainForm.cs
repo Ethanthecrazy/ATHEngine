@@ -275,6 +275,7 @@ namespace WindowsFormsApplication1
                 return;
 
             XmlTextWriter textWriter = new XmlTextWriter(_fileName, null);
+            textWriter.Formatting = Formatting.Indented;
             textWriter.WriteStartDocument();
 
             textWriter.WriteStartElement("World");

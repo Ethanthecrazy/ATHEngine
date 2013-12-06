@@ -72,6 +72,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ATHBox2DRenderer.h" />
+    <ClInclude Include="ATHRenderFunction.h" />
     <ClInclude Include="ATHRenderFunctions.h" />
     <ClInclude Include="ATHRenderTarget.h" />
     <ClInclude Include="Texture\ATHAtlas.h" />

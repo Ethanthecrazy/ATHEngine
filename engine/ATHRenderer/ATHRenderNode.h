@@ -17,9 +17,6 @@ class ATHRenderer;
 
 const int RENDERNODE_TEXTURE_COUNT = 3;
 
-//Function pointer
-typedef void (*RenderFunc)(ATHRenderer* renderer, ID3DXEffect* _pShader, ATHRenderNode* node);
-
 class ATHRenderNode
 {
 

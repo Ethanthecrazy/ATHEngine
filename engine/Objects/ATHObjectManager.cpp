@@ -136,22 +136,21 @@ void ATHObjectManager::LoadObjectsFromXML()
 //================================================================================
 void ATHObjectManager::LoadXML( const char* _szPath )
 {
-	std::string line;
 	std::ifstream myfile ( _szPath );
 	if (!myfile.is_open())
 		return;
 
 	// Get the size of the file
 	size_t begin = (size_t)myfile.tellg();
-	myfile.seekg(0, std::ios::end );
+	myfile.seekg(0, myfile.end );
 	size_t end = (size_t)myfile.tellg();
-	size_t size = end - begin;
-	myfile.seekg(0, std::ios_base::beg);
+	size_t tSize = end - begin;
+	myfile.seekg(0, myfile.beg );
 
 	// Load the data into an array and give it a null terminator.
-	char* pString = new char[size + 1];
-	myfile.read( pString, size );
-	pString[ size ] = '\0'; 
+	char* pString = new char[tSize];
+	memset( pString, 0, tSize );
+	myfile.read( pString, tSize );
 
 	myfile.close();
 
@@ -173,7 +172,6 @@ void ATHObjectManager::LoadXML( const char* _szPath )
 		testObject->Init( pRenderNode, pBody );
 
 		AddObject( testObject );
-
 
 		currObject = currObject->next_sibling();
 	}

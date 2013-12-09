@@ -114,6 +114,7 @@ void CGame::PostUpdate( float fDT )
 	Render();
 	//////////
 
+	//Replace with an in-engine menu
 	if( GetAsyncKeyState( 'W' ) )
 	{
 		ATHRenderer::GetInstance()->GetCamera()->ViewTranslateLocalZ( 0.1f );

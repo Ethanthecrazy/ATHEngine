@@ -35,19 +35,19 @@ void ATHObjectManager::Init()
 	pDebugRenderer->SetFlags(flags);
 	m_pWorld->SetDebugDraw( pDebugRenderer );
 
-	b2Vec2 vertices[3];
-	vertices[0].Set(0.0f, 0.0f);
-	vertices[1].Set(1.0f, 0.0f);
-	vertices[2].Set(0.0f, 1.0f);
+	//b2Vec2 vertices[3];
+	//vertices[0].Set(0.0f, 0.0f);
+	//vertices[1].Set(1.0f, 0.0f);
+	//vertices[2].Set(0.0f, 1.0f);
 
-	int32 count = 3;
-	b2PolygonShape polygon;
-	b2BodyDef bodyDef;
+	//int32 count = 3;
+	//b2PolygonShape polygon;
+	//b2BodyDef bodyDef;
 
-	bodyDef.type = b2_staticBody;
-	bodyDef.position = b2Vec2( 0.0f, 0.0f );
-	polygon.SetAsBox( 20.0f, 1.0f, b2Vec2( 0.0f, -10.0f ), 0.0f );
-	m_pWorld->CreateBody( &bodyDef )->CreateFixture( &polygon, 1.0f );
+	//bodyDef.type = b2_staticBody;
+	//bodyDef.position = b2Vec2( 0.0f, 0.0f );
+	//polygon.SetAsBox( 20.0f, 1.0f, b2Vec2( 0.0f, -10.0f ), 0.0f );
+	//m_pWorld->CreateBody( &bodyDef )->CreateFixture( &polygon, 1.0f );
 }
 //================================================================================
 void ATHObjectManager::Update( float _fDT )

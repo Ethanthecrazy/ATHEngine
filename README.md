@@ -1,5 +1,7 @@
 #ATHEngine
 ##Setup
+###Requirements:
+####DirectX SDK
 ###Visual Studio
 ####Under Configuration properties for the Game project:
 #####Replace Debugging->Command with "$(ProjectDir)..\..\..\game\game.exe"

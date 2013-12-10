@@ -27,7 +27,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Objects", "..\engine\Object
 		{994C58BD-9E62-4403-9ABF-5729C5D8BA97} = {994C58BD-9E62-4403-9ABF-5729C5D8BA97}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ATHScriptManager", "..\ATHScriptManager\ATHScriptManager.vcxproj", "{8E34DE86-881F-4EFA-8E38-09E64F018C8D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ATHScriptManager", "..\engine\ATHScriptManager\ATHScriptManager.vcxproj", "{8E34DE86-881F-4EFA-8E38-09E64F018C8D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

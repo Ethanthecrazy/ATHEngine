@@ -12,6 +12,7 @@ using std::string;
 
 // For testing purposes
 #include "../../engine/Objects/ATHObject.h"
+#include "../../engine/ATHScriptManager/ATHScriptManager.h"
 //////////
 
 // default constructor
@@ -69,6 +70,7 @@ void CGame::TestInit()
 		
 	m_pRenderer->CreateRenderPass( "test", 1, RenderTest, "texture", true );
 	m_pObjectManager->LoadObjectsFromXML();
+	std::cout << "Got Sum " << ATHLUATest() << " from LUA.\n";
 }
 
 // execution

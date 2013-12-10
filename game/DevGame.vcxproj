@@ -54,7 +54,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Debug/ATHRenderer.lib;Debug/ATHUtil.lib;Debug/Box2D.lib;Debug/Objects.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Debug/ATHRenderer.lib;Debug/ATHUtil.lib;Debug/Box2D.lib;Debug/Objects.lib;Debug/ATHScriptManager.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(TargetPath)" "$(SolutionDir)..\Build\"</Command>

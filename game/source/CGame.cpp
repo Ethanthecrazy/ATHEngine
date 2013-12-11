@@ -70,7 +70,7 @@ void CGame::TestInit()
 		
 	m_pRenderer->CreateRenderPass( "test", 1, RenderTest, "texture", true );
 	m_pObjectManager->LoadObjectsFromXML();
-	std::cout << "Got Sum " << ATHLUATest() << " from LUA.\n";
+	std::cout << "Got Sum " << ATHObjectLuaTest() << " from LUA.\n";
 }
 
 // execution

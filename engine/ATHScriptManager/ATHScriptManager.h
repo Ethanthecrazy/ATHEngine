@@ -7,31 +7,29 @@ extern "C" {
 #include "lua\lauxlib.h"
 }
 
+class ATHObject;
 class ATHScriptManager
 {
+private:
 
+	lua_State* m_pLuaState;
+	ATHObject* m_pLastObject;
+
+public:
+
+	ATHScriptManager();
+	~ATHScriptManager();
+
+	int LoadScriptFromFile( char* _szPath );
+	
+	// Runs a function
+	int RunFunc( char* _szName, unsigned int _unNumArgs, ... );
+
+	// Runs a function after loading the objects data into the scope
+	int RunFuncObjectScope( char* _szName, ATHObject* _pObject, unsigned int _unNumArgs, ... );
 };
 
-int ATHLUATest()
-{
-	lua_State* L = luaL_newstate();
-	luaL_openlibs( L );
+int ATHObjectLuaTest();
 
-	luaL_dofile( L, "data/test.lua" );
-
-	lua_getglobal( L, "add" );
-	lua_pushnumber( L, 9 );
-	lua_pushnumber( L, 63 );
-
-	lua_call( L, 2, 1 );
-
-	int nSum = (int)lua_tointeger( L, -1 );
-	lua_pop( L, 1 );
-
-	lua_close( L );
-
-	return nSum;
-
-}
 
 #endif

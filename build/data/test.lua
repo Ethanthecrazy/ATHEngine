@@ -1,5 +1,4 @@
-print "Hello, Cassie!"
-
 function add ( x, y )
-	return x * y
+	math.randomseed(os.time())
+	return x + y
 end

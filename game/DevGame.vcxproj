@@ -79,12 +79,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\CGame.cpp" />
-    <ClCompile Include="source\RenderFunctions.cpp" />
     <ClCompile Include="source\winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\CGame.h" />
-    <ClInclude Include="source\RenderFunctions.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

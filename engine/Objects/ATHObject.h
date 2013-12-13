@@ -5,12 +5,20 @@
 #include <list>
 #include "../ATHUtil/hDataTypes.h"
 
+static const unsigned int ATHOBJECT_MAX_NAME_LENGTH = 64;
+
 class b2Body;
 class ATHRenderNode;
 
 class ATHObject
 {
 private:
+
+	// Unique instance ID
+	unsigned int m_unID;
+
+	//Name
+	char m_szName[ ATHOBJECT_MAX_NAME_LENGTH ];
 
 	// If the object is not going to be destroyed
 	bool m_bAlive;
@@ -30,7 +38,7 @@ public:
 	void SetAlive( bool _bAlive ) { m_bAlive = _bAlive; }
 
 	bool GetActive() { return m_bActive; }
-	void SetAtive( bool _bActive ) { m_bActive = _bActive; }
+	void SetActive( bool _bActive ) { m_bActive = _bActive; }
 
 	D3DXMATRIX		GetTransform();
 	ATHRenderNode*	GetRenderNode();

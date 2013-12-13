@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ATHLuaObjectFunctions.cpp" />
     <ClCompile Include="ATHScriptManager.cpp" />
     <ClCompile Include="lua\lapi.c" />
     <ClCompile Include="lua\lauxlib.c" />
@@ -48,6 +49,7 @@
     <ClCompile Include="lua\lzio.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ATHLuaObjectFunctions.h" />
     <ClInclude Include="ATHScriptManager.h" />
     <ClInclude Include="lua\lapi.h" />
     <ClInclude Include="lua\lauxlib.h" />

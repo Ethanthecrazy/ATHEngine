@@ -48,6 +48,8 @@ void ATHObjectManager::Init()
 	//bodyDef.position = b2Vec2( 0.0f, 0.0f );
 	//polygon.SetAsBox( 20.0f, 1.0f, b2Vec2( 0.0f, -10.0f ), 0.0f );
 	//m_pWorld->CreateBody( &bodyDef )->CreateFixture( &polygon, 1.0f );
+
+	LoadXML( DEFAULT_XML_LOAD_PATH );
 }
 //================================================================================
 void ATHObjectManager::Update( float _fDT )
@@ -243,7 +245,7 @@ ATHRenderNode* ATHObjectManager::GenerateRenderNode( rapidxml::xml_node<>* pNode
 
 	if( strlen( szTexturePath ) > 0 )
 	{
-		pReturnNode = ATHRenderer::GetInstance()->CreateRenderNode( "test", 0 );
+		pReturnNode = ATHRenderer::GetInstance()->CreateRenderNode( "Texture", 0 );
 		ATHAtlas::ATHTextureHandle texHandle = ATHRenderer::GetInstance()->GetAtlas()->GetTexture( szTexturePath );
 
 		pReturnNode->SetMesh( &ATHRenderer::GetInstance()->m_Quad );

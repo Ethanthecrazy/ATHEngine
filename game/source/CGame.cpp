@@ -8,15 +8,18 @@ using std::string;
 #include "../../engine/ATHUtil/MemoryManager.h"
 #include "../../engine/ATHRenderer/ATHRenderer.h"
 #include "../../engine/Objects/ATHObjectManager.h"
-#include "RenderFunctions.h"
+#include "../../engine/ATHScriptManager/ATHScriptManager.h"
 
 // For testing purposes
 #include "../../engine/Objects/ATHObject.h"
 #include "../../engine/ATHScriptManager/ATHScriptManager.h"
+#include "../../engine/ATHScriptManager/ATHLuaObjectFunctions.h"
 //////////
 
 // default constructor
 CGame::CGame() :	m_pObjectManager( nullptr ),
+					m_pRenderer( nullptr ),
+					m_pScriptManager( nullptr ),
 					m_fFrameTime( 0.0f ), 
 					m_unFrameCounter( 0 )
 {
@@ -53,6 +56,8 @@ void CGame::Initialize(HWND _hWnd, HINSTANCE hInstance,
 	m_pObjectManager = new ATHObjectManager();
 	m_pObjectManager->Init();
 
+	m_pScriptManager = new ATHScriptManager();
+
 	srand( unsigned int( time( 0 ) ) );
 
 
@@ -67,10 +72,9 @@ void CGame::Initialize(HWND _hWnd, HINSTANCE hInstance,
 
 void CGame::TestInit()
 {
-		
-	m_pRenderer->CreateRenderPass( "test", 1, RenderTest, "texture", true );
-	m_pObjectManager->LoadObjectsFromXML();
-	std::cout << "Got Sum " << ATHObjectLuaTest() << " from LUA.\n";
+	m_pScriptManager->LoadScriptFromFile( "data/test.lua" );
+	m_pScriptManager->RegisterFunc( average, "average" );
+	m_pScriptManager->RunFunc( "AverageTest", 2, 0, 20 );
 }
 
 // execution
@@ -163,6 +167,8 @@ void CGame::Render()
 // cleanup
 void CGame::Shutdown()
 {
+	delete m_pScriptManager;
+
 	m_pObjectManager->Shutdown();
 	delete m_pObjectManager;
 

@@ -189,10 +189,13 @@ void ATHRenderer::InitStandardRendering()
 	m_pCamera->BuildOrthoPerspective( 20.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.01f, m_fScreenDepth );
 	m_pCamera->SetViewPosition(0.0f, 0.0f, -5.0f);
 
+	//Default texture rendering
+	CreateRenderPass( "Texture", 1, ATHRenderFuncTexture, "texture", true );
+
 	//Setup the debug line rendering
 	m_meshDebugLines.SetVertexDecl( GetVertexDeclaration( ATH_VERTEXDECL_COLORED ) );
 
-	CreateRenderPass( "debugline", 0, DebugLineRender, "coloredline" );
+	CreateRenderPass( "debugline", 0, ATHRenderFuncDebugLines, "coloredline" );
 	ATHRenderNode* pNode =  CreateRenderNode( "debugline", 0 );
 	pNode->SetMesh( &m_meshDebugLines );
 	

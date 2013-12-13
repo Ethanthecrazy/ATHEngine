@@ -11,6 +11,7 @@ using namespace std;
 
 class ATHRenderer;
 class ATHObjectManager;
+class ATHScriptManager;
 
 class CGame
 {
@@ -30,6 +31,8 @@ class CGame
 
 	ATHRenderer*		m_pRenderer;
 	ATHObjectManager*	m_pObjectManager;
+	ATHScriptManager*   m_pScriptManager;
+
 
 	////////////////////
 

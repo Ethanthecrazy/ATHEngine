@@ -55,7 +55,7 @@ int ATHScriptManager::RunFunc( char* _szName, unsigned int _unNumArgs, ... )
 	// Get the return value
 	int toReturn = (int)lua_tointeger( m_pLuaState, 0 );
 
-	// Clean up the stack
+	// Clean up the stack 
 	lua_pop( m_pLuaState, 1 );
 
 	return toReturn;

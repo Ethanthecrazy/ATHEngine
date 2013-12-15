@@ -3,7 +3,7 @@
 ###Requirements:
 ####DirectX SDK
 ###Visual Studio
-####Under Configuration properties for the Game project:
+####Under Configuration properties for the DevGame project:
 #####Replace Debugging->Command with "$(ProjectDir)..\build\devgame.exe"
 #####Replace Debugging->Working Directory with "$(ProjectDir)..\build\"
 ##System-Level Components

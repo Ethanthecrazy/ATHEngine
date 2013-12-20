@@ -166,14 +166,17 @@ void ATHObjectManager::LoadXML( const char* _szPath )
 	rapidxml::xml_node<>* currObject = nodeObjects->first_node();
 	while( currObject )
 	{
-		ATHObject* testObject = new ATHObject();
+		//for( unsigned int i = 0; i < 100; ++i )
+		{
+			ATHObject* pNewObject = new ATHObject();
 
-		ATHRenderNode* pRenderNode = GenerateRenderNode( currObject );
-		b2Body*	pBody = GenerateBody( currObject );
+			ATHRenderNode* pRenderNode = GenerateRenderNode( currObject );
+			b2Body*	pBody = GenerateBody( currObject );
 
-		testObject->Init( pRenderNode, pBody );
+			pNewObject->Init( pRenderNode, pBody );
 
-		AddObject( testObject );
+			AddObject( pNewObject );
+		}
 
 		currObject = currObject->next_sibling();
 	}

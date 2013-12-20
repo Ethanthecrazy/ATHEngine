@@ -3,6 +3,11 @@
 
 #include "ATHRenderer.h"
 
+bool compare_RenderNodeDepth( ATHRenderNode* _first, ATHRenderNode* _second )
+{
+	return ( _first->GetTrasform()._43 < _second->GetTrasform()._43 );
+}
+
 ATHRenderPass::ATHRenderPass() :	m_Process( NULL ),
 									m_bDepthDirty( false ),
 									m_bRenderDepth( false )
@@ -41,6 +46,9 @@ void ATHRenderPass::RemoveNodeFromPass( ATHRenderNode* _node )
 void ATHRenderPass::SortNodes()
 {
 	// TODO: Add functionality for sorting nodes
+
+	m_liNodes.sort( compare_RenderNodeDepth );
+
 	m_bDepthDirty = false;
 }
 //================================================================================

@@ -112,38 +112,6 @@ void CGame::PostUpdate( float fDT )
 	// Do Render Processing
 	Render();
 	//////////
-
-	//Replace with an in-engine menu
-	if( GetAsyncKeyState( 'W' ) )
-	{
-		ATHRenderer::GetInstance()->GetCamera()->ViewTranslateLocalZ( 0.1f );
-	}
-	if( GetAsyncKeyState( 'S' ) )
-	{
-		ATHRenderer::GetInstance()->GetCamera()->ViewTranslateLocalZ( -0.1f );
-	}
-	if( GetAsyncKeyState( 'A' ) )
-	{
-		
-	}
-	if( GetAsyncKeyState( 'D' ) )
-	{
-		
-	}
-	if( GetAsyncKeyState( VK_F2 ) & 1 )
-	{
-		MemoryManager::GetInstance()->DebugString();
-	}
-	if( GetAsyncKeyState( VK_F3 ) & 1 )
-	{
-		m_pObjectManager->ClearObjects();
-		m_pObjectManager->LoadObjectsFromXML();
-	}
-	if( GetAsyncKeyState( VK_F4 ) & 1 )
-	{ 
-		m_pObjectManager->LoadObjectsFromXML();
-	}
-
 }
 
 void CGame::Render()

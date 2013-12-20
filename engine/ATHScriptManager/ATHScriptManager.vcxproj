@@ -49,6 +49,7 @@
     <ClCompile Include="lua\lzio.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ATHLuaObject.h" />
     <ClInclude Include="ATHLuaObjectFunctions.h" />
     <ClInclude Include="ATHScriptManager.h" />
     <ClInclude Include="lua\lapi.h" />

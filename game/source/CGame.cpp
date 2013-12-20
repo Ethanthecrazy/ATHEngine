@@ -12,8 +12,6 @@ using std::string;
 
 // For testing purposes
 #include "../../engine/Objects/ATHObject.h"
-#include "../../engine/ATHScriptManager/ATHScriptManager.h"
-#include "../../engine/ATHScriptManager/ATHLuaObjectFunctions.h"
 //////////
 
 // default constructor
@@ -56,8 +54,6 @@ void CGame::Initialize(HWND _hWnd, HINSTANCE hInstance,
 	m_pObjectManager = new ATHObjectManager();
 	m_pObjectManager->Init();
 
-	m_pScriptManager = new ATHScriptManager();
-
 	srand( unsigned int( time( 0 ) ) );
 
 
@@ -72,9 +68,6 @@ void CGame::Initialize(HWND _hWnd, HINSTANCE hInstance,
 
 void CGame::TestInit()
 {
-	m_pScriptManager->LoadScriptFromFile( "data/test.lua" );
-	m_pScriptManager->RegisterFunc( average, "average" );
-	m_pScriptManager->RunFunc( "AverageTest", 2, 0, 20 );
 }
 
 // execution
@@ -167,8 +160,6 @@ void CGame::Render()
 // cleanup
 void CGame::Shutdown()
 {
-	delete m_pScriptManager;
-
 	m_pObjectManager->Shutdown();
 	delete m_pObjectManager;
 

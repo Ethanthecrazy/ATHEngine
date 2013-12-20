@@ -23,7 +23,7 @@ ATHObjectManager::ATHObjectManager() :	m_fTimeBuffer( 0.0f ),
 void ATHObjectManager::Init()
 {
 	// Box2D Init
-	m_pWorld = new b2World( b2Vec2( 0.0f, -3.0f ) );
+	m_pWorld = new b2World( b2Vec2( 0.0f, 0.0f ) );
 
 	ATHBox2DRenderer* pDebugRenderer = ATHRenderer::GetInstance()->GetDebugRenderer();
 	uint32 flags = 0;

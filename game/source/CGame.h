@@ -12,6 +12,7 @@ using namespace std;
 class ATHRenderer;
 class ATHObjectManager;
 class ATHScriptManager;
+class ATHInputManager;
 
 class CGame
 {
@@ -32,6 +33,7 @@ class CGame
 	ATHRenderer*		m_pRenderer;
 	ATHObjectManager*	m_pObjectManager;
 	ATHScriptManager*   m_pScriptManager;
+	ATHInputManager*	m_pInputManager;
 
 
 	////////////////////

@@ -9,6 +9,7 @@ using std::string;
 #include "../../engine/ATHRenderer/ATHRenderer.h"
 #include "../../engine/Objects/ATHObjectManager.h"
 #include "../../engine/ATHScriptManager/ATHScriptManager.h"
+#include "../../engine/ATHInputManager/ATHInputManager.h"
 
 // For testing purposes
 #include "../../engine/Objects/ATHObject.h"
@@ -54,6 +55,9 @@ void CGame::Initialize(HWND _hWnd, HINSTANCE hInstance,
 	m_pObjectManager = new ATHObjectManager();
 	m_pObjectManager->Init();
 
+	m_pInputManager = ATHInputManager::GetInstance();
+	m_pInputManager->Init( _hWnd, hInstance, nScreenWidth, nScreenHeight, nScreenWidth / 2, nScreenHeight / 2 );
+
 	srand( unsigned int( time( 0 ) ) );
 
 
@@ -97,7 +101,19 @@ bool CGame::Main()
 
 void CGame::PreUpdate( float fDT )
 {
-	
+	m_pInputManager->Update();
+
+	std::list< char > liKeysDown = m_pInputManager->CheckMouseButtons();
+
+	std::list< char >::iterator currKey = liKeysDown.begin();
+
+	while( currKey != liKeysDown.end() )
+	{
+		std::cout << (int)(*currKey) << " ";
+		currKey++;
+	}
+
+	std::cout << "\n";
 }
 
 bool CGame::Update( float fDT )
@@ -128,6 +144,9 @@ void CGame::Render()
 // cleanup
 void CGame::Shutdown()
 {
+	m_pInputManager->Shutdown();
+	m_pInputManager->DeleteInstance();
+
 	m_pObjectManager->Shutdown();
 	delete m_pObjectManager;
 

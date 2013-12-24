@@ -61,6 +61,7 @@ private:
 	std::list<ATHRenderNode*>				m_pNodeInventory;
 	std::list<ATHRenderNode*>				m_liNodeTotalList;
 
+	ATHRenderer();
 	ATHRenderer( const ATHRenderer&);
 	ATHRenderer& operator=(const ATHRenderer&);
 	~ATHRenderer();
@@ -79,8 +80,6 @@ private:
 
 	ATHMesh		m_meshDebugLines;
 	ATHBox2DRenderer m_DebugRenderer;
-
-	ATHRenderer();
 
 public:
 

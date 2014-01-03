@@ -90,7 +90,7 @@ bool ATHInputManager::Init( HWND _hWnd, HINSTANCE _hInstance, unsigned int _unSc
 		return false;
 
 	// Set mouse to data mode
-	hr = m_pMouse->SetDataFormat(&c_dfDIMouse);
+	hr = m_pMouse->SetDataFormat(&c_dfDIMouse2);
 	if(FAILED(hr))
 		return false;
 
@@ -201,7 +201,7 @@ bool ATHInputManager::ReadMouse()
 	memcpy(&m_diPrevMouseState, &m_diMouseState, sizeof(m_diPrevMouseState));
 
 	// Read the mouse
-	hr = m_pMouse->GetDeviceState(sizeof(DIMOUSESTATE), &m_diMouseState);
+	hr = m_pMouse->GetDeviceState(sizeof(DIMOUSESTATE2), &m_diMouseState);
 	if(FAILED(hr))
 	{
 		if((hr == DIERR_INPUTLOST) || (hr == DIERR_NOTACQUIRED))

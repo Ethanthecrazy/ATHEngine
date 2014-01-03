@@ -9,7 +9,7 @@
 
 #define KEYBOARD_BUFFER_SIZE 1
 static const int ATH_NUM_KEYS = 256;
-static const int ATH_MAX_MOUSE_BUTTONS = 4;
+static const int ATH_MAX_MOUSE_BUTTONS = 8;
 
 class ATHInputManager
 {
@@ -31,8 +31,8 @@ private:
 
 
 	// Mouse
-	DIMOUSESTATE m_diMouseState;
-	DIMOUSESTATE m_diPrevMouseState;
+	DIMOUSESTATE2 m_diMouseState;
+	DIMOUSESTATE2 m_diPrevMouseState;
 	int m_nMouseX, m_nMouseY;
 	float m_fSensitivity;
 

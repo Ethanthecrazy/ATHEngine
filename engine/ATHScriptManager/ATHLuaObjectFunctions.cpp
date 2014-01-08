@@ -43,7 +43,7 @@ static int Object_SetActive(lua_State *L)
 	int nArgCount = lua_gettop( L );
 
 	if( nArgCount > 0 )
-		g_pCurrObject->SetActive( (bool)lua_toboolean( L, 1 ) != 0 );
+		g_pCurrObject->SetActive( lua_toboolean( L, 1 ) != 0 );
 
 	return 0;
 

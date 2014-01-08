@@ -13,6 +13,7 @@ class ATHRenderer;
 class ATHObjectManager;
 class ATHScriptManager;
 class ATHInputManager;
+class ATHEventManager;
 
 class CGame
 {
@@ -34,6 +35,7 @@ class CGame
 	ATHObjectManager*	m_pObjectManager;
 	ATHScriptManager*   m_pScriptManager;
 	ATHInputManager*	m_pInputManager;
+	ATHEventManager*	m_pEventManager;
 
 
 	////////////////////

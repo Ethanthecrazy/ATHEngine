@@ -4,9 +4,20 @@
 #include "../ATHRenderer/ATHRenderer.h"
 #include "../ATHRenderer/ATHRenderNode.h"
 
+unsigned int ATHObject::s_unIdCounter = 0;
+
 ATHObject::ATHObject()
 {
+	m_unID = s_unIdCounter;
+	s_unIdCounter++;
+	m_szName[0] = 0;
 
+	m_bAlive = true;
+	m_bActive = true;
+
+	D3DXMatrixIdentity( &m_matTransform );
+	m_pRenderNode = nullptr;
+	m_pBody = nullptr;
 }
 //================================================================================
 ATHObject::~ATHObject()

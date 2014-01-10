@@ -1,6 +1,7 @@
 #include "ATHInputManager.h"
 
 #include <iostream>
+#include "../ATHEventSystem/ATHEventManager.h"
 
 ATHInputManager* ATHInputManager::m_pInstance = nullptr;
 
@@ -12,6 +13,8 @@ ATHInputManager::ATHInputManager()
 	m_pInputInterface = nullptr;
 	m_pKeyboard = nullptr;
 	m_pMouse = nullptr;
+
+	m_pEventManager = nullptr;
 
 	memset( m_chKeyboardState, 0, sizeof( m_chKeyboardState ) );
 	memset( m_chPrevKeyboardState, 0, sizeof( m_chPrevKeyboardState ) );
@@ -53,6 +56,8 @@ void ATHInputManager::DeleteInstance()
 bool ATHInputManager::Init( HWND _hWnd, HINSTANCE _hInstance, unsigned int _unScreenWidth, unsigned int _unScreenHeight, int _nMouseStartX, int _nMouseStartY )
 {
 	HRESULT hr;
+
+	m_pEventManager = ATHEventManager::GetInstance();
 
 	m_hWnd = _hWnd;
 	m_unScreenWidth = _unScreenWidth;
@@ -169,6 +174,9 @@ unsigned int ATHInputManager::Update()
 
 	}
 
+	SendKeyboardEvent();
+	SendMouseEvent();
+
 	return 0;
 }
 //================================================================================
@@ -213,6 +221,67 @@ bool ATHInputManager::ReadMouse()
 	return true;
 }
 //================================================================================
+void ATHInputManager::SendKeyboardEvent()
+{
+	ATHKeyList m_liKeysDown = CheckKeys();
+
+	ATHKeyList::iterator itrCurr = m_liKeysDown.begin();
+	ATHKeyList::iterator itrEnd = m_liKeysDown.end();
+
+	ATHEvent keyEvent;
+	keyEvent.m_EventType = AET_KEYBOARD;
+	unsigned int unKeyDownIndex = 0;
+	unsigned int unKeyUpIndex = 0;
+
+	while( itrCurr != itrEnd )
+	{
+		char szKey;
+		if( KeyPressed( szKey = (*itrCurr ) ) && unKeyDownIndex < 8 )
+		{
+			keyEvent.KEY_szKeysPressed[ unKeyDownIndex ] = szKey;
+			unKeyDownIndex++;
+		}
+
+		itrCurr++;
+	}
+
+	if( unKeyDownIndex > 0|| unKeyUpIndex > 0 )
+	{
+		m_pEventManager->SendEvent( keyEvent, AEP_IMMEDIATE );
+	}
+}
+//================================================================================
+void ATHInputManager::SendMouseEvent()
+{
+	ATHKeyList m_liButtonsDown = CheckMouseButtons();
+	ATHKeyList::iterator itrCurr = m_liButtonsDown.begin();
+	ATHKeyList::iterator itrEnd = m_liButtonsDown.end();
+
+	ATHEvent mouseEvent;
+	mouseEvent.m_EventType = AET_MOUSE;
+	unsigned int unButtonDownIndex = 0;
+
+	while( itrCurr != itrEnd )
+	{
+		char szButton;
+		if( MouseButtonPressed( szButton = (*itrCurr ) ) && unButtonDownIndex < 8 )
+		{
+			mouseEvent.MSE_szMouseButtonsDown[ unButtonDownIndex ] = szButton;
+			unButtonDownIndex++;
+		}
+
+		itrCurr++;
+	}
+
+	if( unButtonDownIndex > 0 )
+	{
+		mouseEvent.MSE_unPosX = (unsigned int)m_nMouseX;
+		mouseEvent.MSE_unPosY = (unsigned int)m_nMouseY;
+
+		m_pEventManager->SendEvent( mouseEvent, AEP_IMMEDIATE );
+	}
+}
+//================================================================================
 bool ATHInputManager::KeyState(unsigned char _chButton )
 {
 	return ( m_chKeyboardState[ _chButton ] & 0x80 ) ? true : false;
@@ -228,7 +297,7 @@ bool ATHInputManager::KeyReleased(unsigned char _chButton )
 	return !KeyState(_chButton) && (m_chPrevKeyboardState[_chButton] & 0x80);
 }
 //================================================================================
-std::list< char > ATHInputManager::CheckKeys()
+ATHKeyList ATHInputManager::CheckKeys()
 {
 	std::list< char > liKeysDown;
 
@@ -267,7 +336,7 @@ bool ATHInputManager::MouseButtonReleased( unsigned char _chButton )
 	return !(m_diMouseState.rgbButtons[_chButton] & 0x80) && (m_diPrevMouseState.rgbButtons[_chButton] & 0x80);
 }
 //================================================================================
-std::list< char > ATHInputManager::CheckMouseButtons()
+ATHKeyList ATHInputManager::CheckMouseButtons()
 {
 	std::list< char > liButtonsDown;
 	

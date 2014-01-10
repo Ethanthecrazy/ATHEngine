@@ -1,5 +1,5 @@
 #include "ATHMeshManager.h"
-//================================================================================
+
 int ATHMeshManager::LoadMesh(char* szFilename)
 {
 	if (!szFilename)	
@@ -16,3 +16,4 @@ int ATHMeshManager::LoadMesh(char* szFilename)
 
 	return -1;
 }
+//================================================================================

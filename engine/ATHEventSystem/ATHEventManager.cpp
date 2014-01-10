@@ -7,12 +7,12 @@ ATHEventManager::ATHEventManager()
 {
 
 }
-
+//================================================================================
 ATHEventManager::~ATHEventManager()
 {
 
 }
-
+//================================================================================
 ATHEventManager* ATHEventManager::GetInstance()
 {
 	if( !m_pInstance )
@@ -22,7 +22,7 @@ ATHEventManager* ATHEventManager::GetInstance()
 
 	return m_pInstance;
 }
-
+//================================================================================
 void ATHEventManager::DeleteInstance()
 {
 	if( m_pInstance )
@@ -32,7 +32,7 @@ void ATHEventManager::DeleteInstance()
 
 	m_pInstance = nullptr;
 }
-
+//================================================================================
 void ATHEventManager::RegisterClient( ATHEventType _eventType, ATHEventListener* _pClient )
 {
 	if( !_pClient )
@@ -40,7 +40,7 @@ void ATHEventManager::RegisterClient( ATHEventType _eventType, ATHEventListener*
 
 	m_mmapClients.insert( std::make_pair( _eventType, _pClient ) );
 }
-
+//================================================================================
 void ATHEventManager::UnregisterClient( ATHEventType _eventType , ATHEventListener* _pClient )
 {
 	std::pair< std::multimap< ATHEventType, ATHEventListener* >::iterator, std::multimap< ATHEventType, ATHEventListener* >::iterator > range;
@@ -56,7 +56,7 @@ void ATHEventManager::UnregisterClient( ATHEventType _eventType , ATHEventListen
 		}
 	}
 }
-
+//================================================================================
 void ATHEventManager::SendEvent( ATHEvent _Event, ATHEventPriority _Priority )
 {
 	switch( _Priority )
@@ -73,7 +73,7 @@ void ATHEventManager::SendEvent( ATHEvent _Event, ATHEventPriority _Priority )
 	}
 	
 }
-
+//================================================================================
 void ATHEventManager::ProcessEvents()
 {
 	while( m_liEvents.size() )
@@ -82,7 +82,7 @@ void ATHEventManager::ProcessEvents()
 		m_liEvents.pop_front();
 	}
 }
-
+//================================================================================
 void ATHEventManager::DispatchEvent( ATHEvent* _toDispatch )
 {
 	std::pair< std::multimap< ATHEventType, ATHEventListener* >::iterator, std::multimap< ATHEventType, ATHEventListener* >::iterator > range;
@@ -94,14 +94,15 @@ void ATHEventManager::DispatchEvent( ATHEvent* _toDispatch )
 		(*mmIter).second->HandleEvent( _toDispatch );
 	}
 }
-
+//================================================================================
 void ATHEventManager::ClearEvents(void)
 {
 	m_liEvents.clear();
 }
-
+//================================================================================
 void ATHEventManager::Shutdown(void)
 {
 	ClearEvents();
 	m_mmapClients.clear();
 }
+//================================================================================

@@ -1,7 +1,7 @@
 #ifndef ATHEVENT_H
 #define ATHEVENT_H
 
-enum ATHEventType{ AET_SYSTEM, AET_KEYDOWN, AET_MOUSEPOS };
+enum ATHEventType{ AET_SYSTEM, AET_KEYBOARD, AET_MOUSE, AET_OBJECT };
 enum ATHEventPriority{ AEP_NORMAL, AEP_IMMEDIATE };
 
 class ATHEvent
@@ -21,12 +21,13 @@ public:
 
 		struct
 		{ 
-			char KEY_szKeysDown[8];
-			char KEY_szMouseButtonsDown[8];
+			char KEY_szKeysPressed[8];
+			char KEY_szKeysReleased[8];
 		};
 
 		struct
 		{
+			char MSE_szMouseButtonsDown[8];
 			unsigned int MSE_unPosX;
 			unsigned int MSE_unPosY; 
 		};

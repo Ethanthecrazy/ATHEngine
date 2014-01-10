@@ -11,12 +11,18 @@
 static const int ATH_NUM_KEYS = 256;
 static const int ATH_MAX_MOUSE_BUTTONS = 8;
 
+typedef std::list<char> ATHKeyList;
+
+class ATHEventManager;
+
 class ATHInputManager
 {
 private:
 
 	static ATHInputManager* m_pInstance;
 	HWND m_hWnd;
+
+	ATHEventManager* m_pEventManager;
 
 	unsigned int m_unScreenWidth;
 	unsigned int m_unScreenHeight;
@@ -55,16 +61,18 @@ public:
 	unsigned int Update();
 	bool ReadKeyboard();
 	bool ReadMouse();
+	void SendKeyboardEvent();
+	void SendMouseEvent();
 
 	bool KeyState(unsigned char _chButton );
 	bool KeyPressed(unsigned char _chButton );				// Down this frame, up last frame
 	bool KeyReleased(unsigned char _chButton );				// Up this frame, down last frame
-	std::list< char > CheckKeys();
+	ATHKeyList CheckKeys();
 
 	bool MouseButtonState( unsigned char _chButton );
 	bool MouseButtonPressed( unsigned char _chButton );		// Down this frame, up last frame
 	bool MouseButtonReleased( unsigned char _chButton );	// Up this frame, down last frame
-	std::list< char > CheckMouseButtons();
+	ATHKeyList CheckMouseButtons();
 
 	
 

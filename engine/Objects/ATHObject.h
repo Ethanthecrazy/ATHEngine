@@ -3,6 +3,7 @@
 
 #include <d3dx9.h>
 #include <list>
+#include "../../engine/ATHEventSystem/ATHEventListener.h"
 #include "../ATHUtil/hDataTypes.h"
 
 static const unsigned int ATHOBJECT_MAX_NAME_LENGTH = 64;
@@ -10,10 +11,12 @@ static const unsigned int ATHOBJECT_MAX_NAME_LENGTH = 64;
 class b2Body;
 class ATHRenderNode;
 
-class ATHObject
+class ATHObject : public ATHEventListener
 {
 private:
 
+	
+	static unsigned int s_unIdCounter;
 	// Unique instance ID
 	unsigned int m_unID;
 
@@ -46,6 +49,7 @@ public:
 	
 	virtual void Init( ATHRenderNode* m_pRenderNode = nullptr, b2Body* m_pBody = nullptr );
 	virtual void Update( float _fDT );
+	virtual void HandleEvent( const ATHEvent* _pEvent ){}
 
 
 };

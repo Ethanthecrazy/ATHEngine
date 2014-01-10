@@ -75,6 +75,15 @@ void CGame::Initialize(HWND _hWnd, HINSTANCE hInstance,
 
 void CGame::TestInit()
 {
+	ATHObject* pTemp = new ATHObject();
+	m_pEventManager->RegisterClient( AET_SYSTEM, pTemp );
+	m_pObjectManager->AddObject( pTemp );
+
+	ATHEvent tempEvent;
+	tempEvent.m_EventType = AET_SYSTEM;
+
+	m_pEventManager->SendEvent( tempEvent );
+	m_pEventManager->SendEvent( tempEvent, AEP_IMMEDIATE );
 }
 
 // execution

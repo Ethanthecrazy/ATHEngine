@@ -11,7 +11,7 @@
 static const int ATH_NUM_KEYS = 256;
 static const int ATH_MAX_MOUSE_BUTTONS = 8;
 
-typedef std::list<char> ATHKeyList;
+typedef std::list<unsigned int> ATHKeyList;
 
 class ATHEventManager;
 

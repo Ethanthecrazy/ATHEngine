@@ -22,9 +22,7 @@ ATHInputManager::ATHInputManager()
 	memset( m_diMouseState.rgbButtons, 0,  ATH_MAX_MOUSE_BUTTONS * sizeof(BYTE) ); 
 	memset (m_diPrevMouseState.rgbButtons, 0, ATH_MAX_MOUSE_BUTTONS * sizeof(BYTE) );
 
-	m_nMouseX = 0;
-	m_nMouseY = 0;
-	float m_fSensitivity = 1.0f;
+	m_fSensitivity = 1.0f;
 
 }
 //================================================================================
@@ -100,13 +98,15 @@ bool ATHInputManager::Init( HWND _hWnd, HINSTANCE _hInstance, unsigned int _unSc
 		return false;
 
 	// Make the mouse exclusive
-	hr = m_pMouse->SetCooperativeLevel( _hWnd, DISCL_FOREGROUND|DISCL_EXCLUSIVE );
-	if(FAILED(hr))
-		return false;
+	//hr = m_pMouse->SetCooperativeLevel( _hWnd, DISCL_FOREGROUND|DISCL_EXCLUSIVE ); 
+	//if(FAILED(hr))
+		//return false;
 
 	m_pMouse->Acquire();
 
 	SetCursorPos( _nMouseStartX, _nMouseStartY );
+	m_nMouseX = _nMouseStartX;
+	m_nMouseY = _nMouseStartY;
 
 	return true;
 }
@@ -172,6 +172,8 @@ unsigned int ATHInputManager::Update()
 		if( m_nMouseY > (int)m_unScreenHeight )
 			m_nMouseY = m_unScreenHeight;
 
+
+		//std::cout << m_nMouseX << " " << m_nMouseY << '\n';
 	}
 
 	SendKeyboardEvent();
@@ -228,20 +230,29 @@ void ATHInputManager::SendKeyboardEvent()
 	ATHKeyList::iterator itrCurr = m_liKeysDown.begin();
 	ATHKeyList::iterator itrEnd = m_liKeysDown.end();
 
-	ATHEvent keyEvent;
-	keyEvent.m_EventType = AET_KEYBOARD;
+	ATHEvent keyEvent( AET_KEYBOARD );
 	unsigned int unKeyDownIndex = 0;
 	unsigned int unKeyUpIndex = 0;
-
 	while( itrCurr != itrEnd )
 	{
-		char szKey;
-		if( KeyPressed( szKey = (*itrCurr ) ) && unKeyDownIndex < 8 )
+		unsigned int szDIKKey = (*itrCurr);
+		if (KeyPressed( szDIKKey ) && unKeyDownIndex < 8)
 		{
-			keyEvent.KEY_szKeysPressed[ unKeyDownIndex ] = szKey;
-			unKeyDownIndex++;
+			BYTE chAsciiKeys[ATH_NUM_KEYS] = {};
+			if (GetKeyboardState(chAsciiKeys))  
+			{
+				unsigned short szAsciiKey = 0;
+				// Why do I have to do both opposite conversions????
+				int nCharCount = ToAsciiEx(MapVirtualKeyEx(szDIKKey, MAPVK_VSC_TO_VK, NULL), MapVirtualKeyEx(szDIKKey, MAPVK_VK_TO_VSC, NULL), chAsciiKeys, &szAsciiKey, 0, NULL);
+				
+				if (nCharCount == 1)
+				{
+					keyEvent.KEY_szKeysPressed[unKeyDownIndex] = (char)szAsciiKey;
+					unKeyDownIndex++;
+				}
+			}
 		}
-
+	
 		itrCurr++;
 	}
 
@@ -257,8 +268,7 @@ void ATHInputManager::SendMouseEvent()
 	ATHKeyList::iterator itrCurr = m_liButtonsDown.begin();
 	ATHKeyList::iterator itrEnd = m_liButtonsDown.end();
 
-	ATHEvent mouseEvent;
-	mouseEvent.m_EventType = AET_MOUSE;
+	ATHEvent mouseEvent( AET_MOUSE );
 	unsigned int unButtonDownIndex = 0;
 
 	while( itrCurr != itrEnd )
@@ -282,24 +292,24 @@ void ATHInputManager::SendMouseEvent()
 	}
 }
 //================================================================================
-bool ATHInputManager::KeyState(unsigned char _chButton )
+bool ATHInputManager::KeyState(unsigned char _chDIKButton )
 {
-	return ( m_chKeyboardState[ _chButton ] & 0x80 ) ? true : false;
+	return (m_chKeyboardState[_chDIKButton] & 0x80) ? true : false;
 }
 //================================================================================
-bool ATHInputManager::KeyPressed(unsigned char _chButton )
+bool ATHInputManager::KeyPressed(unsigned char _chDIKButton )
 {
-	return KeyState(_chButton) && !(m_chPrevKeyboardState[_chButton] & 0x80);
+	return KeyState(_chDIKButton) && !((m_chPrevKeyboardState[_chDIKButton] & 0x80));
 }
 //================================================================================
-bool ATHInputManager::KeyReleased(unsigned char _chButton )
+bool ATHInputManager::KeyReleased(unsigned char _chDIKButton )
 {
-	return !KeyState(_chButton) && (m_chPrevKeyboardState[_chButton] & 0x80);
+	return !KeyState(_chDIKButton) && ((m_chPrevKeyboardState[_chDIKButton] & 0x80));
 }
 //================================================================================
 ATHKeyList ATHInputManager::CheckKeys()
 {
-	std::list< char > liKeysDown;
+	std::list< unsigned int > liKeysDown;
 
 	BYTE chAsciiKeys[ ATH_NUM_KEYS ] = {};
 	if( GetKeyboardState( chAsciiKeys ) )
@@ -308,12 +318,9 @@ ATHKeyList ATHInputManager::CheckKeys()
 		{
 			if( KeyState( (unsigned char)(i) ) )
 			{
-				unsigned int nVKCode = MapVirtualKeyEx(i, 1, NULL );
-				unsigned short sNum = 0;
+				unsigned int nVKCode = MapVirtualKeyEx(i, MAPVK_VSC_TO_VK, NULL );
 
-				ToAsciiEx( nVKCode, i, chAsciiKeys, &sNum, 0, NULL );
-
-				liKeysDown.push_back( (char)sNum ); 
+				liKeysDown.push_back(i);
 			}
 		}
 	}
@@ -338,13 +345,13 @@ bool ATHInputManager::MouseButtonReleased( unsigned char _chButton )
 //================================================================================
 ATHKeyList ATHInputManager::CheckMouseButtons()
 {
-	std::list< char > liButtonsDown;
+	std::list< unsigned int > liButtonsDown;
 	
 	for( unsigned int i = 0; i < ATH_MAX_MOUSE_BUTTONS; ++i )
 	{
 		if( MouseButtonState( (unsigned char)(i) ) )
 		{
-			liButtonsDown.push_back( (char)i );
+			liButtonsDown.push_back( i );
 		}
 	}
 

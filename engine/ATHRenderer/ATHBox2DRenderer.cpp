@@ -57,7 +57,21 @@ void ATHBox2DRenderer::DrawCircle(const b2Vec2& center, float32 radius, const b2
 //================================================================================
 void ATHBox2DRenderer::DrawSolidCircle(const b2Vec2& center, float32 radius, const b2Vec2& axis, const b2Color& color)
 {
+	const float fCircumference = 2.0f * b2_pi * radius;
+	const float32 k_segments = fCircumference / 0.5f + 6.0f;
+	const float32 k_increment = 2.0f * b2_pi / k_segments;
 
+	float32 theta = 0.0f;
+	b2Vec2 prevV = center + radius * b2Vec2(cosf(theta * k_increment * k_segments), sinf(theta * k_increment * k_segments));
+	for (int32 i = 0; i < k_segments + 1; ++i)
+	{
+		b2Vec2 v = center + radius * b2Vec2(cosf(theta), sinf(theta));
+
+		ATHRenderer::GetInstance()->DebugLinesAdd(float3(v.x, v.y, 0.0f), float3(prevV.x, prevV.y, 0.0f), float4(color.r, color.b, color.g, 1.0f));
+
+		prevV = v;
+		theta += k_increment;
+	}
 }
 //================================================================================
 void ATHBox2DRenderer::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& color)

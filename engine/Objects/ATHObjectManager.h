@@ -8,6 +8,7 @@ class b2World;
 class b2Body;
 class ATHRenderNode;
 class ATHObject;
+class b2Shape;
 
 
 class ATHObjectManager
@@ -38,8 +39,11 @@ public:
 	void LoadObjectsFromXML();
 	void LoadXML( const char* _szPath );
 
-	b2Body* GenerateBody( rapidxml::xml_node<>* pNodeObject );
-	ATHRenderNode* GenerateRenderNode( rapidxml::xml_node<>* pNodeObject );
+	b2Body* GenerateB2Body(rapidxml::xml_node<>* pXMLNode);
+	b2Shape* GenerateB2PolygonShape(rapidxml::xml_node<>* pXMLShapeNode);
+	b2Shape* GenerateB2CircleShape(rapidxml::xml_node<>* pXMLShapeNode);
+
+	ATHRenderNode* GenerateRenderNode(rapidxml::xml_node<>* pXMLNode );
 };
 
 #endif;

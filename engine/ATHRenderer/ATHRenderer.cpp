@@ -290,7 +290,7 @@ void ATHRenderer::RenderDepth()
 //================================================================================
 void ATHRenderer::RenderForward()
 {
-	DRXClear( float3( 1.0f, 1.0f, 1.0f ) );
+	DRXClear( float3( 0.3f, 0.3f, 0.5f ) );
 	std::list< ATHRenderPass* >::iterator itrPass = m_liSortedRenderPasses.begin();
 	while( itrPass != m_liSortedRenderPasses.end() )
 	{

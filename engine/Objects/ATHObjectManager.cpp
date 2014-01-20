@@ -32,6 +32,7 @@ void ATHObjectManager::Init()
 	//flags += b2Draw::e_aabbBit;
 	flags += b2Draw::e_pairBit;
 	flags += b2Draw::e_centerOfMassBit;
+
 	pDebugRenderer->SetFlags(flags);
 	m_pWorld->SetDebugDraw( pDebugRenderer );
 
@@ -170,8 +171,8 @@ void ATHObjectManager::LoadXML( const char* _szPath )
 		{
 			ATHObject* pNewObject = new ATHObject();
 
-			ATHRenderNode* pRenderNode = GenerateRenderNode( currObject );
-			b2Body*	pBody = GenerateBody( currObject );
+			ATHRenderNode* pRenderNode = GenerateRenderNode(currObject);
+			b2Body*	pBody = GenerateB2Body(currObject);
 
 			pNewObject->Init( pRenderNode, pBody );
 
@@ -185,89 +186,163 @@ void ATHObjectManager::LoadXML( const char* _szPath )
 
 }
 //================================================================================
-b2Body* ATHObjectManager::GenerateBody( rapidxml::xml_node<>* pNodeObject )
+b2Body* ATHObjectManager::GenerateB2Body(rapidxml::xml_node<>* pXMLNode)
 {
-	b2Body* pReturnBody =  nullptr;
-
+	b2Body* pReturnBody = nullptr;
 	
-	rapidxml::xml_node<>* nodePos = pNodeObject->first_node( "Position" );
-	rapidxml::xml_attribute<>* nodePosAttrX = nodePos->first_attribute("X");
-	rapidxml::xml_attribute<>* nodePosAttrY = nodePos->first_attribute("Y");
+	rapidxml::xml_node<>* pBodyNode = pXMLNode->first_node("B2Body");
+	if (!pBodyNode)
+		return nullptr;
 
-	float fObjectPosX = (float)atof( nodePosAttrX->value() ) * GLOBAL_LOAD_SCALE;
-	float fObjectPosY = (float)atof( nodePosAttrY->value() ) * GLOBAL_LOAD_SCALE;
+	// Get the position of the object
+	float fPosX = 0.0f;
+	float fPosY = 0.0f;
+	float fPosZ = 0.0f;
 
-	rapidxml::xml_node<>* nodeCollGeo = pNodeObject->first_node( "Collision_Geometry" );
-	if( nodeCollGeo )
+	if (rapidxml::xml_node<>* nodePos = pXMLNode->first_node("Position"))
 	{
-		rapidxml::xml_attribute<>* attrVertCount = nodeCollGeo->first_attribute( "Number_of_Verts" );
+		fPosX = (float)atof(nodePos->first_attribute("X")->value()) * GLOBAL_LOAD_SCALE;
+		fPosY = (float)atof(nodePos->first_attribute("Y")->value()) * GLOBAL_LOAD_SCALE;
+		fPosZ = (float)atof(nodePos->first_attribute("Z")->value()) * GLOBAL_LOAD_SCALE;
+	}
 
-		int unVertexCount =  atoi( attrVertCount->value() );
-		int unCurrentVertex = 0;
+	b2BodyDef bodyDef;
+	bodyDef.position = b2Vec2( fPosX, fPosY );
 
-		b2Vec2* vertices = new b2Vec2[unVertexCount];
-
-		rapidxml::xml_node<>* currVertex = nodeCollGeo->first_node();
-		while( currVertex )
-		{
-			rapidxml::xml_attribute<>* attrX = currVertex->first_attribute( "X" );
-			float posX = (float)atof( attrX->value() ) * GLOBAL_LOAD_SCALE;
-
-			rapidxml::xml_attribute<>* attrY = currVertex->first_attribute( "Y" );
-			float posY = (float)atof( attrY->value() ) * GLOBAL_LOAD_SCALE;
-
-			vertices[ unCurrentVertex ].Set( posX, posY );
-
-			unCurrentVertex++;
-			currVertex = currVertex->next_sibling();
-		}
-
-		b2PolygonShape polygon;
-		b2BodyDef bodyDef;
-		polygon.Set(vertices, unVertexCount);
-
+	// Set the type of the body to be created;
+	char* szBodyType = pBodyNode->first_attribute("Type")->value();
+	if (!strcmp(szBodyType, "static"))
+		bodyDef.type = b2_staticBody;
+	else if (!strcmp(szBodyType, "kinematic"))
+		bodyDef.type = b2_kinematicBody;
+	else if (!strcmp(szBodyType, "dynamic"))
 		bodyDef.type = b2_dynamicBody;
 
-		bodyDef.position = b2Vec2( fObjectPosX, fObjectPosY );
+	float fBodyDensity = (float)atof(pBodyNode->first_attribute("Density")->value());
 
-		pReturnBody = m_pWorld->CreateBody( &bodyDef );
-		pReturnBody->CreateFixture( &polygon, 1.0f );
+	// Grab the shape node
+	rapidxml::xml_node<>* pNodeShape = pBodyNode->first_node("B2Shape");
+	if (!pNodeShape)
+		return nullptr;
 
-		delete[] vertices;
+	b2Shape* pB2Shape = nullptr;
+
+	// chain	unsupported
+	// circle	supported
+	// edge		unsupported
+	// polygon: supported
+	char* szShapeType = pNodeShape->first_attribute("Type")->value();
+	if (!strcmp(szShapeType, "circle"))
+	{
+		pB2Shape = GenerateB2CircleShape(pNodeShape);
+	}
+	else if (!strcmp(szShapeType, "polygon"))
+	{
+		pB2Shape = GenerateB2PolygonShape(pNodeShape);
+	}
+
+	// Create the body
+	pReturnBody = m_pWorld->CreateBody(&bodyDef);
+
+	// Clone the shape onto the body and clean up
+	if (pB2Shape)
+	{
+		pReturnBody->CreateFixture(pB2Shape, fBodyDensity);
+		delete pB2Shape;
 	}
 
 	return pReturnBody;
 }
 //================================================================================
-ATHRenderNode* ATHObjectManager::GenerateRenderNode( rapidxml::xml_node<>* pNodeObject )
+b2Shape* ATHObjectManager::GenerateB2PolygonShape(rapidxml::xml_node<>* pXMLShapeNode)
+{
+	b2PolygonShape* pB2Polygon = new b2PolygonShape();
+	b2Vec2* vertices = new b2Vec2[b2_maxPolygonVertices];
+
+	unsigned int unCurrentVertex = 0;
+	rapidxml::xml_node<>* currVertex = pXMLShapeNode->first_node("Vertex");
+	while (currVertex)
+	{
+		rapidxml::xml_attribute<>* attrX = currVertex->first_attribute("X");
+		float posX = (float)atof(attrX->value()) * GLOBAL_LOAD_SCALE;
+
+		rapidxml::xml_attribute<>* attrY = currVertex->first_attribute("Y");
+		float posY = (float)atof(attrY->value()) * GLOBAL_LOAD_SCALE;
+
+		vertices[unCurrentVertex].Set(posX, posY);
+
+		unCurrentVertex++;
+		currVertex = currVertex->next_sibling("Vertex");
+	}
+
+	pB2Polygon->Set(vertices, unCurrentVertex);
+
+	delete[] vertices;
+
+	return pB2Polygon;
+}
+//================================================================================
+b2Shape* ATHObjectManager::GenerateB2CircleShape(rapidxml::xml_node<>* pXMLShapeNode)
+{
+	b2CircleShape* pB2Circle = new b2CircleShape();
+
+	pB2Circle->m_radius = (float)(atof(pXMLShapeNode->first_attribute("Radius")->value())) * GLOBAL_LOAD_SCALE;
+
+	return pB2Circle;
+}
+//================================================================================
+ATHRenderNode* ATHObjectManager::GenerateRenderNode(rapidxml::xml_node<>* pXMLNode )
 {
 	ATHRenderNode* pReturnNode = nullptr;
 
-	rapidxml::xml_attribute<>* pTexturePathAttr = pNodeObject->first_attribute( "Image_Path" );
-	char* szTexturePath = pTexturePathAttr->value();
+	rapidxml::xml_node<>* pRenderNode = pXMLNode->first_node("RenderNode");
+	if (!pRenderNode)
+		return nullptr;
 
-	if( strlen( szTexturePath ) > 0 )
+	char* szPassName = pRenderNode->first_attribute("PassName")->value();
+	int unNodePriority = atoi( pRenderNode->first_attribute("Priority")->value() );
+
+	// Get the dimensions of the render object
+	float fDimX = 1.0f;
+	float fDimY = 1.0f;
+	float fDimZ = 1.0f;
+
+	if (rapidxml::xml_node<>* nodeDims = pRenderNode->first_node("Dimension"))
 	{
-		pReturnNode = ATHRenderer::GetInstance()->CreateRenderNode( "Texture", 0 );
-		ATHAtlas::ATHTextureHandle texHandle = ATHRenderer::GetInstance()->GetAtlas()->GetTexture( szTexturePath );
-
-		pReturnNode->SetMesh( &ATHRenderer::GetInstance()->m_Quad );
-		pReturnNode->SetTexture( texHandle );
-
-
-		rapidxml::xml_node<>* pSizeNode = pNodeObject->first_node( "Size" );
-		rapidxml::xml_attribute<>* pWidthAttr = pSizeNode->first_attribute( "Width" );
-		rapidxml::xml_attribute<>* pHeightAttr = pSizeNode->first_attribute( "Height" );
-
-		float fObjectWidth = (float)atof( pWidthAttr->value() ) * GLOBAL_LOAD_SCALE;
-		float fObjectHeight = (float)atof( pHeightAttr->value() ) * GLOBAL_LOAD_SCALE;
-
-		D3DXMATRIX matScale;
-		D3DXMatrixScaling( &matScale, fObjectWidth, fObjectHeight, 1.0f );
-
-		pReturnNode->SetLocalTransform( matScale );
-
+		fDimX = (float)atof(nodeDims->first_attribute("X")->value()) * GLOBAL_LOAD_SCALE;
+		fDimY = (float)atof(nodeDims->first_attribute("Y")->value()) * GLOBAL_LOAD_SCALE;
+		fDimZ = (float)atof(nodeDims->first_attribute("Z")->value()) * GLOBAL_LOAD_SCALE;
 	}
+
+	// Get the texture path
+	char* szTexturePath = nullptr;
+	if (rapidxml::xml_node<>* pNodeTexture = pRenderNode->first_node("Texture"))
+	{
+		szTexturePath = pNodeTexture->first_attribute("Path")->value();
+	}
+
+	// Get mesh path
+	char* szMeshPath = nullptr;
+	if (rapidxml::xml_node<>* pNodeMesh = pRenderNode->first_node("Mesh"))
+	{
+		szMeshPath = pNodeMesh->first_attribute("Path")->value();
+	}
+
+	// Create the render node
+	pReturnNode = ATHRenderer::GetInstance()->CreateRenderNode( szPassName, unNodePriority);
+	
+	// Scale the render node
+	D3DXMATRIX matScale;
+	D3DXMatrixScaling(&matScale, fDimX, fDimY, fDimZ );
+	pReturnNode->SetLocalTransform(matScale);
+
+	// Set the texture of the render node
+	ATHAtlas::ATHTextureHandle texHandle = ATHRenderer::GetInstance()->GetAtlas()->GetTexture(szTexturePath);
+	pReturnNode->SetTexture(texHandle);
+
+	// Set the mesh of the render node
+	if (!strcmp( szMeshPath, "QUAD" ))
+		pReturnNode->SetMesh(&ATHRenderer::GetInstance()->m_Quad);
 
 	return pReturnNode;
 }

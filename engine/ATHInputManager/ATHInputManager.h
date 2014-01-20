@@ -64,10 +64,10 @@ public:
 	void SendKeyboardEvent();
 	void SendMouseEvent();
 
-	bool KeyState(unsigned char _chButton );
-	bool KeyPressed(unsigned char _chButton );				// Down this frame, up last frame
-	bool KeyReleased(unsigned char _chButton );				// Up this frame, down last frame
-	ATHKeyList CheckKeys();
+	bool KeyState(unsigned char _chDIKButton );
+	bool KeyPressed(unsigned char _chDIKButton );				// Down this frame, up last frame
+	bool KeyReleased(unsigned char _chDIKButton );				// Up this frame, down last frame
+	ATHKeyList CheckKeys();										// These are in DIK codes
 
 	bool MouseButtonState( unsigned char _chButton );
 	bool MouseButtonPressed( unsigned char _chButton );		// Down this frame, up last frame

@@ -245,7 +245,7 @@ void ATHInputManager::SendKeyboardEvent()
 				// Why do I have to do both opposite conversions????
 				int nCharCount = ToAsciiEx(MapVirtualKeyEx(szDIKKey, MAPVK_VSC_TO_VK, NULL), MapVirtualKeyEx(szDIKKey, MAPVK_VK_TO_VSC, NULL), chAsciiKeys, &szAsciiKey, 0, NULL);
 				
-				if (nCharCount == 1)
+				if (nCharCount > 0)
 				{
 					keyEvent.KEY_szKeysPressed[unKeyDownIndex] = (char)szAsciiKey;
 					unKeyDownIndex++;
@@ -258,6 +258,7 @@ void ATHInputManager::SendKeyboardEvent()
 
 	if( unKeyDownIndex > 0|| unKeyUpIndex > 0 )
 	{
+		keyEvent.m_EventID = AEI_KEYDOWN;
 		m_pEventManager->SendEvent( keyEvent, AEP_IMMEDIATE );
 	}
 }
@@ -287,6 +288,7 @@ void ATHInputManager::SendMouseEvent()
 	{
 		mouseEvent.MSE_unPosX = (unsigned int)m_nMouseX;
 		mouseEvent.MSE_unPosY = (unsigned int)m_nMouseY;
+		mouseEvent.m_EventID = AEI_MOUSEDOWN;
 
 		m_pEventManager->SendEvent( mouseEvent, AEP_IMMEDIATE );
 	}

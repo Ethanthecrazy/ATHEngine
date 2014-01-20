@@ -6,6 +6,7 @@
 
 enum ATHEventType{ AET_SYSTEM, AET_KEYBOARD, AET_MOUSE, AET_OBJECT };
 enum ATHEventPriority{ AEP_NORMAL, AEP_IMMEDIATE };
+enum ATHEventID{ AEI_NONE, AEI_KEYDOWN, AEI_KEYUP, AEI_MOUSEDOWN, AEI_MOUSEUP };
 
 class ATHEvent
 {
@@ -16,6 +17,7 @@ private:
 public:
 
 	ATHEventType m_EventType;
+	ATHEventID m_EventID;
 	
 	// Different prefixes for each type of event
 	union
@@ -40,7 +42,7 @@ public:
 	};
 
 
-	ATHEvent( ATHEventType _eventType ) : m_EventType( _eventType ) 
+	ATHEvent(ATHEventType _eventType) : m_EventType(_eventType), m_EventID( AEI_NONE )
 	{
 		memset( SYS_szGenericData, -1, 32 );
 	}

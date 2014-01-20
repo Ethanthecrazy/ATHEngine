@@ -76,7 +76,7 @@ void CGame::Initialize(HWND _hWnd, HINSTANCE hInstance,
 void CGame::TestInit()
 {
 	ATHObject* pTemp = new ATHObject();
-	m_pEventManager->RegisterClient( AET_SYSTEM, pTemp );
+	m_pEventManager->RegisterClient( AET_KEYBOARD, pTemp );
 	m_pObjectManager->AddObject( pTemp );
 }
 

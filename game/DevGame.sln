@@ -10,6 +10,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DevGame", "DevGame.vcxproj"
 		{8E34DE86-881F-4EFA-8E38-09E64F018C8D} = {8E34DE86-881F-4EFA-8E38-09E64F018C8D}
 		{F46BFC96-B12F-40DF-8F4F-BA3068168BDC} = {F46BFC96-B12F-40DF-8F4F-BA3068168BDC}
 		{994C58BD-9E62-4403-9ABF-5729C5D8BA97} = {994C58BD-9E62-4403-9ABF-5729C5D8BA97}
+		{300BC9F5-286E-4B18-BCF1-5BF4EE96F407} = {300BC9F5-286E-4B18-BCF1-5BF4EE96F407}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ATHRenderer", "..\engine\ATHRenderer\ATHRenderer.vcxproj", "{994C58BD-9E62-4403-9ABF-5729C5D8BA97}"
@@ -34,6 +35,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ATHInputManager", "..\engine\ATHInputManager\ATHInputManager.vcxproj", "{31054F80-42C0-44B5-9365-E5D5EC87B10F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ATHEventSystem", "..\engine\ATHEventSystem\ATHEventSystem.vcxproj", "{76433D1F-30C2-4760-B3B0-4BED67DFDC7A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ATHStackSystem", "..\engine\ATHStackSystem\ATHStackSystem.vcxproj", "{300BC9F5-286E-4B18-BCF1-5BF4EE96F407}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +76,10 @@ Global
 		{76433D1F-30C2-4760-B3B0-4BED67DFDC7A}.Debug|Win32.Build.0 = Debug|Win32
 		{76433D1F-30C2-4760-B3B0-4BED67DFDC7A}.Release|Win32.ActiveCfg = Release|Win32
 		{76433D1F-30C2-4760-B3B0-4BED67DFDC7A}.Release|Win32.Build.0 = Release|Win32
+		{300BC9F5-286E-4B18-BCF1-5BF4EE96F407}.Debug|Win32.ActiveCfg = Debug|Win32
+		{300BC9F5-286E-4B18-BCF1-5BF4EE96F407}.Debug|Win32.Build.0 = Debug|Win32
+		{300BC9F5-286E-4B18-BCF1-5BF4EE96F407}.Release|Win32.ActiveCfg = Release|Win32
+		{300BC9F5-286E-4B18-BCF1-5BF4EE96F407}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

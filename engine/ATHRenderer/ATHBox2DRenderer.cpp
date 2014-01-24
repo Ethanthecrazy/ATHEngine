@@ -45,18 +45,12 @@ void ATHBox2DRenderer::DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCoun
 //================================================================================
 void ATHBox2DRenderer::DrawCircle(const b2Vec2& center, float32 radius, const b2Color& color)
 {
-	const float32 k_segments = 16.0f;
-	const float32 k_increment = 2.0f * b2_pi / k_segments;
-	float32 theta = 0.0f;
-	for (int32 i = 0; i < k_segments; ++i)
-	{
-		b2Vec2 v = center + radius * b2Vec2(cosf(theta), sinf(theta));
-		theta += k_increment;
-	}
+	
 }
 //================================================================================
 void ATHBox2DRenderer::DrawSolidCircle(const b2Vec2& center, float32 radius, const b2Vec2& axis, const b2Color& color)
 {
+	// Figure out the number of segments to draw
 	const float fCircumference = 2.0f * b2_pi * radius;
 	const float32 k_segments = fCircumference / 0.5f + 6.0f;
 	const float32 k_increment = 2.0f * b2_pi / k_segments;
@@ -72,6 +66,12 @@ void ATHBox2DRenderer::DrawSolidCircle(const b2Vec2& center, float32 radius, con
 		prevV = v;
 		theta += k_increment;
 	}
+
+	// Render the axis
+	b2Vec2 modAxis = axis;
+	modAxis *= radius;
+	b2Vec2 fAxisEnd = center + modAxis;
+	ATHRenderer::GetInstance()->DebugLinesAdd(float3(center.x, center.y, 0.0f), float3(fAxisEnd.x, fAxisEnd.y, 0.0f), float4(color.r, color.b, color.g, 1.0f));
 }
 //================================================================================
 void ATHBox2DRenderer::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& color)

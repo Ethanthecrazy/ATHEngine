@@ -2,6 +2,7 @@
 #define ATHOBJECT_H
 
 #include <d3dx9.h>
+#include <string>
 #include <list>
 #include "../../engine/ATHEventSystem/ATHEventListener.h"
 #include "../ATHUtil/hDataTypes.h"
@@ -20,9 +21,6 @@ private:
 	// Unique instance ID
 	unsigned int m_unID;
 
-	//Name
-	char m_szName[ ATHOBJECT_MAX_NAME_LENGTH ];
-
 	// If the object is not going to be destroyed
 	bool m_bAlive;
 	// If the object is currently being updated
@@ -34,6 +32,8 @@ private:
 
 public:
 	
+	std::string m_strName;
+
 	ATHObject();
 	~ATHObject();
 

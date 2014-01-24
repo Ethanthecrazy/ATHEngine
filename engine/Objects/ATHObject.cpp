@@ -10,7 +10,6 @@ ATHObject::ATHObject()
 {
 	m_unID = s_unIdCounter;
 	s_unIdCounter++;
-	m_szName[0] = 0;
 
 	m_bAlive = true;
 	m_bActive = true;

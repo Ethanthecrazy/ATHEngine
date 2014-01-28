@@ -8,10 +8,14 @@ using namespace std;
 class ATHStackSystem
 {
 	list<IBaseState*> m_lStates;
-
-public:
+	
 	ATHStackSystem();
 	~ATHStackSystem();
+	ATHStackSystem(const ATHStackSystem& obj);
+	ATHStackSystem& operator=(const ATHStackSystem& obj);
+
+public:
+	
 
 
 };

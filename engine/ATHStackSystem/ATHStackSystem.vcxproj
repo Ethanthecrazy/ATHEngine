@@ -75,6 +75,9 @@
     <ClInclude Include="ATHStackSystem.h" />
     <ClInclude Include="IBaseState.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ATHStackSystem.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

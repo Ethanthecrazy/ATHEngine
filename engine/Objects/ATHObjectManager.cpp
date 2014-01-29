@@ -173,7 +173,11 @@ void ATHObjectManager::LoadXML( const char* _szPath )
 
 			ATHObject* pNewObject = new ATHObject();
 
-			pNewObject->m_strName = currObjName->value();
+			// Assign a name to the object
+			if (currObjName)
+				pNewObject->m_strName = currObjName->value();
+			else
+				pNewObject->m_strName = "Object";
 
 			ATHRenderNode* pRenderNode = GenerateRenderNode(currObject);
 			b2Body*	pBody = GenerateB2Body(currObject);
@@ -224,36 +228,51 @@ b2Body* ATHObjectManager::GenerateB2Body(rapidxml::xml_node<>* pXMLNode)
 
 	float fBodyDensity = (float)atof(pBodyNode->first_attribute("Density")->value());
 
+	// Create the body
+	pReturnBody = m_pWorld->CreateBody(&bodyDef);
+
 	// Grab the shape node
 	rapidxml::xml_node<>* pNodeShape = pBodyNode->first_node("B2Shape");
 	if (!pNodeShape)
 		return nullptr;
 
-	b2Shape* pB2Shape = nullptr;
-
-	// chain	unsupported
-	// circle	supported
-	// edge		unsupported
-	// polygon: supported
-	char* szShapeType = pNodeShape->first_attribute("Type")->value();
-	if (!strcmp(szShapeType, "circle"))
+	while (pNodeShape)
 	{
-		pB2Shape = GenerateB2CircleShape(pNodeShape);
-	}
-	else if (!strcmp(szShapeType, "polygon"))
-	{
-		pB2Shape = GenerateB2PolygonShape(pNodeShape);
+		b2FixtureDef* pFixtureDef = new b2FixtureDef();
+		pFixtureDef->density = fBodyDensity;
+		
+		// Check if its a sensor
+		rapidxml::xml_attribute<>* pSensorAttr = pNodeShape->first_attribute("IsSensor");
+		if (pSensorAttr)
+		{
+			if (strcmp(pSensorAttr->value(), "true") == 0)
+				pFixtureDef->isSensor = true;
+		}
+			
+
+		// chain	unsupported
+		// circle	supported
+		// edge		unsupported
+		// polygon: supported
+		char* szShapeType = pNodeShape->first_attribute("Type")->value();
+		if (!strcmp(szShapeType, "circle"))
+		{
+			pFixtureDef->shape = GenerateB2CircleShape(pNodeShape);
+		}
+		else if (!strcmp(szShapeType, "polygon"))
+		{
+			pFixtureDef->shape = GenerateB2PolygonShape(pNodeShape);
+		}
+
+		// Clone the shape onto the body and clean up
+		pReturnBody->CreateFixture(pFixtureDef);
+
+		delete pFixtureDef;
+
+		pNodeShape = pNodeShape->next_sibling("B2Shape");
 	}
 
-	// Create the body
-	pReturnBody = m_pWorld->CreateBody(&bodyDef);
 
-	// Clone the shape onto the body and clean up
-	if (pB2Shape)
-	{
-		pReturnBody->CreateFixture(pB2Shape, fBodyDensity);
-		delete pB2Shape;
-	}
 
 	return pReturnBody;
 }

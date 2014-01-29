@@ -52,6 +52,8 @@
       <B2Body Type="dynamic" Density="1.0">
         <B2Shape Type="circle" Radius="500.0" >
         </B2Shape>
+        <B2Shape Type="circle" Radius="900.0" IsSensor="true" >
+        </B2Shape>
       </B2Body>
       <Properties />
     </Object>

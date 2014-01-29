@@ -21,6 +21,9 @@ private:
 	// Unique instance ID
 	unsigned int m_unID;
 
+	// Name
+	std::string m_strName;
+
 	// If the object is not going to be destroyed
 	bool m_bAlive;
 	// If the object is currently being updated
@@ -32,10 +35,10 @@ private:
 
 public:
 	
-	std::string m_strName;
-
 	ATHObject();
 	~ATHObject();
+
+	const std::string GetName() { return m_strName; }
 
 	bool GetAlive() { return m_bAlive; }
 	void SetAlive( bool _bAlive ) { m_bAlive = _bAlive; }
@@ -51,7 +54,7 @@ public:
 	virtual void Update( float _fDT );
 	virtual void HandleEvent( const ATHEvent* _pEvent ){}
 
-
+	friend class ATHObjectManager;
 };
 
 #endif

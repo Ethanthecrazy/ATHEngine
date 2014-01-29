@@ -267,6 +267,9 @@ b2Body* ATHObjectManager::GenerateB2Body(rapidxml::xml_node<>* pXMLNode)
 		// Clone the shape onto the body and clean up
 		pReturnBody->CreateFixture(pFixtureDef);
 
+		if (pFixtureDef->shape )
+			delete pFixtureDef->shape;
+
 		delete pFixtureDef;
 
 		pNodeShape = pNodeShape->next_sibling("B2Shape");

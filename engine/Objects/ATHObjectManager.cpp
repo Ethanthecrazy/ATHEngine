@@ -169,21 +169,7 @@ void ATHObjectManager::LoadXML( const char* _szPath )
 	{
 		//for( unsigned int i = 0; i < 100; ++i )
 		{
-			rapidxml::xml_attribute<>* currObjName = currObject->first_attribute("Name");
-
-			ATHObject* pNewObject = new ATHObject();
-
-			// Assign a name to the object
-			if (currObjName)
-				pNewObject->m_strName = currObjName->value();
-			else
-				pNewObject->m_strName = "Object";
-
-			ATHRenderNode* pRenderNode = GenerateRenderNode(currObject);
-			b2Body*	pBody = GenerateB2Body(currObject);
-
-			pNewObject->Init( pRenderNode, pBody );
-
+			ATHObject* pNewObject = GenerateObject(currObject);
 			AddObject( pNewObject );
 		}
 
@@ -192,6 +178,28 @@ void ATHObjectManager::LoadXML( const char* _szPath )
 
 	delete[] pString;
 
+}
+//================================================================================
+ATHObject* ATHObjectManager::GenerateObject(rapidxml::xml_node<>* pRootObjNode)
+{
+	ATHObject* pReturnObject = nullptr;
+
+	rapidxml::xml_attribute<>* currObjName = pRootObjNode->first_attribute("Name");
+
+	pReturnObject = new ATHObject();
+
+	// Assign a name to the object
+	if (currObjName)
+		pReturnObject->m_strName = currObjName->value();
+	else
+		pReturnObject->m_strName = "Object";
+
+	ATHRenderNode* pRenderNode = GenerateRenderNode(pRootObjNode);
+	b2Body*	pBody = GenerateB2Body(pRootObjNode);
+
+	pReturnObject->Init(pRenderNode, pBody);
+
+	return pReturnObject;
 }
 //================================================================================
 b2Body* ATHObjectManager::GenerateB2Body(rapidxml::xml_node<>* pXMLNode)

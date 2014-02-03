@@ -39,6 +39,7 @@ public:
 	void LoadObjectsFromXML();
 	void LoadXML( const char* _szPath );
 
+	ATHObject* GenerateObject(rapidxml::xml_node<>* pRootObjNode );
 	b2Body* GenerateB2Body(rapidxml::xml_node<>* pXMLNode);
 	b2Shape* GenerateB2PolygonShape(rapidxml::xml_node<>* pXMLShapeNode);
 	b2Shape* GenerateB2CircleShape(rapidxml::xml_node<>* pXMLShapeNode);

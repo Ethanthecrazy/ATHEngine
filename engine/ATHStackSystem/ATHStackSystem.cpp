@@ -107,9 +107,16 @@ void ATHStackSystem::Update(float _fDT)
 
 	list<IBaseState*>::iterator iter = m_lStates.begin();
 
-	for (unsigned int i = 0; i < listSize; i++)
+	(*iter)->Update(_fDT);
+	
+	if ((*iter)->GetCascadeTime())
 	{
-		
+		iter++;
+
+		for (; iter != m_lStates.end(); iter++)
+		{
+			(*iter)->Update(_fDT);
+		}
 	}
 }
 

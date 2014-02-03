@@ -5,7 +5,7 @@
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
 #include <list>
-
+#include "../ATHUtil/hDataTypes.h"
 
 #define KEYBOARD_BUFFER_SIZE 1
 static const int ATH_NUM_KEYS = 256;
@@ -40,6 +40,7 @@ private:
 	DIMOUSESTATE2 m_diMouseState;
 	DIMOUSESTATE2 m_diPrevMouseState;
 	int m_nMouseX, m_nMouseY;
+	float m_fMouseDiffX, m_fMouseDiffY;
 	float m_fSensitivity;
 
 	// This is a singleton
@@ -73,6 +74,9 @@ public:
 	bool MouseButtonPressed( unsigned char _chButton );		// Down this frame, up last frame
 	bool MouseButtonReleased( unsigned char _chButton );	// Up this frame, down last frame
 	ATHKeyList CheckMouseButtons();
+
+	float2 GetMousePos();
+	float2 GetMouseDiffThisFrame();
 
 	
 

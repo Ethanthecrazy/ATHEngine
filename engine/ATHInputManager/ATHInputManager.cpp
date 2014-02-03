@@ -22,6 +22,8 @@ ATHInputManager::ATHInputManager()
 	memset( m_diMouseState.rgbButtons, 0,  ATH_MAX_MOUSE_BUTTONS * sizeof(BYTE) ); 
 	memset (m_diPrevMouseState.rgbButtons, 0, ATH_MAX_MOUSE_BUTTONS * sizeof(BYTE) );
 
+	m_fMouseDiffX = 0.0f;
+	m_fMouseDiffY = 0.0f;
 	m_fSensitivity = 1.0f;
 
 }
@@ -98,9 +100,9 @@ bool ATHInputManager::Init( HWND _hWnd, HINSTANCE _hInstance, unsigned int _unSc
 		return false;
 
 	// Make the mouse exclusive
-	//hr = m_pMouse->SetCooperativeLevel( _hWnd, DISCL_FOREGROUND|DISCL_EXCLUSIVE ); 
-	//if(FAILED(hr))
-		//return false;
+	hr = m_pMouse->SetCooperativeLevel( _hWnd, DISCL_FOREGROUND|DISCL_EXCLUSIVE ); 
+	if(FAILED(hr))
+		return false;
 
 	m_pMouse->Acquire();
 
@@ -155,10 +157,12 @@ unsigned int ATHInputManager::Update()
 	if( ReadMouse() )
 	{
 		LONG lXMovement = m_diMouseState.lX;
-		m_nMouseX += (int)(lXMovement * m_fSensitivity);
+		m_fMouseDiffX = lXMovement * m_fSensitivity;
+		m_nMouseX += (int)(m_fMouseDiffX);
 
 		LONG lYMovement = m_diMouseState.lY;
-		m_nMouseY += (int)(lYMovement * m_fSensitivity);
+		m_fMouseDiffY = lYMovement * m_fSensitivity;
+		m_nMouseY += (int)(m_fMouseDiffY);
 
 		if( m_nMouseX < 0 )
 			m_nMouseX = 0;
@@ -172,8 +176,7 @@ unsigned int ATHInputManager::Update()
 		if( m_nMouseY > (int)m_unScreenHeight )
 			m_nMouseY = m_unScreenHeight;
 
-
-		//std::cout << m_nMouseX << " " << m_nMouseY << '\n';
+		std::cout << m_nMouseX << " " << m_nMouseY << '\n';
 	}
 
 	SendKeyboardEvent();
@@ -358,5 +361,15 @@ ATHKeyList ATHInputManager::CheckMouseButtons()
 	}
 
 	return liButtonsDown;
+}
+//================================================================================
+float2 ATHInputManager::GetMousePos()
+{
+	return float2(float(m_nMouseX), float(m_nMouseY));
+}
+//================================================================================
+float2 ATHInputManager::GetMouseDiffThisFrame()
+{
+	return float2( m_fMouseDiffX, m_fMouseDiffY );
 }
 //================================================================================

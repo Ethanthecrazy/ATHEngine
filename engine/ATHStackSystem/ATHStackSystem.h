@@ -16,7 +16,14 @@ class ATHStackSystem
 
 public:
 	
-
+	void PushState(IBaseState* _state, int _stackPosition = 0);
+	void PopState(int _stackPosition = 0);
+	void PopState(char _stateName);
+	void PushStateOnTop(IBaseState* _state);
+	void PushStateOnBottom(IBaseState* _state);
+	void PopTopState();
+	void ClearAllStates();
+	void Update(float _fDT);
 
 };
 

@@ -13,10 +13,13 @@ const unsigned int	NUM_POSITION_ITERATIONS = 5;
 const float			TIMESTEP_LENGTH = (1.0f/30.0f);
 const float			MAX_TIMEBUFFER = 1.0f;
 const char			DEFAULT_XML_LOAD_PATH[] = "data\\base.xml";
+const char			DEFAULT_OBJ_LIBRARY_PATH[] = "data\\object_library.xml";
 const float GLOBAL_LOAD_SCALE = 0.01f;
 
 ATHObjectManager::ATHObjectManager() :	m_fTimeBuffer( 0.0f ),
-										m_pWorld( nullptr )
+										m_pWorld( nullptr ),
+										m_szLibraryBuffer( nullptr ),
+										m_pLibraryObjectsNode( nullptr )
 {
 }
 //================================================================================
@@ -50,7 +53,8 @@ void ATHObjectManager::Init()
 	//polygon.SetAsBox( 20.0f, 1.0f, b2Vec2( 0.0f, -10.0f ), 0.0f );
 	//m_pWorld->CreateBody( &bodyDef )->CreateFixture( &polygon, 1.0f );
 
-	LoadXML( DEFAULT_XML_LOAD_PATH );
+	LoadObjectsFromXML();
+	LoadObjLibFromXML();
 }
 //================================================================================
 void ATHObjectManager::Update( float _fDT )
@@ -99,6 +103,9 @@ void ATHObjectManager::Shutdown()
 {
 	ClearObjects();
 	delete m_pWorld;
+
+	if (m_szLibraryBuffer)
+		delete m_szLibraryBuffer;
 }
 //================================================================================
 void ATHObjectManager::AddObject( ATHObject* pObject )
@@ -111,6 +118,22 @@ void ATHObjectManager::AddObjectStatic( ATHObject* pObject )
 {
 	if( pObject )
 		m_liStaticObjects.push_back( pObject );
+}
+//================================================================================
+void ATHObjectManager::InstanceObject(float3 _fPos, char* _szName)
+{
+	if (!m_pLibraryObjectsNode)
+		return;
+
+	rapidxml::xml_node<>* pObjectNode = m_pLibraryObjectsNode->first_node(_szName);
+	if (!pObjectNode)
+		return;
+
+	ATHObject* pNewObject = GenerateObject(pObjectNode);
+	pNewObject->SetPosition(_fPos);
+
+	AddObject(pNewObject);
+
 }
 //================================================================================
 void ATHObjectManager::ClearObjects()
@@ -132,30 +155,45 @@ void ATHObjectManager::ClearObjects()
 	}
 }
 //================================================================================
+char* ATHObjectManager::GetFileAsText(const char* _szPath)
+{
+	std::ifstream myfile(_szPath);
+	if (!myfile.is_open())
+		return nullptr;
+
+	// Get the size of the file
+	size_t begin = (size_t)myfile.tellg();
+	myfile.seekg(0, myfile.end);
+	size_t end = (size_t)myfile.tellg();
+	size_t tSize = end - begin;
+	myfile.seekg(0, myfile.beg);
+
+	// Load the data into an array and give it a null terminator.
+	char* pString = new char[tSize];
+	memset(pString, 0, tSize);
+	myfile.read(pString, tSize);
+
+	myfile.close();
+
+	return pString;
+}
+//================================================================================
 void ATHObjectManager::LoadObjectsFromXML()
 {
 	LoadXML( DEFAULT_XML_LOAD_PATH );
 }
+void ATHObjectManager::LoadObjLibFromXML()
+{
+	m_szLibraryBuffer = GetFileAsText(DEFAULT_OBJ_LIBRARY_PATH);
+	// Create the rapidxml document
+	m_xmlLibraryDoc.parse<0>(m_szLibraryBuffer);
+
+	m_pLibraryObjectsNode = m_xmlLibraryDoc.first_node();
+}
 //================================================================================
 void ATHObjectManager::LoadXML( const char* _szPath )
 {
-	std::ifstream myfile ( _szPath );
-	if (!myfile.is_open())
-		return;
-
-	// Get the size of the file
-	size_t begin = (size_t)myfile.tellg();
-	myfile.seekg(0, myfile.end );
-	size_t end = (size_t)myfile.tellg();
-	size_t tSize = end - begin;
-	myfile.seekg(0, myfile.beg );
-
-	// Load the data into an array and give it a null terminator.
-	char* pString = new char[tSize];
-	memset( pString, 0, tSize );
-	myfile.read( pString, tSize );
-
-	myfile.close();
+	char* pString = GetFileAsText( _szPath );
 
 	// Create the rapidxml document
 	rapidxml::xml_document<> doc;

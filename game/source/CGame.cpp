@@ -78,6 +78,8 @@ void CGame::TestInit()
 	ATHObject* pTemp = new ATHObject();
 	m_pEventManager->RegisterClient( AET_KEYBOARD, pTemp );
 	m_pObjectManager->AddObject( pTemp );
+
+	m_pObjectManager->InstanceObject(float3( 0.0f, 9.0f, 0.0f ), "CircleTest");
 }
 
 // execution

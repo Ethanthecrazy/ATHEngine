@@ -140,7 +140,7 @@ public:
 		};
 	};
 
-	float3(){}
+	float3() : vX(0.0f), vY(0.0f), vZ(0.0f) {}
 
 	float3( float _val )
 	{

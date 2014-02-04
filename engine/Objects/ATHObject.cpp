@@ -82,3 +82,20 @@ void ATHObject::Update( float _fDT )
 	}
 }
 //================================================================================
+void ATHObject::SetPosition(float3 _fPos)
+{
+	if (m_pBody)
+	{
+		m_pBody->SetTransform(b2Vec2(_fPos.vX, _fPos.vY), m_pBody->GetAngle());
+	}
+	else
+	{
+		m_matTransform._41 = _fPos.vX;
+		m_matTransform._42 = _fPos.vY;
+	}
+
+	m_matTransform._43 = _fPos.vZ;
+
+	Update(0.0f);
+}
+//================================================================================

@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<Objects>
+  <TestObject Name="TestObject" IsActive="true" >
+    <Position X="556" Y="256" Z="256" />
+    <B2Body Type="dynamic" Density="1.0">
+      <B2Shape Type="polygon" >
+        <Vertex Y="-227" X="-206" />
+        <Vertex Y="-379" X="-85" />
+        <Vertex Y="-419" X="-10" />
+        <Vertex Y="-413" X="79" />
+        <Vertex Y="-371" X="155" />
+        <Vertex Y="-219" X="283" />
+        <Vertex Y="-86" X="318" />
+        <Vertex Y="-8" X="320" />
+        <Vertex Y="80" X="296" />
+        <Vertex Y="166" X="236" />
+        <Vertex Y="205" X="148" />
+        <Vertex Y="246" X="49" />
+        <Vertex Y="238" X="-36" />
+        <Vertex Y="201" X="-107" />
+        <Vertex Y="122" X="-201" />
+        <Vertex Y="-31" X="-251" />
+      </B2Shape>
+    </B2Body>
+    <RenderNode PassName="Texture" Priority="0">
+      <Dimension X="512" Y="512" Z="1" />
+      <Texture Path="art\textures\sean.png" />
+      <Mesh Path="QUAD" />
+    </RenderNode>
+    <Properties />
+  </TestObject>
+  <Square Name="Square" IsActive="true" >
+    <Position X="0" Y="256" Z="256" />
+    <B2Body Type="dynamic" Density="1.0">
+      <B2Shape Type="polygon" >
+        <Vertex Y="50" X="50" />
+        <Vertex Y="50" X="-50" />
+        <Vertex Y="-50" X="-50" />
+        <Vertex Y="-50" X="50" />
+      </B2Shape>
+    </B2Body>
+    <RenderNode PassName="Texture" Priority="0">
+      <Dimension X="100" Y="100" Z="1" />
+      <Texture Path="art\textures\wall.png" />
+      <Mesh Path="QUAD" />
+    </RenderNode>
+    <Properties />
+  </Square>
+  <CircleTest Name="CircleTest" IsActive="true" >
+    <Position X="-50" Y="-59" Z="0" />
+    <B2Body Type="dynamic" Density="1.0">
+      <B2Shape Type="circle" Radius="500.0" >
+      </B2Shape>
+    </B2Body>
+    <Properties />
+  </CircleTest>
+</Objects>

@@ -54,6 +54,8 @@ public:
 	virtual void Update( float _fDT );
 	virtual void HandleEvent( const ATHEvent* _pEvent ){}
 
+	virtual void SetPosition(float3 _fPos);
+
 	friend class ATHObjectManager;
 };
 

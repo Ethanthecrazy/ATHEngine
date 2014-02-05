@@ -1,5 +1,5 @@
 #include "ATHLuaObjectFunctions.h"
-#include "../Objects/ATHObject.h"
+#include "../ATHObjectSystem/ATHObject.h"
 
 extern "C" {
 #include "lua\lua.h"

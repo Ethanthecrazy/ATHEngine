@@ -7,13 +7,13 @@ using std::string;
 
 #include "../../engine/ATHUtil/MemoryManager.h"
 #include "../../engine/ATHRenderer/ATHRenderer.h"
-#include "../../engine/Objects/ATHObjectManager.h"
+#include "../../engine/ATHObjectSystem/ATHObjectManager.h"
 #include "../../engine/ATHScriptManager/ATHScriptManager.h"
 #include "../../engine/ATHInputManager/ATHInputManager.h"
 #include "../../engine/ATHEventSystem/ATHEventManager.h"
 
 // For testing purposes
-#include "../../engine/Objects/ATHObject.h"
+#include "../../engine/ATHObjectSystem/ATHObject.h"
 //////////
 
 // default constructor

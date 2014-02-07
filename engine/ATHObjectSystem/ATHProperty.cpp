@@ -3,13 +3,13 @@
 
 ATHProperty::ATHProperty() : m_pData(nullptr), m_unDataSize(0), m_Type( APT_VOID )
 {}
-
+//================================================================================
 ATHProperty::~ATHProperty()
 {
 	if (m_pData)
 		delete m_pData;
 }
-
+//================================================================================
 ATHProperty::ATHProperty(const ATHProperty& _source)
 {
 	m_pData = nullptr;
@@ -24,7 +24,7 @@ ATHProperty::ATHProperty(const ATHProperty& _source)
 	m_pData = new char[m_unDataSize];
 	memcpy_s(m_pData, m_unDataSize, _source.m_pData, m_unDataSize);
 }
-
+//================================================================================
 void ATHProperty::SetData(void* _pData, ATHPropertyType _type, unsigned int _unSize)
 {
 	
@@ -56,22 +56,22 @@ void ATHProperty::SetData(void* _pData, ATHPropertyType _type, unsigned int _unS
 	m_Type = _type;
 
 }
-
+//================================================================================
 int	ATHProperty::GetAsInt()
 {
 	return *((int*)(m_pData));
 }
-
+//================================================================================
 float ATHProperty::GetAsFloat()
 {
 	return *((float*)(m_pData));
 }
-
+//================================================================================
 char* ATHProperty::GetAsString()
 {
 	return (char*)m_pData;
 }
-
+//================================================================================
 void ATHProperty::null()
 {
 	if (m_pData)
@@ -82,3 +82,4 @@ void ATHProperty::null()
 	m_unDataSize = 0;
 
 }
+//================================================================================

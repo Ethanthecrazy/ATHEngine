@@ -8,7 +8,6 @@
 #include "ATHProperty.h"
 #include "../../engine/ATHEventSystem/ATHEventListener.h"
 #include "../ATHUtil/hDataTypes.h"
-
 static const unsigned int ATHOBJECT_MAX_NAME_LENGTH = 64;
 
 class b2Body;

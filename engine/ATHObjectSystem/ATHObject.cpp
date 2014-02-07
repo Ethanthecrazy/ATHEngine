@@ -99,3 +99,62 @@ void ATHObject::SetPosition(float3 _fPos)
 	Update(0.0f);
 }
 //================================================================================
+void ATHObject::SetProperty(char* _szName, void* pData, ATHPropertyType _type, unsigned int _szSize )
+{
+	if (_type == APT_STRING)
+		_szSize = strlen((char*)pData);
+
+	std::string strName(_szName);
+	std::transform(strName.begin(), strName.end(), strName.begin(), tolower );
+	
+	if (m_mapProperties.count(strName) < 1)
+		m_mapProperties.insert( std::pair< std::string, ATHProperty>(strName, ATHProperty()));
+
+	m_mapProperties[strName].SetData(pData, _type, _szSize);
+}
+//================================================================================
+int ATHObject::GetPropertyAsInt(char* _szName)
+{
+	std::string strName(_szName);
+	std::transform(strName.begin(), strName.end(), strName.begin(), tolower);
+
+	if (m_mapProperties[strName].GetPropertyType() != APT_INT)
+		return 0;
+
+	if (m_mapProperties.count(strName) < 1)
+		return 0;
+
+	return m_mapProperties[strName].GetAsInt();
+}
+//================================================================================
+float ATHObject::GetPropertyAsFloat(char* _szName)
+{
+	std::string strName(_szName);
+	std::transform(strName.begin(), strName.end(), strName.begin(), tolower);
+
+	if (m_mapProperties[strName].GetPropertyType() != APT_FLOAT)
+		return 0.0f;
+
+	if (m_mapProperties.count(strName) < 1)
+		return 0.0f;
+
+	return m_mapProperties[strName].GetAsFloat();
+}
+//================================================================================
+std::string ATHObject::GetPropertyAsString(char* _szName)
+{
+	std::string strName(_szName);
+	std::transform(strName.begin(), strName.end(), strName.begin(), tolower);
+
+	if (m_mapProperties[strName].GetPropertyType() != APT_STRING )
+		return std::string();
+
+	if (m_mapProperties.count(strName) < 1)
+		return std::string();
+	
+	std::string strReturn = m_mapProperties[strName].GetAsString();
+	strReturn = strReturn.substr(0, m_mapProperties[strName].GetDataSize());
+
+	return strReturn;;
+}
+//================================================================================

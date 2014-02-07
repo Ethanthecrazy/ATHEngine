@@ -4,6 +4,8 @@
 #include <d3dx9.h>
 #include <string>
 #include <list>
+#include <map>
+#include "ATHProperty.h"
 #include "../../engine/ATHEventSystem/ATHEventListener.h"
 #include "../ATHUtil/hDataTypes.h"
 
@@ -33,6 +35,8 @@ private:
 	ATHRenderNode* m_pRenderNode;
 	b2Body* m_pBody;
 
+	std::map< std::string, ATHProperty > m_mapProperties;
+
 public:
 	
 	ATHObject();
@@ -55,6 +59,11 @@ public:
 	virtual void HandleEvent( const ATHEvent* _pEvent ){}
 
 	virtual void SetPosition(float3 _fPos);
+
+	void SetProperty(char* _szName, void* pData, ATHPropertyType _type, unsigned int _szSize = 0);
+	int GetPropertyAsInt(char* _szName);
+	float GetPropertyAsFloat(char* _szName);
+	std::string GetPropertyAsString(char* _szName);
 
 	friend class ATHObjectManager;
 };

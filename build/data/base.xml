@@ -28,7 +28,11 @@
         <Texture Path="art\textures\sean.png" />
         <Mesh Path="QUAD" />
       </RenderNode>
-      <Properties />
+      <Properties>
+        <Property Name="MaxHealth" Type="INTEGER" Value="20" />
+        <Property Name="Damage" Type="FLOAT" Value="3.2" />
+        <Property Name="CommandName" Type="STRING" Value="Destroy" />
+      </Properties>
     </Object>
     <Object Name="Square" IsActive="true" >
       <Position X="0" Y="256" Z="256" />

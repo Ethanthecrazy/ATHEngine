@@ -232,12 +232,53 @@ ATHObject* ATHObjectManager::GenerateObject(rapidxml::xml_node<>* pRootObjNode)
 	else
 		pReturnObject->m_strName = "Object";
 
+	// Handle Property setup
+	LoadProperties( pReturnObject, pRootObjNode->first_node("Properties") );
+
 	ATHRenderNode* pRenderNode = GenerateRenderNode(pRootObjNode);
 	b2Body*	pBody = GenerateB2Body(pRootObjNode);
 
 	pReturnObject->Init(pRenderNode, pBody);
 
 	return pReturnObject;
+}
+
+void ATHObjectManager::LoadProperties(ATHObject* _pLoadTarget, rapidxml::xml_node<>* _pXMLPropertiesNode)
+{
+	if (_pXMLPropertiesNode == nullptr)
+		return;
+
+	rapidxml::xml_node<>* pPropertyNode = _pXMLPropertiesNode->first_node("Property");
+	while (pPropertyNode)
+	{
+		rapidxml::xml_attribute<>* pAttrName = pPropertyNode->first_attribute("Name");
+		rapidxml::xml_attribute<>* pAttrType = pPropertyNode->first_attribute("Type");
+		rapidxml::xml_attribute<>* pAttrValue = pPropertyNode->first_attribute("Value");
+
+		char* szAttrType = pAttrType->value();
+		if (strcmp(szAttrType, "INTEGER") == 0)
+		{
+			int nVal = atoi(pAttrValue->value());
+			_pLoadTarget->SetProperty(pAttrName->value(), &nVal, APT_INT);
+		}
+		else if (strcmp(szAttrType, "FLOAT") == 0)
+		{
+			float fVal = (float)atof(pAttrValue->value());
+			_pLoadTarget->SetProperty(pAttrName->value(), &fVal, APT_FLOAT);
+		}
+		else if (strcmp(szAttrType, "STRING") == 0)
+		{
+			_pLoadTarget->SetProperty(pAttrName->value(), pAttrValue->value(), APT_STRING, strlen(pAttrValue->value()));
+		}
+
+		pPropertyNode = pPropertyNode->next_sibling("Property");
+	}
+
+	//Testcode
+	int nTest = _pLoadTarget->GetPropertyAsInt("MaxHealth");
+	float fTest = _pLoadTarget->GetPropertyAsFloat("Damage");
+	std::string strTest = _pLoadTarget->GetPropertyAsString("CommandName");
+
 }
 //================================================================================
 b2Body* ATHObjectManager::GenerateB2Body(rapidxml::xml_node<>* pXMLNode)

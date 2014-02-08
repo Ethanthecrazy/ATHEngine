@@ -25,8 +25,16 @@ ATHObjectManager::ATHObjectManager() :	m_fTimeBuffer( 0.0f ),
 //================================================================================
 void ATHObjectManager::Init()
 {
+	InitBox2D();
+
+	LoadObjectsFromXML();
+	LoadObjLibFromXML();
+}
+//================================================================================
+void ATHObjectManager::InitBox2D()
+{
 	// Box2D Init
-	m_pWorld = new b2World( b2Vec2( 0.0f, 0.0f ) );
+	m_pWorld = new b2World(b2Vec2(0.0f, 0.0f));
 
 	ATHBox2DRenderer* pDebugRenderer = ATHRenderer::GetInstance()->GetDebugRenderer();
 	uint32 flags = 0;
@@ -37,24 +45,11 @@ void ATHObjectManager::Init()
 	flags += b2Draw::e_centerOfMassBit;
 
 	pDebugRenderer->SetFlags(flags);
-	m_pWorld->SetDebugDraw( pDebugRenderer );
+	m_pWorld->SetDebugDraw(pDebugRenderer);
 
-	//b2Vec2 vertices[3];
-	//vertices[0].Set(0.0f, 0.0f);
-	//vertices[1].Set(1.0f, 0.0f);
-	//vertices[2].Set(0.0f, 1.0f);
+	m_pWorld->SetContactListener(this);
 
-	//int32 count = 3;
-	//b2PolygonShape polygon;
-	//b2BodyDef bodyDef;
-
-	//bodyDef.type = b2_staticBody;
-	//bodyDef.position = b2Vec2( 0.0f, 0.0f );
-	//polygon.SetAsBox( 20.0f, 1.0f, b2Vec2( 0.0f, -10.0f ), 0.0f );
-	//m_pWorld->CreateBody( &bodyDef )->CreateFixture( &polygon, 1.0f );
-
-	LoadObjectsFromXML();
-	LoadObjLibFromXML();
+	// https://dl.dropboxusercontent.com/u/22926149/ATHEngine/Comments/ATHObjectManager.Init.txt
 }
 //================================================================================
 void ATHObjectManager::Update( float _fDT )
@@ -153,6 +148,24 @@ void ATHObjectManager::ClearObjects()
 		delete (*itrObjects);
 		itrObjects = m_liObjects.erase( itrObjects );
 	}
+}
+//================================================================================
+void ATHObjectManager::BeginContact(b2Contact* contact)
+{
+	ATHObject* pObjectA = (ATHObject*)contact->GetFixtureA()->GetBody()->GetUserData();
+	ATHObject* pObjectB = (ATHObject*)contact->GetFixtureB()->GetBody()->GetUserData();
+
+	IF(pObjectA)->OnCollisionEnter(pObjectB);
+	IF(pObjectB)->OnCollisionEnter(pObjectA);
+}
+//================================================================================
+void ATHObjectManager::EndContact(b2Contact* contact)
+{
+	ATHObject* pObjectA = (ATHObject*)contact->GetFixtureA()->GetBody()->GetUserData();
+	ATHObject* pObjectB = (ATHObject*)contact->GetFixtureB()->GetBody()->GetUserData();
+
+	IF(pObjectA)->OnCollisionExit(pObjectB);
+	IF(pObjectB)->OnCollisionExit(pObjectA);
 }
 //================================================================================
 char* ATHObjectManager::GetFileAsText(const char* _szPath)

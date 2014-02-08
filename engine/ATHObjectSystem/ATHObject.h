@@ -64,6 +64,9 @@ public:
 	float GetPropertyAsFloat(char* _szName);
 	std::string GetPropertyAsString(char* _szName);
 
+	virtual void OnCollisionEnter(ATHObject* _pOtherObject);
+	virtual void OnCollisionExit(ATHObject* _pOtherObject);
+
 	friend class ATHObjectManager;
 };
 

@@ -1,6 +1,8 @@
 #ifndef HDATATYPES_H
 #define HDATATYPES_H
 
+#define IF(x) if(x)(x)
+
 #include <Windows.h>
 #include <math.h>
 

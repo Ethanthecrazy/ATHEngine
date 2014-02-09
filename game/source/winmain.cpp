@@ -26,6 +26,7 @@
 #include <windows.h>	//	Needed for Windows Applications.
 
 #include <iostream>
+#include <fstream>
 #include <ctime>
 
 #include "../../engine/ATHUtil/MemoryManager.h"
@@ -288,10 +289,12 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	//	Game Initialization
 	//////////////////////////////////////////
 
+	// Redirect std::cout to a log file
+	//std::ofstream fsLog("log.txt", std::ofstream::trunc);
+	//std::cout.rdbuf(fsLog.rdbuf());
+
 	MemoryManager::GetInstance()->Init( g_nMEMORY_SIZE );
-
 	CGame* theGame = CGame::GetInstance();
-
 	theGame->Initialize( hWnd, hInstance, g_nWINDOW_WIDTH, g_nWINDOW_HEIGHT, g_bIS_WINDOWED );
 
 	//////////////////////////////////////////
@@ -333,6 +336,10 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 	MemoryManager::GetInstance()->DebugString();
 	MemoryManager::FreeInstance();
+
+	// Close the log file nicely
+	//if (fsLog.is_open())
+		//fsLog.close();
 
 	/////////////////////////////////////////
 	

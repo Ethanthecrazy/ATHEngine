@@ -52,6 +52,7 @@ public:
 		std::string GetName() { return m_pTexNode->m_szName; }
 		float2 GetDimensions() { return float2( (float)m_pTexNode->m_SurfDesc.Width, (float)m_pTexNode->m_SurfDesc.Height ); }
 		LPDIRECT3DTEXTURE9 GetTexture() { return m_pTexNode->m_lpTexture; }
+		bool Valid() { return m_pTexNode && true; }
 
 		friend class ATHRenderer;
 		friend class ATHAtlas;

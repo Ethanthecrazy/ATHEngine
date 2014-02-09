@@ -44,7 +44,7 @@ public:
 	// Object Management
 	void AddObject( ATHObject* pObject );
 	void AddObjectStatic( ATHObject* pObject );
-	void InstanceObject(float3 _fPos, char* _szName);
+	ATHObject* InstanceObject(float3 _fPos, char* _szName);
 	void ClearObjects();
 
 	// Collision functions

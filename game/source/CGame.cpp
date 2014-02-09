@@ -80,6 +80,14 @@ void CGame::TestInit()
 	m_pObjectManager->AddObject( pTemp );
 
 	m_pObjectManager->InstanceObject(float3( 0.0f, 9.0f, 0.0f ), "CircleTest");
+
+	for (int i = 0; i < 10; ++i)
+	{
+		ATHObject* pNewObj = m_pObjectManager->InstanceObject(float3(0.0f, -100.0f - i * 10.0f, 0.0f), "TestObject");
+		pNewObj->GetBody()->ApplyLinearImpulse(b2Vec2(0.0f, 200.0f), pNewObj->GetBody()->GetWorldCenter());
+	}
+
+
 }
 
 // execution

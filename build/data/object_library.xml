@@ -24,14 +24,14 @@
     </B2Body>
     <RenderNode PassName="Texture" Priority="0">
       <Dimension X="512" Y="512" Z="1" />
-      <Texture Path="art\textures\sean.png" />
+      <Texture Path="assets\textures\sean.png" />
       <Mesh Path="QUAD" />
     </RenderNode>
     <Properties />
   </TestObject>
   <Square Name="Square" IsActive="true" >
     <Position X="0" Y="256" Z="256" />
-    <B2Body Type="dynamic" Density="1.0">
+    <B2Body Type="dynamic" Density="10.0">
       <B2Shape Type="polygon" >
         <Vertex Y="50" X="50" />
         <Vertex Y="50" X="-50" />
@@ -41,7 +41,7 @@
     </B2Body>
     <RenderNode PassName="Texture" Priority="0">
       <Dimension X="100" Y="100" Z="1" />
-      <Texture Path="art\textures\wall.png" />
+      <Texture Path="assets\textures\wall.png" />
       <Mesh Path="QUAD" />
     </RenderNode>
     <Properties />

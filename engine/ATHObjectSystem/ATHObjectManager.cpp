@@ -115,19 +115,21 @@ void ATHObjectManager::AddObjectStatic( ATHObject* pObject )
 		m_liStaticObjects.push_back( pObject );
 }
 //================================================================================
-void ATHObjectManager::InstanceObject(float3 _fPos, char* _szName)
+ATHObject* ATHObjectManager::InstanceObject(float3 _fPos, char* _szName)
 {
 	if (!m_pLibraryObjectsNode)
-		return;
+		return nullptr;
 
 	rapidxml::xml_node<>* pObjectNode = m_pLibraryObjectsNode->first_node(_szName);
 	if (!pObjectNode)
-		return;
+		return nullptr;
 
 	ATHObject* pNewObject = GenerateObject(pObjectNode);
 	pNewObject->SetPosition(_fPos);
 
 	AddObject(pNewObject);
+
+	return pNewObject;
 
 }
 //================================================================================
@@ -464,7 +466,10 @@ ATHRenderNode* ATHObjectManager::GenerateRenderNode(rapidxml::xml_node<>* pXMLNo
 
 	// Set the texture of the render node
 	ATHAtlas::ATHTextureHandle texHandle = ATHRenderer::GetInstance()->GetAtlas()->GetTexture(szTexturePath);
-	pReturnNode->SetTexture(texHandle);
+	if (texHandle.Valid())
+		pReturnNode->SetTexture(texHandle);
+	else
+		std::cout << "Failed to find texture at path '" << szTexturePath << "'\n";
 
 	// Set the mesh of the render node
 	if (!strcmp( szMeshPath, "QUAD" ))

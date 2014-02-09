@@ -155,6 +155,9 @@ unsigned int ATHInputManager::Update()
 {
 	ReadKeyboard();
 
+	m_fMouseDiffX = 0.0f;
+	m_fMouseDiffY = 0.0f;
+
 	if( ReadMouse() )
 	{
 		LONG lXMovement = m_diMouseState.lX;

@@ -19,7 +19,7 @@
 #define SHADER_LOAD_PATH ".\\data\\shaders\\"
 #define SHADER_SEARCH_EXTENSION ".fx"
 #define SHADER_DEPTH_NAME "gbuffer"
-#define TEXTURE_LOAD_PATH ".\\art\\textures\\"
+#define TEXTURE_LOAD_PATH ".\\assets\\textures\\"
 #define	TEXTURE_SEARCH_EXTENSION ".png"
 #define MESH_LOAD_PATH ".\\art\\meshes\\"
 

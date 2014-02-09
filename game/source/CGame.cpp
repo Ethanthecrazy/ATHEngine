@@ -47,8 +47,8 @@ void CGame::Initialize(HWND _hWnd, HINSTANCE hInstance,
 
 	cout << "CGame: Init\n"; 
 	srand( unsigned int( time( 0 ) ) );
-	m_nScreenWidth = nScreenWidth;
-	m_nScreenHeight = nScreenHeight;
+	m_unScreenWidth = nScreenWidth;
+	m_unScreenHeight = nScreenHeight;
 
 	m_pRenderer = ATHRenderer::GetInstance();
 	m_pRenderer->Initialize( _hWnd, hInstance, nScreenWidth, nScreenHeight, false, true );
@@ -110,6 +110,11 @@ bool CGame::Main()
 void CGame::PreUpdate( float fDT )
 {
 	m_pInputManager->Update();
+
+	//Test camera code
+	m_pRenderer->GetCamera()->ViewTranslateLocalX(m_pInputManager->GetMouseDiffThisFrame().vX  * fDT );
+	m_pRenderer->GetCamera()->ViewTranslateLocalY(-m_pInputManager->GetMouseDiffThisFrame().vY  * fDT );
+	m_pRenderer->GetCamera()->ViewTranslateLocalZ(m_pInputManager->GetMouseDiffThisFrame().vZ * fDT );
 }
 
 bool CGame::Update( float fDT )

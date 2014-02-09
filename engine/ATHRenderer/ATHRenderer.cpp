@@ -182,11 +182,11 @@ void ATHRenderer::InitStandardRendering()
 
 	m_rtDepth.Create( m_pDevice, m_unScreenWidth, m_unScreenHeight, D3DFMT_R32F );
 
-	m_fScreenDepth = 100.0f;
+	m_fScreenDepth = 1000.0f;
 	m_pCamera = new CCamera();
-	//m_pCamera->BuildPerspective(D3DX_PI / 2.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.1f, m_fScreenDepth );
+	m_pCamera->BuildPerspective(D3DX_PI / 2.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.1f, m_fScreenDepth );
 
-	m_pCamera->BuildOrthoPerspective( 20.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.01f, m_fScreenDepth );
+	//m_pCamera->BuildOrthoPerspective( 20.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.01f, m_fScreenDepth );
 	m_pCamera->SetViewPosition(0.0f, 0.0f, -5.0f);
 
 	//Default texture rendering
@@ -290,7 +290,7 @@ void ATHRenderer::RenderDepth()
 //================================================================================
 void ATHRenderer::RenderForward()
 {
-	DRXClear( float3( 0.3f, 0.3f, 0.5f ) );
+	DRXClear( float3( 0.0f, 0.0f, 0.0f ) );
 	std::list< ATHRenderPass* >::iterator itrPass = m_liSortedRenderPasses.begin();
 	while( itrPass != m_liSortedRenderPasses.end() )
 	{

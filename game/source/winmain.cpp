@@ -348,7 +348,5 @@ int main(void)
 	int toReturn = WinMain(GetModuleHandle(NULL), NULL,
 		GetCommandLine(), SW_SHOWDEFAULT);
 
-	system("PAUSE");
-
 	return toReturn;
 }

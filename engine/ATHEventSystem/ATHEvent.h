@@ -36,8 +36,8 @@ public:
 		struct
 		{
 			char MSE_szMouseButtonsDown[8];
-			unsigned int MSE_unPosX;
-			unsigned int MSE_unPosY; 
+			float MSE_unPosX;
+			float MSE_unPosY; 
 		};
 	};
 

@@ -24,8 +24,8 @@ class CGame
 	float m_fElapsedTime;
 	float m_fGameTime;
 
-	int m_nScreenWidth;
-	int m_nScreenHeight;
+	unsigned int m_unScreenWidth;
+	unsigned int m_unScreenHeight;
 
 	CTimer m_Timer;
 	float			m_fFrameTime;
@@ -69,8 +69,8 @@ public:
 	float GetElapsedTime() {return m_fElapsedTime; }
 	void SetElapsedTime(float t) { m_fElapsedTime = t; }
 	
-	int GetScreenWidth() {return m_nScreenWidth;  }
-	int GetScreenHeight() {return m_nScreenHeight; }
+	unsigned int GetScreenWidth() {return m_unScreenWidth;  }
+	unsigned int GetScreenHeight() {return m_unScreenHeight; }
 };
 
 

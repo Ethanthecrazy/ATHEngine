@@ -39,8 +39,8 @@ private:
 	// Mouse
 	DIMOUSESTATE2 m_diMouseState;
 	DIMOUSESTATE2 m_diPrevMouseState;
-	int m_nMouseX, m_nMouseY;
-	float m_fMouseDiffX, m_fMouseDiffY;
+	float m_fMouseX, m_fMouseY;
+	float m_fMouseDiffX, m_fMouseDiffY, m_fMouseDiffZ;
 	float m_fSensitivity;
 
 	// This is a singleton
@@ -76,7 +76,8 @@ public:
 	ATHKeyList CheckMouseButtons();
 
 	float2 GetMousePos();
-	float2 GetMouseDiffThisFrame();
+	float3 GetMouseDiffThisFrame();
+	void SetMouseSensativity( float _fSensativity ) { m_fSensitivity = _fSensativity; }
 
 	
 

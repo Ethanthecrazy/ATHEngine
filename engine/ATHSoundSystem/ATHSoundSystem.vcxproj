@@ -11,10 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CSGD_XAudio2.cpp" />
+    <ClCompile Include="ATHAudio.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CSGD_XAudio2.h" />
+    <ClInclude Include="ATHAudio.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3496DF86-262C-4559-8312-81F10083E8EF}</ProjectGuid>

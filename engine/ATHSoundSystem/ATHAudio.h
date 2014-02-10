@@ -1,30 +1,3 @@
-///////////////////////////////////////////////////////////////////////////
-//	File			:	"CSGD_XAudio2.h"
-//
-//	Author			:	David Brown (DB)
-//	Based in part on:
-//		-The MAudioManager wrapper by Joshua Villareal.
-//
-//	Creation Date	:	12/26/2011
-//
-//	Purpose			:	To wrap XAudio2.
-//						Allows the loading and playing of 
-//						.wav and .xwm files through XAudio2.
-//
-//	Special thanks to:  Joshua Villareal and Ethan Pendergraft for providing his MAudioManager.
-///////////////////////////////////////////////////////////////////////////
-
-/* 
-Disclaimer:
-This source code was developed for and is the property of:
-
-(c) Full Sail University Game Development Curriculum 2008-2012 and
-(c) Full Sail Real World Education Game Design & Development Curriculum 2000-2008
-
-Full Sail students may not redistribute or make this code public, 
-but may use it in their own personal projects.
-*/
-
 #pragma once
 
 #include <XAudio2.h>
@@ -255,7 +228,7 @@ public:
 	int GetVoiceChannel(int nID);
 };
 
-class CSGD_XAudio2
+class ATHAudio
 {
 	//	Pointer to the XAudio2 interface
 	IXAudio2*				m_pXAudio2;
@@ -293,10 +266,10 @@ class CSGD_XAudio2
 	std::map< std::string, int > m_mapNameLibrary;
 
 	// Proper singleton:
-	CSGD_XAudio2();
-	CSGD_XAudio2(const CSGD_XAudio2&);
-	CSGD_XAudio2& operator=(const CSGD_XAudio2&);
-	~CSGD_XAudio2();
+	ATHAudio();
+	ATHAudio(const ATHAudio&);
+	ATHAudio& operator=(const ATHAudio&);
+	~ATHAudio();
 
 	///////////////////////////////////////////////////////////////////
 	//	Function:	"Play"
@@ -373,7 +346,7 @@ class CSGD_XAudio2
 public:
 
 	// Singleton accessor
-	static CSGD_XAudio2* GetInstance( void );
+	static ATHAudio* GetInstance( void );
 
 	//	Returns the total number of voices available
 	int	NumVoices(void)		{ return (int)m_vVoices.size(); }

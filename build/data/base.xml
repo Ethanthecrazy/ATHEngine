@@ -34,74 +34,18 @@
         <Property Name="CommandName" Type="STRING" Value="Destroy" />
       </Properties>
     </Object>
-    <Object Name="Square" IsActive="true" >
+    <Reference Name="Square" IsActive="true" >
       <Position X="0" Y="256" Z="256" />
-      <B2Body Type="dynamic" Density="1.0">
-        <B2Shape Type="polygon" >
-          <Vertex Y="50" X="50" />
-          <Vertex Y="50" X="-50" />
-          <Vertex Y="-50" X="-50" />
-          <Vertex Y="-50" X="50" />
-        </B2Shape>
-      </B2Body>
-      <RenderNode PassName="Texture" Priority="0">
-        <Dimension X="100" Y="100" Z="1" />
-        <Texture Path="assets\textures\wall.png" />
-        <Mesh Path="QUAD" />
-      </RenderNode>
-      <Properties />
-    </Object>
-    <Object Name="Square" IsActive="true" >
+    </Reference>
+    <Reference Name="Square" IsActive="true" >
       <Position X="0" Y="256" Z="256" />
-      <B2Body Type="dynamic" Density="1.0">
-        <B2Shape Type="polygon" >
-          <Vertex Y="50" X="50" />
-          <Vertex Y="50" X="-50" />
-          <Vertex Y="-50" X="-50" />
-          <Vertex Y="-50" X="50" />
-        </B2Shape>
-      </B2Body>
-      <RenderNode PassName="Texture" Priority="0">
-        <Dimension X="100" Y="100" Z="1" />
-        <Texture Path="assets\textures\wall.png" />
-        <Mesh Path="QUAD" />
-      </RenderNode>
-      <Properties />
-    </Object>
-    <Object Name="Square" IsActive="true" >
+    </Reference>
+    <Reference Name="Square" IsActive="true" >
       <Position X="0" Y="256" Z="256" />
-      <B2Body Type="dynamic" Density="1.0">
-        <B2Shape Type="polygon" >
-          <Vertex Y="50" X="50" />
-          <Vertex Y="50" X="-50" />
-          <Vertex Y="-50" X="-50" />
-          <Vertex Y="-50" X="50" />
-        </B2Shape>
-      </B2Body>
-      <RenderNode PassName="Texture" Priority="0">
-        <Dimension X="100" Y="100" Z="1" />
-        <Texture Path="assets\textures\wall.png" />
-        <Mesh Path="QUAD" />
-      </RenderNode>
-      <Properties />
-    </Object>
-    <Object Name="Square" IsActive="true" >
+    </Reference>
+    <Reference Name="Square" IsActive="true" >
       <Position X="0" Y="256" Z="256" />
-      <B2Body Type="dynamic" Density="1.0">
-        <B2Shape Type="polygon" >
-          <Vertex Y="50" X="50" />
-          <Vertex Y="50" X="-50" />
-          <Vertex Y="-50" X="-50" />
-          <Vertex Y="-50" X="50" />
-        </B2Shape>
-      </B2Body>
-      <RenderNode PassName="Texture" Priority="0">
-        <Dimension X="100" Y="100" Z="1" />
-        <Texture Path="assets\textures\wall.png" />
-        <Mesh Path="QUAD" />
-      </RenderNode>
-      <Properties />
-    </Object>
+    </Reference>
     <Object Name="CircleTest" IsActive="true" >
       <Position X="-50" Y="-59" Z="0" />
       <B2Body Type="dynamic" Density="1.0">
@@ -112,5 +56,8 @@
       </B2Body>
       <Properties />
     </Object>
-  </Objects>
+    <Reference Name ="CircleTest">
+      <Position X="-10" Y="0" Z="0" />
+    </Reference>
+</Objects>
 </World>

@@ -11,7 +11,7 @@
 const unsigned int	NUM_VELOCITY_ITERATIONS = 8;
 const unsigned int	NUM_POSITION_ITERATIONS = 5;
 const float			TIMESTEP_LENGTH = (1.0f/30.0f);
-const float			MAX_TIMEBUFFER = 1.0f;
+const float			MAX_TIMEBUFFER = 0.5f;
 const char			DEFAULT_XML_LOAD_PATH[] = "data\\base.xml";
 const char			DEFAULT_OBJ_LIBRARY_PATH[] = "data\\object_library.xml";
 const float GLOBAL_LOAD_SCALE = 0.01f;
@@ -26,9 +26,8 @@ ATHObjectManager::ATHObjectManager() :	m_fTimeBuffer( 0.0f ),
 void ATHObjectManager::Init()
 {
 	InitBox2D();
-
-	LoadObjectsFromXML();
 	LoadObjLibFromXML();
+	LoadObjectsFromXML();
 }
 //================================================================================
 void ATHObjectManager::InitBox2D()
@@ -122,7 +121,11 @@ ATHObject* ATHObjectManager::InstanceObject(float3 _fPos, char* _szName)
 
 	rapidxml::xml_node<>* pObjectNode = m_pLibraryObjectsNode->first_node(_szName);
 	if (!pObjectNode)
+	{
+		std::cout << "Failed to instance object " << _szName << "\n";
 		return nullptr;
+	}
+		
 
 	ATHObject* pNewObject = GenerateObject(pObjectNode);
 	pNewObject->SetPosition(_fPos);
@@ -197,6 +200,7 @@ void ATHObjectManager::LoadObjectsFromXML()
 {
 	LoadXML( DEFAULT_XML_LOAD_PATH );
 }
+//================================================================================
 void ATHObjectManager::LoadObjLibFromXML()
 {
 	m_szLibraryBuffer = GetFileAsText(DEFAULT_OBJ_LIBRARY_PATH);
@@ -218,17 +222,21 @@ void ATHObjectManager::LoadXML( const char* _szPath )
 	rapidxml::xml_node<>* nodeWorld = doc.first_node();
 	rapidxml::xml_node<>* nodeObjects = nodeWorld->first_node( "Objects" );
 	rapidxml::xml_node<>* currObject = nodeObjects->first_node( "Object" );
-	while( currObject )
+	while (currObject)
 	{
-		//for( unsigned int i = 0; i < 100; ++i )
-		{
-			ATHObject* pNewObject = GenerateObject(currObject);
-			AddObject( pNewObject );
-		}
+		ATHObject* pNewObject = GenerateObject(currObject);
+		AddObject(pNewObject);
 
-		currObject = currObject->next_sibling();
+		currObject = currObject->next_sibling("Object");
 	}
 
+	rapidxml::xml_node<>* currReference = nodeObjects->first_node("Reference");
+	while (currReference)
+	{
+		GenerateObjectFromReference(currReference);
+	
+		currReference = currReference->next_sibling("Reference");
+	}
 	delete[] pString;
 
 }
@@ -257,7 +265,27 @@ ATHObject* ATHObjectManager::GenerateObject(rapidxml::xml_node<>* pRootObjNode)
 
 	return pReturnObject;
 }
+//================================================================================
+ATHObject* ATHObjectManager::GenerateObjectFromReference(rapidxml::xml_node<>* pRefNode)
+{
+	ATHObject* pReturnObject = nullptr;
+	rapidxml::xml_attribute<>* currObjName = pRefNode->first_attribute("Name");
 
+	float3 fPos(0.0f);
+
+	rapidxml::xml_node<>* currObjPosNode = pRefNode->first_node("Position");
+	if (currObjPosNode)
+	{
+		fPos.vX = (float)atof(currObjPosNode->first_attribute("X")->value()) * GLOBAL_LOAD_SCALE;
+		fPos.vY = (float)atof(currObjPosNode->first_attribute("Y")->value()) * GLOBAL_LOAD_SCALE;
+		fPos.vZ = (float)atof(currObjPosNode->first_attribute("Z")->value()) * GLOBAL_LOAD_SCALE;
+	}
+
+	pReturnObject = InstanceObject(fPos, currObjName->value());
+
+	return pReturnObject;
+}
+//================================================================================
 void ATHObjectManager::LoadProperties(ATHObject* _pLoadTarget, rapidxml::xml_node<>* _pXMLPropertiesNode)
 {
 	if (_pXMLPropertiesNode == nullptr)

@@ -60,6 +60,7 @@ public:
 
 	// Object parsing
 	ATHObject* GenerateObject(rapidxml::xml_node<>* pRootObjNode );
+	ATHObject* GenerateObjectFromReference(rapidxml::xml_node<>* pRefNode);
 	void LoadProperties(ATHObject* _pLoadTarget, rapidxml::xml_node<>* _pXMLPropertiesNode);
 	
 	// Box2d Parsing

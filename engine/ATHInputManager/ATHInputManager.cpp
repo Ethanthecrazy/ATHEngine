@@ -184,8 +184,8 @@ unsigned int ATHInputManager::Update()
 		if( m_fMouseY > (int)m_unScreenHeight )
 			m_fMouseY = m_unScreenHeight;
 
-		if (m_fMouseDiffY != 0.0f || m_fMouseDiffX != 0.0f )
-			std::cout << m_fMouseX << " " << m_fMouseY << '\n';
+		//if (m_fMouseDiffY != 0.0f || m_fMouseDiffX != 0.0f)
+			//std::cout << m_fMouseX << " " << m_fMouseY << '\n';
 	}
 
 	SendKeyboardEvent();

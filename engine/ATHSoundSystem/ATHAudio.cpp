@@ -1,31 +1,4 @@
-////////////////////////////////////////////////////////////////
-//	File			:	"CSGD_XAudio2.cpp"
-//
-//	Author			:	David Brown (DB)
-//	Based in part on:
-//		-The MAudioManager wrapper by Joshua Villareal.
-//
-//	Creation Date	:	12/26/2011
-//
-//	Purpose			:	To wrap XAudio2.
-//						Allows the loading and playing of 
-//						.wav and .xwm files through XAudio2.
-//
-//	Special thanks to:  Joshua Villareal and Ethan Pendergraft for providing his MAudioManager.
-/////////////////////////////////////////////////////////////////
-
-/* 
-Disclaimer:
-This source code was developed for and is the property of:
-
-(c) Full Sail University Game Development Curriculum 2008-2012 and
-(c) Full Sail Real World Education Game Design & Development Curriculum 2000-2008
-
-Full Sail students may not redistribute or make this code public, 
-but may use it in their own personal projects.
-*/
-
-#include "CSGD_XAudio2.h"
+#include "ATHAudio.h"
 #include <assert.h>
 #include <tchar.h>
 
@@ -173,7 +146,7 @@ void VoiceCallback::OnStreamEnd()
 
 	//OutputDebugString("OnStreamEnd RECYCLE VOICE\n");
 
-	//CSGD_XAudio2::GetInstance()->RecycleVoice(nVoiceChannel);
+	//ATHAudio::GetInstance()->RecycleVoice(nVoiceChannel);
 }
 
 //Unused methods are stubs
@@ -329,7 +302,7 @@ HRESULT SoundInfo::LoadSoundInfo( LPCTSTR strFileName )
 };
 
 /////////////////////////////////////////////////////////////////
-CSGD_XAudio2::CSGD_XAudio2()
+ATHAudio::ATHAudio()
 {
 #ifndef _XBOX
 	CoInitializeEx(NULL, COINIT_MULTITHREADED);
@@ -345,22 +318,22 @@ CSGD_XAudio2::CSGD_XAudio2()
 	m_nMasterOutputChannels			= -1;
 }
 
-CSGD_XAudio2::~CSGD_XAudio2()
+ATHAudio::~ATHAudio()
 {
 #ifndef _XBOX
 	CoUninitialize();
 #endif
 }
 
-CSGD_XAudio2* CSGD_XAudio2::GetInstance( void )
+ATHAudio* ATHAudio::GetInstance( void )
 {
-	static CSGD_XAudio2 instance;
+	static ATHAudio instance;
 	return &instance;
 }
 
-//IXAudio2* CSGD_XAudio2::m_pXAudio2 = NULL;
+//IXAudio2* ATHAudio::m_pXAudio2 = NULL;
 
-bool CSGD_XAudio2::InitXAudio2()
+bool ATHAudio::InitXAudio2()
 {
 	UINT32 flags = 0;
 
@@ -424,7 +397,7 @@ bool CSGD_XAudio2::InitXAudio2()
 	return true;
 }
 
-void CSGD_XAudio2::ShutdownXAudio2( void )
+void ATHAudio::ShutdownXAudio2( void )
 {
 	SilenceAll();
 	//m_pXAudio2->CommitChanges(AUDIO_ENGINE_OP_SET);
@@ -508,7 +481,7 @@ void CSGD_XAudio2::ShutdownXAudio2( void )
 	}
 }
 
-void CSGD_XAudio2::Update()
+void ATHAudio::Update()
 {
 	m_nActiveVoiceCount = 0;
 
@@ -546,7 +519,7 @@ void CSGD_XAudio2::Update()
 	//m_pXAudio2->CommitChanges(AUDIO_ENGINE_OP_SET);//XAUDIO2_COMMIT_ALL);
 }
 
-void CSGD_XAudio2::SilenceAll()
+void ATHAudio::SilenceAll()
 {
 	//	Recycle all voices (which stops them playing)
 	for(unsigned int i=0; i < m_vVoices.size(); i++)
@@ -562,7 +535,7 @@ void CSGD_XAudio2::SilenceAll()
 	}
 }
 
-void CSGD_XAudio2::RecycleVoiceNow(int nIndex)
+void ATHAudio::RecycleVoiceNow(int nIndex)
 {
 	//	Looping voices must be stopped MANUALLY, so ignore this one
 	if (m_vVoices[nIndex].m_bIsLooping == true)
@@ -595,7 +568,7 @@ void CSGD_XAudio2::RecycleVoiceNow(int nIndex)
 	m_qVoicesOpenSlots.push(nIndex);
 }
 
-void CSGD_XAudio2::Play(int nID, SoundInfo soundTemplate, bool bIsLooping)
+void ATHAudio::Play(int nID, SoundInfo soundTemplate, bool bIsLooping)
 {
 	assert(soundTemplate.buffer.AudioBytes != NULL && "sound buffer is NULL");
 
@@ -696,7 +669,7 @@ void CSGD_XAudio2::Play(int nID, SoundInfo soundTemplate, bool bIsLooping)
 		m_vVoices[ nIndex ].m_pVoice->SubmitSourceBuffer( &soundTemplate.buffer );
 }
 
-void CSGD_XAudio2::CalcPanOutputMatrix(float pan, WORD inputChannels, float *pLevelMatrix)
+void ATHAudio::CalcPanOutputMatrix(float pan, WORD inputChannels, float *pLevelMatrix)
 {
 	assert( pan >= -1.0f && pan <= 1.0f && "Pan out of range");
     assert( pLevelMatrix != NULL );  
@@ -831,7 +804,7 @@ void CSGD_XAudio2::CalcPanOutputMatrix(float pan, WORD inputChannels, float *pLe
 	}
 }
 
-int CSGD_XAudio2::GetOpenVoiceChannel(void)
+int ATHAudio::GetOpenVoiceChannel(void)
 {
 	int nIndex = -1;
 
@@ -848,7 +821,7 @@ int CSGD_XAudio2::GetOpenVoiceChannel(void)
 //	SFX
 //////////////////////////////////////////////////////////
 
-int CSGD_XAudio2::SFXLoadSound( const TCHAR* szFileName )
+int ATHAudio::SFXLoadSound( const TCHAR* szFileName )
 {
 	if (!szFileName)	
 		return -1;
@@ -929,7 +902,7 @@ int CSGD_XAudio2::SFXLoadSound( const TCHAR* szFileName )
 	return nID;
 }
 
-int CSGD_XAudio2::SFXLoadSound( std::string _szSoundName, const TCHAR* szFileName )
+int ATHAudio::SFXLoadSound( std::string _szSoundName, const TCHAR* szFileName )
 {
 	int nCapture = SFXLoadSound( szFileName );
 
@@ -939,7 +912,7 @@ int CSGD_XAudio2::SFXLoadSound( std::string _szSoundName, const TCHAR* szFileNam
 	return nCapture;
 }
 
-int CSGD_XAudio2::SFXGetSoundID( std::string _szSoundName )
+int ATHAudio::SFXGetSoundID( std::string _szSoundName )
 {
 	if( m_mapNameLibrary.count( _szSoundName ) > 0 )
 	{
@@ -949,7 +922,7 @@ int CSGD_XAudio2::SFXGetSoundID( std::string _szSoundName )
 	return -1;
 }
 
-void CSGD_XAudio2::SFXUnloadSound( int nID )
+void ATHAudio::SFXUnloadSound( int nID )
 {
 	assert( nID > -1 && nID < (int)m_vSFXLibrary.size() && "Sound ID out of range" );
 	assert( m_vSFXLibrary[nID].m_bInUse && "Sound ID not loaded" );
@@ -973,7 +946,7 @@ void CSGD_XAudio2::SFXUnloadSound( int nID )
 	m_qSFXLibraryOpenSlots.push(nID);
 }
 
-void CSGD_XAudio2::SFXPlaySound( int nID, bool bIsLooping )
+void ATHAudio::SFXPlaySound( int nID, bool bIsLooping )
 {	
 	assert( nID > -1 && nID < (int)m_vSFXLibrary.size() && "Sound ID out of range" );
 	assert( m_vSFXLibrary[nID].m_bInUse && "Sound ID not loaded" );
@@ -983,7 +956,7 @@ void CSGD_XAudio2::SFXPlaySound( int nID, bool bIsLooping )
 	Play(nID, soundTemplate, bIsLooping);
 }
 
-void CSGD_XAudio2::SFXStopSound(int nID)
+void ATHAudio::SFXStopSound(int nID)
 {
 	assert( nID > -1 && nID < (int)m_vSFXLibrary.size() && "Sound ID out of range" );
 	assert( m_vSFXLibrary[nID].m_bInUse && "Sound ID not loaded" );
@@ -999,7 +972,7 @@ void CSGD_XAudio2::SFXStopSound(int nID)
 	}
 }
 
-bool CSGD_XAudio2::SFXIsSoundPlaying(int nID)
+bool ATHAudio::SFXIsSoundPlaying(int nID)
 {
 	assert( nID > -1 && nID < (int)m_vSFXLibrary.size() && "Sound ID out of range" );
 	assert( m_vSFXLibrary[nID].m_bInUse && "Sound ID not loaded" );
@@ -1015,7 +988,7 @@ bool CSGD_XAudio2::SFXIsSoundPlaying(int nID)
 	return false;
 }
 
-float CSGD_XAudio2::SFXGetMasterVolume(void)
+float ATHAudio::SFXGetMasterVolume(void)
 {
 	assert( m_pSFXSubmixVoice != NULL && "Submix voice is NULL!" );
 
@@ -1025,7 +998,7 @@ float CSGD_XAudio2::SFXGetMasterVolume(void)
 	return fVolume;
 }
 
-float CSGD_XAudio2::SFXGetSoundVolume(int nID)
+float ATHAudio::SFXGetSoundVolume(int nID)
 {
 	assert( nID > -1 && nID < (int)m_vSFXLibrary.size() && "Sound ID out of range" );
 	assert( m_vSFXLibrary[nID].m_bInUse && "Sound ID not loaded" );
@@ -1033,7 +1006,7 @@ float CSGD_XAudio2::SFXGetSoundVolume(int nID)
 	return m_vSFXLibrary[ nID ].m_fVolume;
 }
 
-float CSGD_XAudio2::SFXGetSoundPan(int nID)
+float ATHAudio::SFXGetSoundPan(int nID)
 {
 	assert( nID > -1 && nID < (int)m_vSFXLibrary.size() && "Sound ID out of range" );
 	assert( m_vSFXLibrary[nID].m_bInUse && "Sound ID not loaded" );
@@ -1041,7 +1014,7 @@ float CSGD_XAudio2::SFXGetSoundPan(int nID)
 	return m_vSFXLibrary[ nID ].m_fPan;
 }
 
-float CSGD_XAudio2::SFXGetSoundFrequencyRatio(int nID)
+float ATHAudio::SFXGetSoundFrequencyRatio(int nID)
 {
 	assert( nID > -1 && nID < (int)m_vSFXLibrary.size() && "Sound ID out of range" );
 	assert( m_vSFXLibrary[nID].m_bInUse && "Sound ID not loaded" );
@@ -1049,14 +1022,14 @@ float CSGD_XAudio2::SFXGetSoundFrequencyRatio(int nID)
 	return m_vSFXLibrary[ nID ].m_fFrequencyRatio;
 }
 
-void CSGD_XAudio2::SFXSetMasterVolume(float fVolume)
+void ATHAudio::SFXSetMasterVolume(float fVolume)
 {
 	assert(fVolume >= -XAUDIO2_MAX_VOLUME_LEVEL && fVolume <= XAUDIO2_MAX_VOLUME_LEVEL && "Volume outside valid range");
 
 	m_pSFXSubmixVoice->SetVolume(fVolume, AUDIO_ENGINE_OP_SET);
 }
 
-void CSGD_XAudio2::SFXSetSoundVolume(int nID, float fVolume)
+void ATHAudio::SFXSetSoundVolume(int nID, float fVolume)
 {
 	assert( nID > -1 && nID < (int)m_vSFXLibrary.size() && "Sound ID out of range" );
 	assert( m_vSFXLibrary[nID].m_bInUse && "Sound ID not loaded" );
@@ -1073,7 +1046,7 @@ void CSGD_XAudio2::SFXSetSoundVolume(int nID, float fVolume)
 	//}
 }
 
-void CSGD_XAudio2::SFXSetSoundPan(int nID, float fPan)
+void ATHAudio::SFXSetSoundPan(int nID, float fPan)
 {
 	assert( nID > -1 && nID < (int)m_vSFXLibrary.size() && "Sound ID out of range" );
 	assert( m_vSFXLibrary[nID].m_bInUse && "Sound ID not loaded" );
@@ -1081,7 +1054,7 @@ void CSGD_XAudio2::SFXSetSoundPan(int nID, float fPan)
 	m_vSFXLibrary[ nID ].m_fPan = fPan;
 }
 
-void CSGD_XAudio2::SFXSetSoundFrequencyRatio(int nID, float fFreqRatio)
+void ATHAudio::SFXSetSoundFrequencyRatio(int nID, float fFreqRatio)
 {
 	assert( nID > -1 && nID < (int)m_vSFXLibrary.size() && "Sound ID out of range" );
 	assert( m_vSFXLibrary[nID].m_bInUse && "Sound ID not loaded" );
@@ -1104,7 +1077,7 @@ void CSGD_XAudio2::SFXSetSoundFrequencyRatio(int nID, float fFreqRatio)
 //	Music
 //////////////////////////////////////////////////////////
 
-int CSGD_XAudio2::MusicLoadSong( const TCHAR* szFileName )
+int ATHAudio::MusicLoadSong( const TCHAR* szFileName )
 {
 	if (!szFileName)	
 		return -1;
@@ -1185,7 +1158,7 @@ int CSGD_XAudio2::MusicLoadSong( const TCHAR* szFileName )
 	return nID;
 }
 
-void CSGD_XAudio2::MusicUnloadSong( int nID )
+void ATHAudio::MusicUnloadSong( int nID )
 {
 	assert( nID > -1 && nID < (int)m_vMusicLibrary.size() && "Song ID out of range" );
 	assert( m_vMusicLibrary[nID].m_bInUse && "Song ID not loaded" );
@@ -1196,7 +1169,7 @@ void CSGD_XAudio2::MusicUnloadSong( int nID )
 	m_qMusicLibraryOpenSlots.push(nID);
 }
 
-void CSGD_XAudio2::MusicPlaySong( int nID, bool bIsLooping )
+void ATHAudio::MusicPlaySong( int nID, bool bIsLooping )
 {	
 	assert( nID > -1 && nID < (int)m_vMusicLibrary.size() && "Song ID out of range" );
 	assert( m_vMusicLibrary[nID].m_bInUse && "Song ID not loaded" );
@@ -1206,7 +1179,7 @@ void CSGD_XAudio2::MusicPlaySong( int nID, bool bIsLooping )
 	Play(nID, soundTemplate, bIsLooping);
 }
 
-void CSGD_XAudio2::MusicStopSong(int nID)
+void ATHAudio::MusicStopSong(int nID)
 {
 	assert( nID > -1 && nID < (int)m_vMusicLibrary.size() && "Song ID out of range" );
 	assert( m_vMusicLibrary[nID].m_bInUse && "Song ID not loaded" );
@@ -1222,7 +1195,7 @@ void CSGD_XAudio2::MusicStopSong(int nID)
 	}
 }
 
-bool CSGD_XAudio2::MusicIsSongPlaying(int nID)
+bool ATHAudio::MusicIsSongPlaying(int nID)
 {
 	assert( nID > -1 && nID < (int)m_vMusicLibrary.size() && "Song ID out of range" );
 	assert( m_vMusicLibrary[nID].m_bInUse && "Song ID not loaded" );
@@ -1238,7 +1211,7 @@ bool CSGD_XAudio2::MusicIsSongPlaying(int nID)
 	return false;
 }
 
-float CSGD_XAudio2::MusicGetMasterVolume(void)
+float ATHAudio::MusicGetMasterVolume(void)
 {
 	assert( m_pMusicSubmixVoice != NULL && "Submix voice is NULL!" );
 
@@ -1248,7 +1221,7 @@ float CSGD_XAudio2::MusicGetMasterVolume(void)
 	return fVolume;
 }
 
-float CSGD_XAudio2::MusicGetSongVolume(int nID)
+float ATHAudio::MusicGetSongVolume(int nID)
 {
 	assert( nID > -1 && nID < (int)m_vMusicLibrary.size() && "Song ID out of range" );
 	assert( m_vMusicLibrary[nID].m_bInUse && "Song ID not loaded" );
@@ -1256,7 +1229,7 @@ float CSGD_XAudio2::MusicGetSongVolume(int nID)
 	return m_vMusicLibrary[ nID ].m_fVolume;
 }
 
-float CSGD_XAudio2::MusicGetSongPan(int nID)
+float ATHAudio::MusicGetSongPan(int nID)
 {
 	assert( nID > -1 && nID < (int)m_vMusicLibrary.size() && "Song ID out of range" );
 	assert( m_vMusicLibrary[nID].m_bInUse && "Song ID not loaded" );
@@ -1264,7 +1237,7 @@ float CSGD_XAudio2::MusicGetSongPan(int nID)
 	return m_vMusicLibrary[ nID ].m_fPan;
 }
 
-float CSGD_XAudio2::MusicGetSongFrequencyRatio(int nID)
+float ATHAudio::MusicGetSongFrequencyRatio(int nID)
 {
 	assert( nID > -1 && nID < (int)m_vMusicLibrary.size() && "Song ID out of range" );
 	assert( m_vMusicLibrary[nID].m_bInUse && "Song ID not loaded" );
@@ -1272,14 +1245,14 @@ float CSGD_XAudio2::MusicGetSongFrequencyRatio(int nID)
 	return m_vMusicLibrary[ nID ].m_fFrequencyRatio;
 }
 
-void CSGD_XAudio2::MusicSetMasterVolume(float fVolume)
+void ATHAudio::MusicSetMasterVolume(float fVolume)
 {
 	assert(fVolume >= -XAUDIO2_MAX_VOLUME_LEVEL && fVolume <= XAUDIO2_MAX_VOLUME_LEVEL && "Volume outside valid range");
 
 	m_pMusicSubmixVoice->SetVolume(fVolume, AUDIO_ENGINE_OP_SET);
 }
 
-void CSGD_XAudio2::MusicSetSongVolume(int nID, float fVolume)
+void ATHAudio::MusicSetSongVolume(int nID, float fVolume)
 {
 	assert( nID > -1 && nID < (int)m_vMusicLibrary.size() && "Song ID out of range" );
 	assert( m_vMusicLibrary[nID].m_bInUse && "Song ID not loaded" );
@@ -1297,7 +1270,7 @@ void CSGD_XAudio2::MusicSetSongVolume(int nID, float fVolume)
 }
 
 // Affects ALL songs with this id
-void CSGD_XAudio2::MusicSetSongPan(int nID, float fPan)
+void ATHAudio::MusicSetSongPan(int nID, float fPan)
 {
 	assert( nID > -1 && nID < (int)m_vMusicLibrary.size() && "Song ID out of range" );
 	assert( m_vMusicLibrary[nID].m_bInUse && "Song ID not loaded" );
@@ -1320,7 +1293,7 @@ void CSGD_XAudio2::MusicSetSongPan(int nID, float fPan)
 	}
 }
 
-void CSGD_XAudio2::MusicSetSongFrequencyRatio(int nID, float fFreqRatio)
+void ATHAudio::MusicSetSongFrequencyRatio(int nID, float fFreqRatio)
 {
 	assert( nID > -1 && nID < (int)m_vMusicLibrary.size() && "Song ID out of range" );
 	assert( m_vMusicLibrary[nID].m_bInUse && "Song ID not loaded" );

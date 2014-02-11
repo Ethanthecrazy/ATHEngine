@@ -1,39 +1,9 @@
 <?xml version="1.0"?>
 <World Version="1.0.0.0">
   <Objects>
-    <Object Name="TestObject" IsActive="true" >
+    <Reference Name="TestObject" IsActive="true" >
       <Position X="556" Y="256" Z="256" />
-      <B2Body Type="dynamic" Density="1.0">
-        <B2Shape Type="polygon" >
-          <Vertex Y="-227" X="-206" />
-          <Vertex Y="-379" X="-85" />
-          <Vertex Y="-419" X="-10" />
-          <Vertex Y="-413" X="79" />
-          <Vertex Y="-371" X="155" />
-          <Vertex Y="-219" X="283" />
-          <Vertex Y="-86" X="318" />
-          <Vertex Y="-8" X="320" />
-          <Vertex Y="80" X="296" />
-          <Vertex Y="166" X="236" />
-          <Vertex Y="205" X="148" />
-          <Vertex Y="246" X="49" />
-          <Vertex Y="238" X="-36" />
-          <Vertex Y="201" X="-107" />
-          <Vertex Y="122" X="-201" />
-          <Vertex Y="-31" X="-251" />
-        </B2Shape>
-      </B2Body>
-      <RenderNode PassName="Texture" Priority="0">
-        <Dimension X="512" Y="512" Z="1" />
-        <Texture Path="assets\textures\sean.png" />
-        <Mesh Path="QUAD" />
-      </RenderNode>
-      <Properties>
-        <Property Name="MaxHealth" Type="INTEGER" Value="20" />
-        <Property Name="Damage" Type="FLOAT" Value="3.2" />
-        <Property Name="CommandName" Type="STRING" Value="Destroy" />
-      </Properties>
-    </Object>
+    </Reference>
     <Reference Name="Square" IsActive="true" >
       <Position X="0" Y="256" Z="256" />
     </Reference>

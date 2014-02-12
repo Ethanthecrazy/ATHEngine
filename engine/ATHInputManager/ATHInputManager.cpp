@@ -108,8 +108,8 @@ bool ATHInputManager::Init( HWND _hWnd, HINSTANCE _hInstance, unsigned int _unSc
 	m_pMouse->Acquire();
 
 	SetCursorPos( _nMouseStartX, _nMouseStartY );
-	m_fMouseX = _nMouseStartX;
-	m_fMouseY = _nMouseStartY;
+	m_fMouseX = (float)_nMouseStartX;
+	m_fMouseY = (float)_nMouseStartY;
 
 	return true;
 }
@@ -170,7 +170,7 @@ unsigned int ATHInputManager::Update()
 
 		// Z is the scroll wheel, sensitivty doesnt change it
 		LONG lZMovement = m_diMouseState.lZ;
-		m_fMouseDiffZ = lZMovement;
+		m_fMouseDiffZ = (float)lZMovement;
 
 		if( m_fMouseX < 0 )
 			m_fMouseX = 0;
@@ -179,10 +179,10 @@ unsigned int ATHInputManager::Update()
 			m_fMouseY = 0;
 
 		if( m_fMouseX > (int)m_unScreenWidth )
-			m_fMouseX = m_unScreenWidth;
+			m_fMouseX = (float)m_unScreenWidth;
 
 		if( m_fMouseY > (int)m_unScreenHeight )
-			m_fMouseY = m_unScreenHeight;
+			m_fMouseY = (float)m_unScreenHeight;
 
 		//if (m_fMouseDiffY != 0.0f || m_fMouseDiffX != 0.0f)
 			//std::cout << m_fMouseX << " " << m_fMouseY << '\n';

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DevGame", "DevGame.vcxproj", "{40222032-B276-4982-B260-6E9CE6D245ED}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -12,6 +12,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DevGame", "DevGame.vcxproj"
 		{3496DF86-262C-4559-8312-81F10083E8EF} = {3496DF86-262C-4559-8312-81F10083E8EF}
 		{F46BFC96-B12F-40DF-8F4F-BA3068168BDC} = {F46BFC96-B12F-40DF-8F4F-BA3068168BDC}
 		{994C58BD-9E62-4403-9ABF-5729C5D8BA97} = {994C58BD-9E62-4403-9ABF-5729C5D8BA97}
+		{673F48BE-4628-4C98-BB8A-D58CC4577095} = {673F48BE-4628-4C98-BB8A-D58CC4577095}
 		{300BC9F5-286E-4B18-BCF1-5BF4EE96F407} = {300BC9F5-286E-4B18-BCF1-5BF4EE96F407}
 	EndProjectSection
 EndProject
@@ -34,6 +35,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ATHStackSystem", "..\engine\ATHStackSystem\ATHStackSystem.vcxproj", "{300BC9F5-286E-4B18-BCF1-5BF4EE96F407}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ATHObjectSystem", "..\engine\ATHObjectSystem\ATHObjectSystem.vcxproj", "{673F48BE-4628-4C98-BB8A-D58CC4577095}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3CD0723B-34DE-4591-9252-74606FC3CE5C} = {3CD0723B-34DE-4591-9252-74606FC3CE5C}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ATHSoundSystem", "..\engine\ATHSoundSystem\ATHSoundSystem.vcxproj", "{3496DF86-262C-4559-8312-81F10083E8EF}"
 EndProject

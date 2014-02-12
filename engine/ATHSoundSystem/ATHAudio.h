@@ -230,6 +230,8 @@ public:
 
 class ATHAudio
 {
+	static ATHAudio* m_pInstance;
+
 	//	Pointer to the XAudio2 interface
 	IXAudio2*				m_pXAudio2;
 	//	The final output voice
@@ -347,6 +349,7 @@ public:
 
 	// Singleton accessor
 	static ATHAudio* GetInstance( void );
+	void DeleteInstance();
 
 	//	Returns the total number of voices available
 	int	NumVoices(void)		{ return (int)m_vVoices.size(); }
@@ -428,9 +431,9 @@ public:
 	//				
 	//  IMPORTANT:	Supports .wav files ONLY.
 	///////////////////////////////////////////////////////////////////
-	int SFXLoadSound( const TCHAR* szFileName );
+	int SFXLoadSound (const TCHAR* szFileName );
 
-	int SFXLoadSound( std::string _szSoundName, const TCHAR* szFileName );
+	int SFXLoadSound( std::string _szSoundName, const TCHAR* szFileName);
 
 	int SFXGetSoundID( std::string _szSoundName );
 
@@ -463,6 +466,8 @@ public:
 	//				is called on them.
 	///////////////////////////////////////////////////////////////////
 	void SFXPlaySound( int nID, bool bIsLooping = false );
+
+	void SFXPlaySound( std::string _szSoundName, bool bIsLooping = false);
 
 	///////////////////////////////////////////////////////////////////
 	//	Function:	"SFXStopSound"

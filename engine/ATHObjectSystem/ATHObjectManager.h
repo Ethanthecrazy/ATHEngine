@@ -2,7 +2,7 @@
 #define ATHOBJECTMANAGER_H
 
 #include <list>
-#include "RapidXML\rapidxml.hpp"
+#include "../ATHUtil/FileUtil.h"
 #include "../ATHUtil/hDataTypes.h"
 #include "../Box2D/Dynamics/b2WorldCallbacks.h"
 
@@ -51,12 +51,10 @@ public:
 	virtual void BeginContact(b2Contact* contact);
 	virtual void EndContact(b2Contact* contact);
 
-	char* GetFileAsText(const char* _szPath);
-
 	// Object Loading
-	void LoadObjectsFromXML();
+	void LoadObjectsFromXML( const char* _szFilePath );
 	void LoadObjLibFromXML();
-	void LoadXML( const char* _szPath );
+	void LoadXMLFromFile( const char* _szPath );
 
 	// Object parsing
 	ATHObject* GenerateObject(rapidxml::xml_node<>* pRootObjNode );

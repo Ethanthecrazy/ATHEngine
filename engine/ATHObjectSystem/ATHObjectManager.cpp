@@ -5,15 +5,18 @@
 #include "../ATHRenderer/ATHRenderer.h"
 #include "../ATHUtil/NewInclude.h"
 #include "../Box2D/Box2D.h"
-#include "RapidXML/rapidxml.hpp"
+#include "../ATHUtil/FileUtil.h"
 #include "ATHObject.h"
+
+#define OBJECT_LIBRARY_PATH_NAME "ObjectLibrary"
+#define OBJECT_BASE_PATH_NAME "ObjectBase"
+#define OBJECT_FILE_EXTENSION ".xml"
 
 const unsigned int	NUM_VELOCITY_ITERATIONS = 8;
 const unsigned int	NUM_POSITION_ITERATIONS = 5;
 const float			TIMESTEP_LENGTH = (1.0f/30.0f);
 const float			MAX_TIMEBUFFER = 0.5f;
 const char			DEFAULT_XML_LOAD_PATH[] = "data\\base.xml";
-const char			DEFAULT_OBJ_LIBRARY_PATH[] = "data\\object_library.xml";
 const float GLOBAL_LOAD_SCALE = 0.01f;
 
 ATHObjectManager::ATHObjectManager() :	m_fTimeBuffer( 0.0f ),
@@ -27,7 +30,8 @@ void ATHObjectManager::Init()
 {
 	InitBox2D();
 	LoadObjLibFromXML();
-	LoadObjectsFromXML();
+
+	LoadObjectsFromXML(ATHGetPath(OBJECT_BASE_PATH_NAME).c_str());
 }
 //================================================================================
 void ATHObjectManager::InitBox2D()
@@ -126,7 +130,6 @@ ATHObject* ATHObjectManager::InstanceObject(float3 _fPos, char* _szName)
 		return nullptr;
 	}
 		
-
 	ATHObject* pNewObject = GenerateObject(pObjectNode);
 	pNewObject->SetPosition(_fPos);
 
@@ -173,46 +176,29 @@ void ATHObjectManager::EndContact(b2Contact* contact)
 	IF(pObjectB)->OnCollisionExit(pObjectA);
 }
 //================================================================================
-char* ATHObjectManager::GetFileAsText(const char* _szPath)
+void ATHObjectManager::LoadObjectsFromXML( const char* _szFilePath )
 {
-	std::ifstream myfile(_szPath);
-	if (!myfile.is_open())
-		return nullptr;
-
-	// Get the size of the file
-	size_t begin = (size_t)myfile.tellg();
-	myfile.seekg(0, myfile.end);
-	size_t end = (size_t)myfile.tellg();
-	size_t tSize = end - begin;
-	myfile.seekg(0, myfile.beg);
-
-	// Load the data into an array and give it a null terminator.
-	char* pString = new char[tSize];
-	memset(pString, 0, tSize);
-	myfile.read(pString, tSize);
-
-	myfile.close();
-
-	return pString;
-}
-//================================================================================
-void ATHObjectManager::LoadObjectsFromXML()
-{
-	LoadXML( DEFAULT_XML_LOAD_PATH );
+	LoadXMLFromFile(_szFilePath);
 }
 //================================================================================
 void ATHObjectManager::LoadObjLibFromXML()
 {
-	m_szLibraryBuffer = GetFileAsText(DEFAULT_OBJ_LIBRARY_PATH);
+	m_szLibraryBuffer = ATHGetFileAsText(ATHGetPath(OBJECT_LIBRARY_PATH_NAME).c_str());
+	if (!m_szLibraryBuffer)
+	{
+		std::cout << "Could not find Object Library\n";
+		return;
+	}
+
 	// Create the rapidxml document
 	m_xmlLibraryDoc.parse<0>(m_szLibraryBuffer);
 
 	m_pLibraryObjectsNode = m_xmlLibraryDoc.first_node();
 }
 //================================================================================
-void ATHObjectManager::LoadXML( const char* _szPath )
+void ATHObjectManager::LoadXMLFromFile( const char* _szPath )
 {
-	char* pString = GetFileAsText( _szPath );
+	char* pString = ATHGetFileAsText( _szPath );
 
 	// Create the rapidxml document
 	rapidxml::xml_document<> doc;

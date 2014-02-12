@@ -14,6 +14,7 @@ class ATHObjectManager;
 class ATHScriptManager;
 class ATHInputManager;
 class ATHEventManager;
+class ATHAudio;
 
 class CGame
 {
@@ -36,7 +37,7 @@ class CGame
 	ATHScriptManager*   m_pScriptManager;
 	ATHInputManager*	m_pInputManager;
 	ATHEventManager*	m_pEventManager;
-
+	ATHAudio*			m_pAudioManager;
 
 	////////////////////
 

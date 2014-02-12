@@ -11,6 +11,7 @@ using std::string;
 #include "../../engine/ATHScriptManager/ATHScriptManager.h"
 #include "../../engine/ATHInputManager/ATHInputManager.h"
 #include "../../engine/ATHEventSystem/ATHEventManager.h"
+#include "../../engine/ATHSoundSystem/ATHAudio.h"
 
 // For testing purposes
 #include "../../engine/ATHObjectSystem/ATHObject.h"
@@ -20,6 +21,7 @@ using std::string;
 CGame::CGame() :	m_pObjectManager( nullptr ),
 					m_pRenderer( nullptr ),
 					m_pScriptManager( nullptr ),
+					m_pAudioManager( nullptr ),
 					m_fFrameTime( 0.0f ), 
 					m_unFrameCounter( 0 )
 {
@@ -60,6 +62,9 @@ void CGame::Initialize(HWND _hWnd, HINSTANCE hInstance,
 	m_pInputManager->Init( _hWnd, hInstance, nScreenWidth, nScreenHeight, nScreenWidth / 2, nScreenHeight / 2 );
 
 	m_pEventManager = ATHEventManager::GetInstance();
+
+	m_pAudioManager = ATHAudio::GetInstance();
+	m_pAudioManager->InitXAudio2();
 
 	srand( unsigned int( time( 0 ) ) );
 
@@ -137,6 +142,7 @@ void CGame::PostUpdate( float fDT )
 {
 	// Do Render Processing
 	Render();
+	m_pAudioManager->Update();
 	//////////
 }
 
@@ -154,6 +160,9 @@ void CGame::Render()
 // cleanup
 void CGame::Shutdown()
 {
+	m_pAudioManager->ShutdownXAudio2();
+	m_pAudioManager->DeleteInstance();
+
 	m_pEventManager->Shutdown();
 	m_pEventManager->DeleteInstance();
 

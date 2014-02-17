@@ -1,20 +1,13 @@
 #ifndef CGame_h__
 #define CGame_h__
 
-#include <Windows.h>
 #include "../../engine/ATHUtil/UTimer.h"
+#include "../../engine/ATHEngine.h"
 
 #include <vector>
 #include <string>
 using std::string;
 using namespace std;
-
-class ATHRenderer;
-class ATHObjectManager;
-class ATHScriptManager;
-class ATHInputManager;
-class ATHEventManager;
-class ATHAudio;
 
 class CGame
 {
@@ -28,18 +21,9 @@ class CGame
 	unsigned int m_unScreenWidth;
 	unsigned int m_unScreenHeight;
 
-	CTimer m_Timer;
+	CTimer			m_Timer;
 	float			m_fFrameTime;
 	unsigned int	m_unFrameCounter;
-
-	ATHRenderer*		m_pRenderer;
-	ATHObjectManager*	m_pObjectManager;
-	ATHScriptManager*   m_pScriptManager;
-	ATHInputManager*	m_pInputManager;
-	ATHEventManager*	m_pEventManager;
-	ATHAudio*			m_pAudioManager;
-
-	////////////////////
 
 	// default constructor
 	CGame();
@@ -51,27 +35,22 @@ class CGame
 	~CGame();
 
 	// utility functions
-	void PreUpdate( float fDT );
-	bool Update( float fDT );
-	void PostUpdate( float fDT );
 	void Render();
 
 public:
 
+	ATHEngine m_Engine;
 
 	static CGame* GetInstance();
 
-	void Initialize(HWND hWnd, HINSTANCE hInstance, int nScreenWidth, int nScreenHeight, bool bIsWindowed);
-	void TestInit();
+	void Initialize();
 
 	bool Main();
 	void Shutdown();
 
 	float GetElapsedTime() {return m_fElapsedTime; }
 	void SetElapsedTime(float t) { m_fElapsedTime = t; }
-	
-	unsigned int GetScreenWidth() {return m_unScreenWidth;  }
-	unsigned int GetScreenHeight() {return m_unScreenHeight; }
+
 };
 
 

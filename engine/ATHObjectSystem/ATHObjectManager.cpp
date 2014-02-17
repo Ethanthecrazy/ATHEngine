@@ -133,6 +133,9 @@ ATHObject* ATHObjectManager::InstanceObject(float3 _fPos, char* _szName)
 	ATHObject* pNewObject = GenerateObject(pObjectNode);
 	pNewObject->SetPosition(_fPos);
 
+	if (pNewObject)
+		std::cout << "Instanced Object: " << pNewObject->GetName() << "\n";
+
 	AddObject(pNewObject);
 
 	return pNewObject;
@@ -212,6 +215,8 @@ void ATHObjectManager::LoadXMLFromFile( const char* _szPath )
 	{
 		ATHObject* pNewObject = GenerateObject(currObject);
 		AddObject(pNewObject);
+		if (pNewObject)
+			std::cout << "Loaded Object: " << pNewObject->GetName() << "\n";
 
 		currObject = currObject->next_sibling("Object");
 	}
@@ -219,7 +224,7 @@ void ATHObjectManager::LoadXMLFromFile( const char* _szPath )
 	rapidxml::xml_node<>* currReference = nodeObjects->first_node("Reference");
 	while (currReference)
 	{
-		GenerateObjectFromReference(currReference);
+		if( GenerateObjectFromReference(currReference) )
 	
 		currReference = currReference->next_sibling("Reference");
 	}

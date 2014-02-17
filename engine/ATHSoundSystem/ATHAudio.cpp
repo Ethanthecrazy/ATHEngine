@@ -1,6 +1,11 @@
 #include "ATHAudio.h"
 #include <assert.h>
 #include <tchar.h>
+#include <iostream>
+#include "../ATHUtil/FileUtil.h"
+
+#define DEFAULT_SOUND_PATH_NAME "Sound"
+#define SOUND_SEARCH_EXTENSION ".wav"
 
 ATHAudio* ATHAudio::m_pInstance = nullptr;
 const UINT32 AUDIO_SAMPLE_RATE = 44100; //XAUDIO2_DEFAULT_SAMPLERATE
@@ -401,6 +406,9 @@ bool ATHAudio::InitXAudio2()
     } 
 
 	m_vVoices.reserve(32);
+
+	// Load the default sounds
+	LoadSoundsFromDirectory( ATHGetPath( DEFAULT_SOUND_PATH_NAME ).c_str() );
 
 	return true;
 }
@@ -828,6 +836,54 @@ int ATHAudio::GetOpenVoiceChannel(void)
 //////////////////////////////////////////////////////////
 //	SFX
 //////////////////////////////////////////////////////////
+void ATHAudio::LoadSoundsFromDirectory(const char* _szDir)
+{
+	// Data for searching
+	WIN32_FIND_DATA search_data;
+	memset(&search_data, 0, sizeof(WIN32_FIND_DATA));
+
+	// Setup the path to start the search
+	std::string pathToDirectory = std::string(_szDir);
+	pathToDirectory += "\\*";
+
+	HANDLE handle = FindFirstFile(pathToDirectory.c_str(), &search_data);
+
+	while (handle != INVALID_HANDLE_VALUE)
+	{
+		if (!(search_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+		{
+			// Get the filename of the file
+			std::string szFilename = search_data.cFileName;
+
+			// Get the file extension
+			unsigned int unExtenPos = szFilename.find_last_of(".");
+			std::string szFileExtension = szFilename.substr(unExtenPos);
+
+			// Make sure that it is the correct filetype
+			if (strcmp(szFileExtension.c_str(), SOUND_SEARCH_EXTENSION) == 0 )
+			{
+				//Generate the path to the file
+				std::string pathToFile = std::string(_szDir);
+				pathToFile += szFilename;
+
+				// Remove the leading ".\"
+				unsigned int unStartPos = pathToFile.find_first_of("\\");
+				pathToFile = pathToFile.substr(unStartPos + 1);
+
+				if (SFXLoadSound(szFilename, pathToFile.c_str()) > -1)
+					std::cout << "Loaded Sound: " << pathToFile << "\n";
+
+			}
+		}
+
+		if (FindNextFile(handle, &search_data) == FALSE)
+			break;
+	}
+
+	//Close the handle after use or memory/resource leak
+	FindClose(handle);
+}
+//================================================================================
 int ATHAudio::SFXLoadSound( const TCHAR* szFileName )
 {
 	if (!szFileName)	

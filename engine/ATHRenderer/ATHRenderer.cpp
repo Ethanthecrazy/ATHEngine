@@ -609,7 +609,7 @@ void ATHRenderer::ClearRenderPasses()
 ATHRenderNode* ATHRenderer::CreateRenderNode( char* _szPassName ,unsigned int _unPriority )
 {
 	ATHRenderNode* _toReturn = CreateNode();
-	FindRenderPass( _szPassName )->AddNodeToPass( _toReturn, _unPriority );
+	IF(FindRenderPass( _szPassName ))->AddNodeToPass( _toReturn, _unPriority );
 	return _toReturn;
 }
 //================================================================================

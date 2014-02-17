@@ -1,0 +1,5 @@
+<Config>
+  <Graphics Fullscreen="false" Vsync="true" >
+    <Resolution X="1280" Y="720" />
+  </Graphics>
+</Config>

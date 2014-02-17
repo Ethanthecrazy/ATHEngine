@@ -41,19 +41,27 @@ std::string ATHGetPath(char* _szAssetType)
 
 	rapidxml::xml_node<>* nodePaths = doc.first_node();
 	if (!nodePaths)
+	{
+		delete szPathFile;
 		return strReturnVal;
+	}
 
 	rapidxml::xml_node<>* nodeAssetPath = nodePaths->first_node(_szAssetType);
 	if (!nodeAssetPath)
+	{
+		delete szPathFile;
 		return strReturnVal;
+	}
 
 	rapidxml::xml_attribute<>* attrPath = nodeAssetPath->first_attribute("Path");
 	if (!attrPath)
+	{
+		delete szPathFile;
 		return strReturnVal;
+	}
 
 	strReturnVal = attrPath->value();
 
 	delete szPathFile;
-
 	return strReturnVal;
 }

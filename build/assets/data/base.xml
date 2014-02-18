@@ -1,33 +1,5 @@
 <?xml version="1.0"?>
 <World Version="1.0.0.0">
   <Objects>
-    <Reference Name="TestObject" IsActive="true" >
-      <Position X="556" Y="256" Z="256" />
-    </Reference>
-    <Reference Name="Square" IsActive="true" >
-      <Position X="0" Y="256" Z="256" />
-    </Reference>
-    <Reference Name="Square" IsActive="true" >
-      <Position X="0" Y="256" Z="256" />
-    </Reference>
-    <Reference Name="Square" IsActive="true" >
-      <Position X="0" Y="256" Z="256" />
-    </Reference>
-    <Reference Name="Square" IsActive="true" >
-      <Position X="0" Y="256" Z="256" />
-    </Reference>
-    <Object Name="CircleTest" IsActive="true" >
-      <Position X="-50" Y="-59" Z="0" />
-      <B2Body Type="dynamic" Density="1.0">
-        <B2Shape Type="circle" Radius="500.0" >
-        </B2Shape>
-        <B2Shape Type="circle" Radius="900.0" IsSensor="true" >
-        </B2Shape>
-      </B2Body>
-      <Properties />
-    </Object>
-    <Reference Name ="CircleTest">
-      <Position X="-10" Y="0" Z="0" />
-    </Reference>
-</Objects>
+  </Objects>
 </World>

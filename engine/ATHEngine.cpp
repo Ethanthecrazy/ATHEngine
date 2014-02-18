@@ -138,7 +138,6 @@ bool ATHEngine::CreateViewport()
 
 }
 //================================================================================
-//================================================================================
 #ifdef _WIN32
 bool ATHEngine::ViewportWindows()
 {
@@ -219,17 +218,7 @@ bool ATHEngine::ViewportWindows()
 //================================================================================
 void ATHEngine::TestInit()
 {
-	ATHObject* pTemp = new ATHObject();
-	m_pEventManager->RegisterClient(AET_KEYBOARD, pTemp);
-	m_pObjectManager->AddObject(pTemp);
 
-	m_pObjectManager->InstanceObject(float3(0.0f, 9.0f, 0.0f), "CircleTest");
-
-	for (int i = 0; i < 10; ++i)
-	{
-		ATHObject* pNewObj = m_pObjectManager->InstanceObject(float3(0.0f, -100.0f - i * 10.0f, 0.0f), "TestObject");
-		pNewObj->GetBody()->ApplyLinearImpulse(b2Vec2(0.0f, 200.0f), pNewObj->GetBody()->GetWorldCenter());
-	}
 }
 //================================================================================
 bool ATHEngine::Update(float _fDT)
@@ -240,9 +229,9 @@ bool ATHEngine::Update(float _fDT)
 	m_pInputManager->Update();
 
 	// Camera movemnt test code //////
-	m_pRenderer->GetCamera()->ViewTranslateLocalX(m_pInputManager->GetMouseDiffThisFrame().vX  * _fDT);
-	m_pRenderer->GetCamera()->ViewTranslateLocalY(-m_pInputManager->GetMouseDiffThisFrame().vY  * _fDT);
-	m_pRenderer->GetCamera()->ViewTranslateLocalZ(m_pInputManager->GetMouseDiffThisFrame().vZ * _fDT);
+	//m_pRenderer->GetCamera()->ViewTranslateLocalX(m_pInputManager->GetMouseDiffThisFrame().vX  * _fDT);
+	//m_pRenderer->GetCamera()->ViewTranslateLocalY(-m_pInputManager->GetMouseDiffThisFrame().vY  * _fDT);
+	//m_pRenderer->GetCamera()->ViewTranslateLocalZ(m_pInputManager->GetMouseDiffThisFrame().vZ * _fDT);
 	//////////////////////////////////
 
 	m_pObjectManager->Update(_fDT);

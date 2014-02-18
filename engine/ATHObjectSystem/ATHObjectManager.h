@@ -69,6 +69,8 @@ public:
 	// Render parsing
 	ATHRenderNode* GenerateRenderNode(rapidxml::xml_node<>* pXMLNode );
 
+	void GenerateXMLFromObject(ATHObject* _pObject, rapidxml::xml_node<>* _nodeContainer) {}
+
 
 };
 

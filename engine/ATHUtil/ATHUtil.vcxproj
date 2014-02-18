@@ -71,12 +71,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ATHRand.cpp" />
     <ClCompile Include="MemoryManager.cpp" />
     <ClCompile Include="OverloadedNew.cpp" />
     <ClCompile Include="UTimer.cpp" />
     <ClCompile Include="FileUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ATHRand.h" />
     <ClInclude Include="hDataTypes.h" />
     <ClInclude Include="MemoryManager.h" />
     <ClInclude Include="NewInclude.h" />

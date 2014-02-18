@@ -16,12 +16,12 @@
 #include "Camera.h"
 
 #define NODE_LAYER_OFFSET (64.0f)
-#define SHADER_LOAD_PATH ".\\data\\shaders\\"
+#define SHADER_LOAD_NAME "Shader"
 #define SHADER_SEARCH_EXTENSION ".fx"
 #define SHADER_DEPTH_NAME "gbuffer"
-#define TEXTURE_LOAD_PATH ".\\art\\textures\\"
+#define TEXTURE_LOAD_NAME "Texture"
 #define	TEXTURE_SEARCH_EXTENSION ".png"
-#define MESH_LOAD_PATH ".\\art\\meshes\\"
+#define MESH_LOAD_NAME "Mesh"
 
 
 enum { ATH_VERTEXDECL_COLORED, ATH_VERTEXDECL_TEXTURED, ATH_VERTEXDECL_ANIMATED };
@@ -115,13 +115,13 @@ public:
 	void	ChangeDisplayParam( int nScreenWidth, int nScreenHeight, bool bFullScreen, bool bVsync );
 	void	ResetDevice(void);
 
-	void	LoadTextures( char* _path );
+	void	LoadTextures( const char* _path );
 
 	// VertexDecl Management
 	ATHVertexDecl*	GetVertexDeclaration( unsigned int _unHandle );
 	
 	// Shader Management
-	void			LoadShaders( char* _path );
+	void			LoadShaders( const char* _path );
 	void			UnloadShaders();
 	ID3DXEffect*	GetShader( char* _szName );
 

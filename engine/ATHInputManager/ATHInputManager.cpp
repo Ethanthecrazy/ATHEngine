@@ -24,6 +24,7 @@ ATHInputManager::ATHInputManager()
 
 	m_fMouseDiffX = 0.0f;
 	m_fMouseDiffY = 0.0f;
+	m_fMouseDiffY = 0.0f;
 	m_fSensitivity = 1.0f;
 
 }
@@ -107,8 +108,8 @@ bool ATHInputManager::Init( HWND _hWnd, HINSTANCE _hInstance, unsigned int _unSc
 	m_pMouse->Acquire();
 
 	SetCursorPos( _nMouseStartX, _nMouseStartY );
-	m_nMouseX = _nMouseStartX;
-	m_nMouseY = _nMouseStartY;
+	m_fMouseX = (float)_nMouseStartX;
+	m_fMouseY = (float)_nMouseStartY;
 
 	return true;
 }
@@ -154,29 +155,37 @@ unsigned int ATHInputManager::Update()
 {
 	ReadKeyboard();
 
+	m_fMouseDiffX = 0.0f;
+	m_fMouseDiffY = 0.0f;
+
 	if( ReadMouse() )
 	{
 		LONG lXMovement = m_diMouseState.lX;
 		m_fMouseDiffX = lXMovement * m_fSensitivity;
-		m_nMouseX += (int)(m_fMouseDiffX);
+		m_fMouseX += m_fMouseDiffX;
 
 		LONG lYMovement = m_diMouseState.lY;
 		m_fMouseDiffY = lYMovement * m_fSensitivity;
-		m_nMouseY += (int)(m_fMouseDiffY);
+		m_fMouseY += m_fMouseDiffY;
 
-		if( m_nMouseX < 0 )
-			m_nMouseX = 0;
+		// Z is the scroll wheel, sensitivty doesnt change it
+		LONG lZMovement = m_diMouseState.lZ;
+		m_fMouseDiffZ = (float)lZMovement;
 
-		if (m_nMouseY < 0 )
-			m_nMouseY = 0;
+		if( m_fMouseX < 0 )
+			m_fMouseX = 0;
 
-		if( m_nMouseX > (int)m_unScreenWidth )
-			m_nMouseX = m_unScreenWidth;
+		if (m_fMouseY < 0 )
+			m_fMouseY = 0;
 
-		if( m_nMouseY > (int)m_unScreenHeight )
-			m_nMouseY = m_unScreenHeight;
+		if( m_fMouseX > (int)m_unScreenWidth )
+			m_fMouseX = (float)m_unScreenWidth;
 
-		//std::cout << m_nMouseX << " " << m_nMouseY << '\n';
+		if( m_fMouseY > (int)m_unScreenHeight )
+			m_fMouseY = (float)m_unScreenHeight;
+
+		//if (m_fMouseDiffY != 0.0f || m_fMouseDiffX != 0.0f)
+			//std::cout << m_fMouseX << " " << m_fMouseY << '\n';
 	}
 
 	SendKeyboardEvent();
@@ -289,8 +298,8 @@ void ATHInputManager::SendMouseEvent()
 
 	if( unButtonDownIndex > 0 )
 	{
-		mouseEvent.MSE_unPosX = (unsigned int)m_nMouseX;
-		mouseEvent.MSE_unPosY = (unsigned int)m_nMouseY;
+		mouseEvent.MSE_unPosX = m_fMouseX;
+		mouseEvent.MSE_unPosY = m_fMouseY;
 		mouseEvent.m_EventID = AEI_MOUSEDOWN;
 
 		m_pEventManager->SendEvent( mouseEvent, AEP_IMMEDIATE );
@@ -365,11 +374,11 @@ ATHKeyList ATHInputManager::CheckMouseButtons()
 //================================================================================
 float2 ATHInputManager::GetMousePos()
 {
-	return float2(float(m_nMouseX), float(m_nMouseY));
+	return float2(m_fMouseX, m_fMouseY);
 }
 //================================================================================
-float2 ATHInputManager::GetMouseDiffThisFrame()
+float3 ATHInputManager::GetMouseDiffThisFrame()
 {
-	return float2( m_fMouseDiffX, m_fMouseDiffY );
+	return float3( m_fMouseDiffX, m_fMouseDiffY, m_fMouseDiffZ );
 }
 //================================================================================

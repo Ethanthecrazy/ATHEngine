@@ -5,15 +5,18 @@
 #include "../ATHRenderer/ATHRenderer.h"
 #include "../ATHUtil/NewInclude.h"
 #include "../Box2D/Box2D.h"
-#include "RapidXML/rapidxml.hpp"
+#include "../ATHUtil/FileUtil.h"
 #include "ATHObject.h"
+
+#define OBJECT_LIBRARY_PATH_NAME "ObjectLibrary"
+#define OBJECT_BASE_PATH_NAME "ObjectBase"
+#define OBJECT_FILE_EXTENSION ".xml"
 
 const unsigned int	NUM_VELOCITY_ITERATIONS = 8;
 const unsigned int	NUM_POSITION_ITERATIONS = 5;
 const float			TIMESTEP_LENGTH = (1.0f/30.0f);
-const float			MAX_TIMEBUFFER = 1.0f;
+const float			MAX_TIMEBUFFER = 0.5f;
 const char			DEFAULT_XML_LOAD_PATH[] = "data\\base.xml";
-const char			DEFAULT_OBJ_LIBRARY_PATH[] = "data\\object_library.xml";
 const float GLOBAL_LOAD_SCALE = 0.01f;
 
 ATHObjectManager::ATHObjectManager() :	m_fTimeBuffer( 0.0f ),
@@ -26,9 +29,9 @@ ATHObjectManager::ATHObjectManager() :	m_fTimeBuffer( 0.0f ),
 void ATHObjectManager::Init()
 {
 	InitBox2D();
-
-	LoadObjectsFromXML();
 	LoadObjLibFromXML();
+
+	LoadObjectsFromXML(ATHGetPath(OBJECT_BASE_PATH_NAME).c_str());
 }
 //================================================================================
 void ATHObjectManager::InitBox2D()
@@ -115,19 +118,27 @@ void ATHObjectManager::AddObjectStatic( ATHObject* pObject )
 		m_liStaticObjects.push_back( pObject );
 }
 //================================================================================
-void ATHObjectManager::InstanceObject(float3 _fPos, char* _szName)
+ATHObject* ATHObjectManager::InstanceObject(float3 _fPos, char* _szName)
 {
 	if (!m_pLibraryObjectsNode)
-		return;
+		return nullptr;
 
 	rapidxml::xml_node<>* pObjectNode = m_pLibraryObjectsNode->first_node(_szName);
 	if (!pObjectNode)
-		return;
-
+	{
+		std::cout << "Failed to instance object " << _szName << "\n";
+		return nullptr;
+	}
+		
 	ATHObject* pNewObject = GenerateObject(pObjectNode);
 	pNewObject->SetPosition(_fPos);
 
+	if (pNewObject)
+		std::cout << "Instanced Object: " << pNewObject->GetName() << "\n";
+
 	AddObject(pNewObject);
+
+	return pNewObject;
 
 }
 //================================================================================
@@ -168,45 +179,29 @@ void ATHObjectManager::EndContact(b2Contact* contact)
 	IF(pObjectB)->OnCollisionExit(pObjectA);
 }
 //================================================================================
-char* ATHObjectManager::GetFileAsText(const char* _szPath)
+void ATHObjectManager::LoadObjectsFromXML( const char* _szFilePath )
 {
-	std::ifstream myfile(_szPath);
-	if (!myfile.is_open())
-		return nullptr;
-
-	// Get the size of the file
-	size_t begin = (size_t)myfile.tellg();
-	myfile.seekg(0, myfile.end);
-	size_t end = (size_t)myfile.tellg();
-	size_t tSize = end - begin;
-	myfile.seekg(0, myfile.beg);
-
-	// Load the data into an array and give it a null terminator.
-	char* pString = new char[tSize];
-	memset(pString, 0, tSize);
-	myfile.read(pString, tSize);
-
-	myfile.close();
-
-	return pString;
+	LoadXMLFromFile(_szFilePath);
 }
 //================================================================================
-void ATHObjectManager::LoadObjectsFromXML()
-{
-	LoadXML( DEFAULT_XML_LOAD_PATH );
-}
 void ATHObjectManager::LoadObjLibFromXML()
 {
-	m_szLibraryBuffer = GetFileAsText(DEFAULT_OBJ_LIBRARY_PATH);
+	m_szLibraryBuffer = ATHGetFileAsText(ATHGetPath(OBJECT_LIBRARY_PATH_NAME).c_str());
+	if (!m_szLibraryBuffer)
+	{
+		std::cout << "Could not find Object Library\n";
+		return;
+	}
+
 	// Create the rapidxml document
 	m_xmlLibraryDoc.parse<0>(m_szLibraryBuffer);
 
 	m_pLibraryObjectsNode = m_xmlLibraryDoc.first_node();
 }
 //================================================================================
-void ATHObjectManager::LoadXML( const char* _szPath )
+void ATHObjectManager::LoadXMLFromFile( const char* _szPath )
 {
-	char* pString = GetFileAsText( _szPath );
+	char* pString = ATHGetFileAsText( _szPath );
 
 	// Create the rapidxml document
 	rapidxml::xml_document<> doc;
@@ -216,17 +211,23 @@ void ATHObjectManager::LoadXML( const char* _szPath )
 	rapidxml::xml_node<>* nodeWorld = doc.first_node();
 	rapidxml::xml_node<>* nodeObjects = nodeWorld->first_node( "Objects" );
 	rapidxml::xml_node<>* currObject = nodeObjects->first_node( "Object" );
-	while( currObject )
+	while (currObject)
 	{
-		//for( unsigned int i = 0; i < 100; ++i )
-		{
-			ATHObject* pNewObject = GenerateObject(currObject);
-			AddObject( pNewObject );
-		}
+		ATHObject* pNewObject = GenerateObject(currObject);
+		AddObject(pNewObject);
+		if (pNewObject)
+			std::cout << "Loaded Object: " << pNewObject->GetName() << "\n";
 
-		currObject = currObject->next_sibling();
+		currObject = currObject->next_sibling("Object");
 	}
 
+	rapidxml::xml_node<>* currReference = nodeObjects->first_node("Reference");
+	while (currReference)
+	{
+		if( GenerateObjectFromReference(currReference) )
+	
+		currReference = currReference->next_sibling("Reference");
+	}
 	delete[] pString;
 
 }
@@ -255,7 +256,27 @@ ATHObject* ATHObjectManager::GenerateObject(rapidxml::xml_node<>* pRootObjNode)
 
 	return pReturnObject;
 }
+//================================================================================
+ATHObject* ATHObjectManager::GenerateObjectFromReference(rapidxml::xml_node<>* pRefNode)
+{
+	ATHObject* pReturnObject = nullptr;
+	rapidxml::xml_attribute<>* currObjName = pRefNode->first_attribute("Name");
 
+	float3 fPos(0.0f);
+
+	rapidxml::xml_node<>* currObjPosNode = pRefNode->first_node("Position");
+	if (currObjPosNode)
+	{
+		fPos.vX = (float)atof(currObjPosNode->first_attribute("X")->value()) * GLOBAL_LOAD_SCALE;
+		fPos.vY = (float)atof(currObjPosNode->first_attribute("Y")->value()) * GLOBAL_LOAD_SCALE;
+		fPos.vZ = (float)atof(currObjPosNode->first_attribute("Z")->value()) * GLOBAL_LOAD_SCALE;
+	}
+
+	pReturnObject = InstanceObject(fPos, currObjName->value());
+
+	return pReturnObject;
+}
+//================================================================================
 void ATHObjectManager::LoadProperties(ATHObject* _pLoadTarget, rapidxml::xml_node<>* _pXMLPropertiesNode)
 {
 	if (_pXMLPropertiesNode == nullptr)
@@ -464,7 +485,10 @@ ATHRenderNode* ATHObjectManager::GenerateRenderNode(rapidxml::xml_node<>* pXMLNo
 
 	// Set the texture of the render node
 	ATHAtlas::ATHTextureHandle texHandle = ATHRenderer::GetInstance()->GetAtlas()->GetTexture(szTexturePath);
-	pReturnNode->SetTexture(texHandle);
+	if (texHandle.Valid())
+		pReturnNode->SetTexture(texHandle);
+	else
+		std::cout << "Failed to find texture at path '" << szTexturePath << "'\n";
 
 	// Set the mesh of the render node
 	if (!strcmp( szMeshPath, "QUAD" ))

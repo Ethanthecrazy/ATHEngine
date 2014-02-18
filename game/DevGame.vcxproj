@@ -59,7 +59,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Debug/ATHRenderer.lib;Debug/ATHUtil.lib;Debug/Box2D.lib;Debug/ATHObjectSystem.lib;Debug/ATHScriptManager.lib;Debug/ATHInputManager.lib;Debug/ATHEventSystem.lib;Debug/ATHStackSystem.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Debug/ATHEngine.lib;Debug/ATHRenderer.lib;Debug/ATHUtil.lib;Debug/Box2D.lib;Debug/ATHObjectSystem.lib;Debug/ATHScriptManager.lib;Debug/ATHInputManager.lib;Debug/ATHEventSystem.lib;Debug/ATHStackSystem.lib;Debug/ATHSoundSystem.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>

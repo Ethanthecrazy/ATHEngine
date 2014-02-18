@@ -11,7 +11,7 @@
 #include "Texture/ATHAtlas.h"
 #include "Mesh/ATHVertexDecl.h"
 #include "ATHRenderFunctions.h"
-
+#include "../ATHUtil/FileUtil.h"
 
 ATHRenderer* ATHRenderer::m_pInstance = nullptr;
 // The sorting predicate for the ATHRenderPass pointers
@@ -127,7 +127,7 @@ bool ATHRenderer::Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScre
 
 	HRESULT hr = 0;
 
-	if( FAILED( hr = m_pD3D->CreateDevice( 0, D3DDEVTYPE_HAL, hWnd, D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED,
+	if( FAILED( hr = m_pD3D->CreateDevice( 0, D3DDEVTYPE_HAL, hWnd, D3DCREATE_HARDWARE_VERTEXPROCESSING,
 		&m_PresentParams, &m_pDevice )))
 	{
 		MessageBoxW( hWnd, L"Failed to create the device.", NULL, MB_OK );
@@ -141,9 +141,8 @@ bool ATHRenderer::Initialize( HWND hWnd, HINSTANCE hInstance, unsigned int nScre
 	m_pTextureAtlas = new ATHAtlas();
 	m_pTextureAtlas->Initialize( m_pDevice );
 
-	LoadTextures( TEXTURE_LOAD_PATH );
-
-	LoadShaders( SHADER_LOAD_PATH );
+	LoadTextures( ATHGetPath( TEXTURE_LOAD_NAME ).c_str() );
+	LoadShaders( ATHGetPath( SHADER_LOAD_NAME ).c_str() );
 
 	InitStandardRendering();
 
@@ -182,11 +181,11 @@ void ATHRenderer::InitStandardRendering()
 
 	m_rtDepth.Create( m_pDevice, m_unScreenWidth, m_unScreenHeight, D3DFMT_R32F );
 
-	m_fScreenDepth = 100.0f;
+	m_fScreenDepth = 1000.0f;
 	m_pCamera = new CCamera();
-	//m_pCamera->BuildPerspective(D3DX_PI / 2.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.1f, m_fScreenDepth );
+	m_pCamera->BuildPerspective(D3DX_PI / 2.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.1f, m_fScreenDepth );
 
-	m_pCamera->BuildOrthoPerspective( 20.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.01f, m_fScreenDepth );
+	//m_pCamera->BuildOrthoPerspective( 20.0f, ((float)(m_unScreenWidth))/m_unScreenHeight, 0.01f, m_fScreenDepth );
 	m_pCamera->SetViewPosition(0.0f, 0.0f, -5.0f);
 
 	//Default texture rendering
@@ -290,7 +289,7 @@ void ATHRenderer::RenderDepth()
 //================================================================================
 void ATHRenderer::RenderForward()
 {
-	DRXClear( float3( 0.3f, 0.3f, 0.5f ) );
+	DRXClear( float3( 0.9f, 0.9f, 0.9f ) );
 	std::list< ATHRenderPass* >::iterator itrPass = m_liSortedRenderPasses.begin();
 	while( itrPass != m_liSortedRenderPasses.end() )
 	{
@@ -415,7 +414,7 @@ void ATHRenderer::ResetDevice(void)
 	m_pDevice->Reset( &m_PresentParams );
 }
 //================================================================================
-void ATHRenderer::LoadTextures( char* _path )
+void ATHRenderer::LoadTextures( const char* _path )
 {
 		// Data for searching
 	WIN32_FIND_DATA search_data;
@@ -474,7 +473,7 @@ ATHVertexDecl*	ATHRenderer::GetVertexDeclaration( unsigned int _unHandle )
 		return nullptr;
 }
 //================================================================================
-void ATHRenderer::LoadShaders( char* _path )
+void ATHRenderer::LoadShaders( const char* _path )
 {
 	// Data for searching
 	WIN32_FIND_DATA search_data;
@@ -559,7 +558,6 @@ ID3DXEffect* ATHRenderer::GetShader( char* _szName )
 
 	return pToReturn;
 }
-
 //================================================================================
 ATHRenderPass*	ATHRenderer::CreateRenderPass( char* _szName, unsigned int _unPriority, RenderFunc _function,  char* _szShaderName, bool _bRenderToDepth, char* _szTechnique )
 {
@@ -611,7 +609,7 @@ void ATHRenderer::ClearRenderPasses()
 ATHRenderNode* ATHRenderer::CreateRenderNode( char* _szPassName ,unsigned int _unPriority )
 {
 	ATHRenderNode* _toReturn = CreateNode();
-	FindRenderPass( _szPassName )->AddNodeToPass( _toReturn, _unPriority );
+	IF(FindRenderPass( _szPassName ))->AddNodeToPass( _toReturn, _unPriority );
 	return _toReturn;
 }
 //================================================================================

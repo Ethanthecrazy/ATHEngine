@@ -404,6 +404,10 @@ void MemoryManager::DebugString()
 	std::cout << "TotalUsage\t\t\t";
 	std::cout << buffer;
 	std::cout << "\n";
+
+	// If the total usage is non-zero, here is a chance to look at it
+	if (unTotalUsage > 0)
+		system("pause");
 }
 
 

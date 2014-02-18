@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<Paths>
+  <Texture Path=".\assets\textures\" />
+  <Shader Path=".\assets\shaders\" />
+  <Mesh Path=".\assets\meshes\" />
+  <Sound Path=".\assets\sounds\" />
+  <ObjectBase Path=".\assets\data\base.xml" />
+  <ObjectLibrary Path=".\assets\data\object_library.xml" />
+  <Lua Path="" />
+</Paths>

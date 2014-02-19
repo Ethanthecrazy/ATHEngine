@@ -86,12 +86,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ObjectGenerator.cpp" />
+    <ClCompile Include="source\Classes\Planet.cpp" />
+    <ClCompile Include="source\ObjectGenerator.cpp" />
     <ClCompile Include="source\CGame.cpp" />
     <ClCompile Include="source\winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ObjectGenerator.h" />
+    <ClInclude Include="source\Classes\Planet.h" />
+    <ClInclude Include="source\ObjectGenerator.h" />
     <ClInclude Include="source\CGame.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

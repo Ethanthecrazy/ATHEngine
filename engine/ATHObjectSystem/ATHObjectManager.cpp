@@ -166,8 +166,8 @@ void ATHObjectManager::BeginContact(b2Contact* contact)
 	ATHObject* pObjectA = (ATHObject*)contact->GetFixtureA()->GetBody()->GetUserData();
 	ATHObject* pObjectB = (ATHObject*)contact->GetFixtureB()->GetBody()->GetUserData();
 
-	IF(pObjectA)->OnCollisionEnter(pObjectB);
-	IF(pObjectB)->OnCollisionEnter(pObjectA);
+	IF(pObjectA)->OnCollisionEnter(contact);
+	IF(pObjectB)->OnCollisionEnter(contact);
 }
 //================================================================================
 void ATHObjectManager::EndContact(b2Contact* contact)
@@ -175,8 +175,8 @@ void ATHObjectManager::EndContact(b2Contact* contact)
 	ATHObject* pObjectA = (ATHObject*)contact->GetFixtureA()->GetBody()->GetUserData();
 	ATHObject* pObjectB = (ATHObject*)contact->GetFixtureB()->GetBody()->GetUserData();
 
-	IF(pObjectA)->OnCollisionExit(pObjectB);
-	IF(pObjectB)->OnCollisionExit(pObjectA);
+	IF(pObjectA)->OnCollisionExit(contact);
+	IF(pObjectB)->OnCollisionExit(contact);
 }
 //================================================================================
 void ATHObjectManager::LoadObjectsFromXML( const char* _szFilePath )
@@ -359,15 +359,15 @@ b2Body* ATHObjectManager::GenerateB2Body(rapidxml::xml_node<>* pXMLNode)
 
 	while (pNodeShape)
 	{
-		b2FixtureDef* pFixtureDef = new b2FixtureDef();
-		pFixtureDef->density = fBodyDensity;
+		b2FixtureDef pFixtureDef;
+		pFixtureDef.density = fBodyDensity;
 		
 		// Check if its a sensor
 		rapidxml::xml_attribute<>* pSensorAttr = pNodeShape->first_attribute("IsSensor");
 		if (pSensorAttr)
 		{
 			if (strcmp(pSensorAttr->value(), "true") == 0)
-				pFixtureDef->isSensor = true;
+				pFixtureDef.isSensor = true;
 		}
 			
 
@@ -378,20 +378,18 @@ b2Body* ATHObjectManager::GenerateB2Body(rapidxml::xml_node<>* pXMLNode)
 		char* szShapeType = pNodeShape->first_attribute("Type")->value();
 		if (!strcmp(szShapeType, "circle"))
 		{
-			pFixtureDef->shape = GenerateB2CircleShape(pNodeShape);
+			pFixtureDef.shape = GenerateB2CircleShape(pNodeShape);
 		}
 		else if (!strcmp(szShapeType, "polygon"))
 		{
-			pFixtureDef->shape = GenerateB2PolygonShape(pNodeShape);
+			pFixtureDef.shape = GenerateB2PolygonShape(pNodeShape);
 		}
 
 		// Clone the shape onto the body and clean up
-		pReturnBody->CreateFixture(pFixtureDef);
+		pReturnBody->CreateFixture(&pFixtureDef);
 
-		if (pFixtureDef->shape )
-			delete pFixtureDef->shape;
-
-		delete pFixtureDef;
+		if (pFixtureDef.shape )
+			delete pFixtureDef.shape;
 
 		pNodeShape = pNodeShape->next_sibling("B2Shape");
 	}

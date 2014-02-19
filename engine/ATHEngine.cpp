@@ -229,9 +229,9 @@ bool ATHEngine::Update(float _fDT)
 	m_pInputManager->Update();
 
 	// Camera movemnt test code //////
-	//m_pRenderer->GetCamera()->ViewTranslateLocalX(m_pInputManager->GetMouseDiffThisFrame().vX  * _fDT);
-	//m_pRenderer->GetCamera()->ViewTranslateLocalY(-m_pInputManager->GetMouseDiffThisFrame().vY  * _fDT);
-	//m_pRenderer->GetCamera()->ViewTranslateLocalZ(m_pInputManager->GetMouseDiffThisFrame().vZ * _fDT);
+	m_pRenderer->GetCamera()->ViewTranslateLocalX(m_pInputManager->GetMouseDiffThisFrame().vX  * _fDT);
+	m_pRenderer->GetCamera()->ViewTranslateLocalY(-m_pInputManager->GetMouseDiffThisFrame().vY  * _fDT);
+	m_pRenderer->GetCamera()->ViewTranslateLocalZ(m_pInputManager->GetMouseDiffThisFrame().vZ * _fDT);
 	//////////////////////////////////
 
 	m_pObjectManager->Update(_fDT);

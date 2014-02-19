@@ -158,12 +158,12 @@ std::string ATHObject::GetPropertyAsString(char* _szName)
 	return strReturn;;
 }
 //================================================================================
-void ATHObject::OnCollisionEnter(ATHObject* _pOtherObject)
+void ATHObject::OnCollisionEnter(b2Contact* _pContact)
 {
 	
 }
 //================================================================================
-void ATHObject::OnCollisionExit(ATHObject* _pOtherObject)
+void ATHObject::OnCollisionExit(b2Contact* _pContact)
 {
 	
 }

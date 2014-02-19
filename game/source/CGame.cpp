@@ -14,6 +14,7 @@ using std::string;
 
 // For testing purposes
 #include "../../engine/ATHObjectSystem/ATHObject.h"
+#include "ObjectGenerator.h"
 //////////
 
 // default constructor
@@ -43,10 +44,16 @@ void CGame::Initialize()
 	m_Engine.Init();
 
 	cout << "CGame: Init\n"; 
-	srand( unsigned int( time( 0 ) ) );
 
 	m_Timer.Reset();
 	m_Timer.Start();
+
+	ObjectGenerator objGen;
+	objGen.Init(m_Engine.GetObjectManager());
+	objGen.GeneratePlanet(float2(0.0f, 0.0f), 3.0f, 5.0f);
+
+	for (unsigned int i = 0; i < 50; ++i )
+		m_Engine.GetObjectManager()->InstanceObject(float3(0.0f, 10.0f, 0.0f), "Square");
 }
 
 // execution

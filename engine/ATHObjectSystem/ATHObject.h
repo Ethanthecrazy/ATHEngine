@@ -11,6 +11,7 @@
 static const unsigned int ATHOBJECT_MAX_NAME_LENGTH = 64;
 
 class b2Body;
+class b2Contact;
 class ATHRenderNode;
 
 class ATHObject : public ATHEventListener
@@ -29,6 +30,8 @@ private:
 	bool m_bAlive;
 	// If the object is currently being updated
 	bool m_bActive;
+
+protected:
 
 	D3DXMATRIX m_matTransform;
 	ATHRenderNode* m_pRenderNode;
@@ -64,8 +67,8 @@ public:
 	float GetPropertyAsFloat(char* _szName);
 	std::string GetPropertyAsString(char* _szName);
 
-	virtual void OnCollisionEnter(ATHObject* _pOtherObject);
-	virtual void OnCollisionExit(ATHObject* _pOtherObject);
+	virtual void OnCollisionEnter(b2Contact* _pContact);
+	virtual void OnCollisionExit(b2Contact* _pContact);
 
 	friend class ATHObjectManager;
 };

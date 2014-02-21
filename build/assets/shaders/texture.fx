@@ -15,9 +15,9 @@ sampler		samp1
 {
 	Texture = <tex1>;
 	// texture filtering
-	MinFilter = LINEAR;
-	MagFilter = POINT;
-	MipFilter = LINEAR;
+	MinFilter = PYRAMIDALQUAD;
+	MagFilter = PYRAMIDALQUAD;
+	MipFilter = NONE;
 	// texture address modes (available options are WRAP, MIRROR, BORDER, and CLAMP)
 	AddressU  = CLAMP;
 	AddressV  = CLAMP;
@@ -64,9 +64,9 @@ float4 TransformPS( float2 uv0:TEXCOORD0):COLOR
 	//return c;
 	
 	// determine the pixel to sample from
-    float4 texCol = tex2D(samp1, uv0) * multColor;
+    float4 texCol = tex2D(samp1, uv0);
 
-	if( texCol.a == 0 )
+	if( texCol.a == 0.0f )
 		discard;
     
     return texCol;

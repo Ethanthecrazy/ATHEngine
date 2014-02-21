@@ -82,6 +82,11 @@ void ATHObject::Update( float _fDT )
 	}
 }
 //================================================================================
+void ATHObject::FixedUpdate()
+{
+
+}
+//================================================================================
 void ATHObject::SetPosition(float3 _fPos)
 {
 	if (m_pBody)

@@ -12,12 +12,12 @@
 #define OBJECT_BASE_PATH_NAME "ObjectBase"
 #define OBJECT_FILE_EXTENSION ".xml"
 
-const unsigned int	NUM_VELOCITY_ITERATIONS = 8;
-const unsigned int	NUM_POSITION_ITERATIONS = 5;
+const unsigned int	NUM_VELOCITY_ITERATIONS = 5;
+const unsigned int	NUM_POSITION_ITERATIONS = 3;
 const float			TIMESTEP_LENGTH = (1.0f/30.0f);
 const float			MAX_TIMEBUFFER = 0.5f;
 const char			DEFAULT_XML_LOAD_PATH[] = "data\\base.xml";
-const float GLOBAL_LOAD_SCALE = 0.01f;
+const float GLOBAL_LOAD_SCALE = 1.0f;
 
 ATHObjectManager::ATHObjectManager() :	m_fTimeBuffer( 0.0f ),
 										m_pWorld( nullptr ),
@@ -42,9 +42,9 @@ void ATHObjectManager::InitBox2D()
 	ATHBox2DRenderer* pDebugRenderer = ATHRenderer::GetInstance()->GetDebugRenderer();
 	uint32 flags = 0;
 	flags += b2Draw::e_shapeBit;
-	flags += b2Draw::e_jointBit;
-	//flags += b2Draw::e_aabbBit;
-	flags += b2Draw::e_pairBit;
+	//flags += b2Draw::e_jointBit;
+	flags += b2Draw::e_aabbBit;
+	//flags += b2Draw::e_pairBit;
 	flags += b2Draw::e_centerOfMassBit;
 
 	pDebugRenderer->SetFlags(flags);
@@ -63,10 +63,13 @@ void ATHObjectManager::Update( float _fDT )
 	if( m_fTimeBuffer > MAX_TIMEBUFFER )
 		m_fTimeBuffer = MAX_TIMEBUFFER;
 
+	unsigned int unNumSteps = 0;
+
 	while( m_fTimeBuffer > TIMESTEP_LENGTH )
 	{
 		m_pWorld->Step( TIMESTEP_LENGTH, NUM_VELOCITY_ITERATIONS, NUM_POSITION_ITERATIONS );
 		m_fTimeBuffer -= TIMESTEP_LENGTH;
+		unNumSteps += 1;
 	}
 
 	m_pWorld->DrawDebugData();
@@ -78,8 +81,14 @@ void ATHObjectManager::Update( float _fDT )
 		ATHObject* pCurrObj = (*itrObjects);
 		if( pCurrObj->GetAlive() )
 		{
-			if( pCurrObj->GetActive() )
-				pCurrObj->Update( _fDT );
+			if (pCurrObj->GetActive())
+			{
+				pCurrObj->Update(_fDT);
+
+				for (unsigned int i = 0; i < unNumSteps; ++i)
+					pCurrObj->FixedUpdate();
+			}
+
 		}
 		else
 			m_liToRemove.push_back( pCurrObj );

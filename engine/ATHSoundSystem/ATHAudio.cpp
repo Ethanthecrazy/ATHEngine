@@ -29,7 +29,7 @@ void CVoicePointerPool::DestroyVoices(void)
 #ifdef _DEBUG
 	TCHAR buffer[128];
 
-	_stprintf_s(buffer, _countof(buffer), _T("SGD XAUDIO2: %d - %d sample rate %d bit %d chan voices using SubmixVoice: %p\n"), 
+	_stprintf_s(buffer, _countof(buffer), _T("XAUDIO2: %d - %d sample rate %d bit %d chan voices using SubmixVoice: %p\n"), 
 		m_vVoicePool.size(), m_wfx.nSamplesPerSec, m_wfx.wBitsPerSample, m_wfx.nChannels, m_pSubmixVoice);
 	OutputDebugString(buffer);
 #endif
@@ -435,7 +435,7 @@ void ATHAudio::ShutdownXAudio2( void )
 #ifdef _DEBUG
 	TCHAR buffer[128];
 
-	_stprintf_s(buffer, _countof(buffer), _T("SGD XAUDIO2: Maximum simultaneous active voice channels: %d\n"), m_vVoices.size());
+	_stprintf_s(buffer, _countof(buffer), _T("XAUDIO2: Maximum simultaneous active voice channels: %d\n"), m_vVoices.size());
 	OutputDebugString(buffer);
 #endif
 	//	Clear all voices
@@ -901,14 +901,14 @@ int ATHAudio::SFXLoadSound( const TCHAR* szFileName )
 			// Trying to load Music as SFX
 			TCHAR szBuffer[256] = {0};
 			_stprintf_s(szBuffer, _countof(szBuffer), _T("Call MusicLoadSong for this file - %s"), szFileName); 
-			MessageBox(0, szBuffer, _T("SGD XAudio2 Error"), MB_OK);
+			MessageBox(0, szBuffer, _T("XAudio2 Error"), MB_OK);
 			return -1;
 		}
 		else if (_tcsicmp(pExtention, _T(".wav")) != 0)
 		{
 			TCHAR szBuffer[256] = {0};
 			_stprintf_s(szBuffer, _countof(szBuffer), _T("Unsupported file format - %s"), pExtention);
-			MessageBox(0, szBuffer, _T("SGD XAudio2 Error"), MB_OK);
+			MessageBox(0, szBuffer, _T("XAudio2 Error"), MB_OK);
 			return -1;
 		}
 	}
@@ -916,7 +916,7 @@ int ATHAudio::SFXLoadSound( const TCHAR* szFileName )
 	{
 		TCHAR szBuffer[256] = {0};
 		_stprintf_s(szBuffer, _countof(szBuffer), _T("Bad filename - %s"), szFileName); 
-		MessageBox(0, szBuffer, _T("SGD XAudio2 Error"), MB_OK);
+		MessageBox(0, szBuffer, _T("XAudio2 Error"), MB_OK);
 		return -1;
 	}
 
@@ -938,7 +938,7 @@ int ATHAudio::SFXLoadSound( const TCHAR* szFileName )
 		// Failed.
 		TCHAR szBuffer[256] = {0};
 		_stprintf_s(szBuffer, _countof(szBuffer), _T("Failed to Load - %s"), szFileName); 
-		MessageBox(0, szBuffer, _T("SGD XAudio2 Error"), MB_OK);
+		MessageBox(0, szBuffer, _T("XAudio2 Error"), MB_OK);
 		return -1;
 	}
 
@@ -1164,14 +1164,14 @@ int ATHAudio::MusicLoadSong( const TCHAR* szFileName )
 			// Trying to load SFX as Music
 			TCHAR szBuffer[256] = {0};
 			_stprintf_s(szBuffer, _countof(szBuffer), _T("Call SFXLoadSound for this file - %s"), szFileName); 
-			MessageBox(0, szBuffer, _T("SGD XAudio2 Error"), MB_OK);
+			MessageBox(0, szBuffer, _T("XAudio2 Error"), MB_OK);
 			return -1;
 		}
 		else if (_tcsicmp(pExtention, _T(".xwm")) != 0)
 		{
 			TCHAR szBuffer[256] = {0};
 			_stprintf_s(szBuffer, _countof(szBuffer), _T("Unsupported file format - %s"), pExtention); 
-			MessageBox(0, szBuffer, _T("SGD XAudio2 Error"), MB_OK);
+			MessageBox(0, szBuffer, _T("XAudio2 Error"), MB_OK);
 			return -1;
 		}
 	}
@@ -1179,7 +1179,7 @@ int ATHAudio::MusicLoadSong( const TCHAR* szFileName )
 	{
 		TCHAR szBuffer[256] = {0};
 		_stprintf_s(szBuffer, _countof(szBuffer), _T("Bad filename - %s"), szFileName); 
-		MessageBox(0, szBuffer, _T("SGD XAudio2 Error"), MB_OK);
+		MessageBox(0, szBuffer, _T("XAudio2 Error"), MB_OK);
 		return -1;
 	}
 
@@ -1201,7 +1201,7 @@ int ATHAudio::MusicLoadSong( const TCHAR* szFileName )
 		// Failed.
 		TCHAR szBuffer[256] = {0};
 		_stprintf_s(szBuffer, _countof(szBuffer), _T("Failed to Load - %s"), szFileName); 
-		MessageBox(0, szBuffer, _T("SGD XAudio2 Error"), MB_OK);
+		MessageBox(0, szBuffer, _T("XAudio2 Error"), MB_OK);
 		return -1;
 	}
 

@@ -1,7 +1,7 @@
 #include "Planet.h"
 #include "../../../engine/Box2D/Box2D.h"
 
-#define PLANET_GRAVITY_CONSTANT 2.0f
+#define PLANET_GRAVITY_CONSTANT 9.8f
 
 Planet::Planet()
 {
@@ -9,7 +9,7 @@ Planet::Planet()
 	m_fMass = 0.0f;
 }
 
-void Planet::Update(float _fDT)
+void Planet::FixedUpdate()
 {
 	std::list< b2Body* >::iterator itrBody = m_liGravityTargets.begin();
 	std::list< b2Body* >::iterator itrEnd = m_liGravityTargets.end();

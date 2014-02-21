@@ -37,14 +37,14 @@
     <Position X="0" Y="256" Z="256" />
     <B2Body Type="dynamic" Density="10.0">
       <B2Shape Type="polygon" >
-        <Vertex Y="50" X="50" />
-        <Vertex Y="50" X="-50" />
-        <Vertex Y="-50" X="-50" />
-        <Vertex Y="-50" X="50" />
+        <Vertex Y="0.5" X="0.5" />
+        <Vertex Y="0.5" X="-0.5" />
+        <Vertex Y="-0.5" X="-0.5" />
+        <Vertex Y="-0.5" X="0.5" />
       </B2Shape>
     </B2Body>
     <RenderNode PassName="Texture" Priority="0">
-      <Dimension X="100" Y="100" Z="1" />
+      <Dimension X="1" Y="1" Z="1" />
       <Texture Path="assets\textures\wall.png" />
       <Mesh Path="QUAD" />
     </RenderNode>

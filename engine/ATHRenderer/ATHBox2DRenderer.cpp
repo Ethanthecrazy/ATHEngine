@@ -54,7 +54,7 @@ void ATHBox2DRenderer::DrawSolidCircle(const b2Vec2& center, float32 radius, con
 {
 	// Figure out the number of segments to draw
 	const float fCircumference = 2.0f * b2_pi * radius;
-	const float32 k_segments = fCircumference / 0.5f + 6.0f;
+	const float32 k_segments = fCircumference / 2.0f;
 	const float32 k_increment = 2.0f * b2_pi / k_segments;
 
 	float32 theta = 0.0f;

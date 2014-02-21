@@ -58,6 +58,7 @@ public:
 	
 	virtual void Init( ATHRenderNode* m_pRenderNode = nullptr, b2Body* m_pBody = nullptr );
 	virtual void Update( float _fDT );
+	virtual void FixedUpdate();
 	virtual void HandleEvent( const ATHEvent* _pEvent ){}
 
 	virtual void SetPosition(float3 _fPos);

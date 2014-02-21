@@ -19,15 +19,15 @@ void ATHAtlas::Shutdown()
 	Clear();
 }
 //================================================================================
-bool ATHAtlas::LoadTexture( char* _szHandle, char* _szFilepath )
+ATHAtlas::ATHTextureHandle ATHAtlas::LoadTexture(char* _szHandle, char* _szFilepath)
 {
 	if( strlen( _szHandle ) < 3 || strlen( _szFilepath ) < 4 )
-		return false;
+		return ATHTextureHandle();
 
 	std::string szHandleString = _szHandle;
 
 	if( m_mapTextures.count( szHandleString ) > 0 )
-		return false;
+		return ATHTextureHandle();
 
 	sTexNode* pNewTex = new sTexNode();
 
@@ -50,7 +50,7 @@ bool ATHAtlas::LoadTexture( char* _szHandle, char* _szFilepath )
 	if( FAILED( result ) )
 	{
 		delete pNewTex;
-		return false;
+		return ATHTextureHandle();
 	}
 
 	pNewTex->m_szName = szHandleString;
@@ -60,19 +60,19 @@ bool ATHAtlas::LoadTexture( char* _szHandle, char* _szFilepath )
 
 	m_mapTextures[ szHandleString ] = pNewTex;
 
-	return true;
+	return ATHTextureHandle(pNewTex);
 
 }
 //================================================================================
-bool ATHAtlas::LoadTextureFromData(const char* _szHandle, unsigned int _unWidth, unsigned int _unHeight, void* _pData, size_t _tDataSize)
+ATHAtlas::ATHTextureHandle ATHAtlas::LoadTextureFromData(const char* _szHandle, unsigned int _unWidth, unsigned int _unHeight, void* _pData, size_t _tDataSize)
 {
 	if (_pData == nullptr || _tDataSize < 1)
-		return false;
+		return ATHTextureHandle();
 	
 	std::string szHandleString = _szHandle;
 
 	if (m_mapTextures.count(szHandleString))
-		return false;
+		return ATHTextureHandle(m_mapTextures[szHandleString]);
 
 	HRESULT result = 0;
 	// Create the texture in system memory
@@ -89,7 +89,7 @@ bool ATHAtlas::LoadTextureFromData(const char* _szHandle, unsigned int _unWidth,
 
 	if (FAILED(result))
 	{
-		return false;
+		return ATHTextureHandle();
 	}
 
 	// Set the information in the texture
@@ -116,7 +116,7 @@ bool ATHAtlas::LoadTextureFromData(const char* _szHandle, unsigned int _unWidth,
 
 	if (FAILED(result))
 	{
-		return false;
+		return ATHTextureHandle();
 	}
 
 	// Update the graphics texture with the system texture
@@ -135,7 +135,7 @@ bool ATHAtlas::LoadTextureFromData(const char* _szHandle, unsigned int _unWidth,
 
 	m_mapTextures[szHandleString] = pNewTex;
 
-	return true;
+	return ATHTextureHandle(pNewTex);
 
 }
 //================================================================================

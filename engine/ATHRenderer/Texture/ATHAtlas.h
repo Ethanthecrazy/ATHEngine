@@ -64,8 +64,8 @@ public:
 	void Initialize( LPDIRECT3DDEVICE9 _device ); 
 	void Shutdown();
 
-	bool LoadTexture( char* _szHandle, char* _szFilepath );
-	bool LoadTextureFromData(const char* _szHandle, unsigned int _unWidth, unsigned int _unHeight, void* _pData, size_t _tDataSize);
+	ATHTextureHandle LoadTexture(char* _szHandle, char* _szFilepath);
+	ATHTextureHandle LoadTextureFromData(const char* _szHandle, unsigned int _unWidth, unsigned int _unHeight, void* _pData, size_t _tDataSize);
 	void UnloadTexture( LPDIRECT3DTEXTURE9 _texture );
 
 	ATHTextureHandle GetTexture( const char* _szHandle );

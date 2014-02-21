@@ -14,7 +14,7 @@ using std::string;
 
 // For testing purposes
 #include "../../engine/ATHObjectSystem/ATHObject.h"
-#include "ObjectGenerator.h"
+
 #include "../../engine/ATHUtil/ATHRand.h"
 //////////
 
@@ -43,6 +43,7 @@ CGame* CGame::GetInstance()
 void CGame::Initialize()
 {
 	m_Engine.Init();
+	m_ObjectGenerator.Init(m_Engine.GetObjectManager());
 
 	cout << "CGame: Init\n"; 
 
@@ -56,10 +57,7 @@ void CGame::Initialize()
 	}
 
 	ATHRandom::SeedRand( (unsigned long)time(0) );
-
-	ObjectGenerator objGen;
-	objGen.Init(m_Engine.GetObjectManager());
-	objGen.GeneratePlanet(float2(32.0f, -32.0f), 5.0f, 10.0f);
+	m_ObjectGenerator.GeneratePlanet(float2(32.0f, -32.0f), 5.0f, 10.0f, float3(0.9f, 0.3f, 0.1f));
 
 }
 
@@ -72,18 +70,13 @@ bool CGame::Main()
 	static ATHObject* s_pObj = nullptr;
 	if (!s_pObj)
 	{
-		ObjectGenerator objGen;
-		objGen.Init(m_Engine.GetObjectManager());
-		s_pObj = objGen.GeneratePlanet(float2(0.0f, 0.0f), 5.0f, 10.0f);
+		s_pObj = m_ObjectGenerator.GeneratePlanet(float2(0.0f, 0.0f), 5.0f, 10.0f, float3(ATHRandom::Rand(0.0f, 1.0f), ATHRandom::Rand(0.0f, 1.0f), ATHRandom::Rand(0.0f, 1.0f)));
 	}
 
 	if (GetAsyncKeyState(VK_F1) & 1)
 	{
-			s_pObj->SetAlive(false);
-
-		ObjectGenerator objGen;
-		objGen.Init(m_Engine.GetObjectManager());
-		s_pObj =  objGen.GeneratePlanet(float2(0.0f, 0.0f), 5.0f, 10.0f);
+		s_pObj->SetAlive(false);
+		s_pObj = m_ObjectGenerator.GeneratePlanet(float2(0.0f, 0.0f), 5.0f, 10.0f, float3(ATHRandom::Rand(0.0f, 1.0f), ATHRandom::Rand(0.0f, 1.0f), ATHRandom::Rand(0.0f, 1.0f)));
 	}
 
 	m_fElapsedTime = (float)m_Timer.GetElapsedTime();

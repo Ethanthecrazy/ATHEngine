@@ -16,6 +16,7 @@ private:
 public:
 
 	Planet();
+	~Planet();
 	virtual void FixedUpdate();
 	virtual void OnCollisionEnter(b2Contact* _pContact);
 	virtual void OnCollisionExit(b2Contact* _pContact);

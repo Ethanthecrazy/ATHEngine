@@ -101,7 +101,7 @@ bool ATHInputManager::Init( HWND _hWnd, HINSTANCE _hInstance, unsigned int _unSc
 		return false;
 
 	// Make the mouse exclusive
-	hr = m_pMouse->SetCooperativeLevel( _hWnd, DISCL_FOREGROUND|DISCL_EXCLUSIVE ); 
+	hr = m_pMouse->SetCooperativeLevel( _hWnd, DISCL_FOREGROUND ); 
 	if(FAILED(hr))
 		return false;
 

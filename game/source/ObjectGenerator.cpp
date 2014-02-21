@@ -8,7 +8,9 @@
 #include <iostream>
 
 #define PLANET_RAD_MIN 1.0f
-#define PLANET_RAD_MAX 10.0f;
+#define PLANET_RAD_MAX 10.0f
+#define UNIT_TO_PIXEL_RATIO 128
+unsigned int ObjectGenerator::s_unPlanetTextureCount = 0;
 
 ObjectGenerator::ObjectGenerator()
 {
@@ -20,7 +22,8 @@ void ObjectGenerator::Init(ATHObjectManager* _pObjectManager)
 	m_pObjectManager = _pObjectManager;
 }
 
-ATHObject* ObjectGenerator::GeneratePlanet(float2 _fPos, float _fMinRadius, float _fMaxRadius)
+
+ATHObject* ObjectGenerator::GeneratePlanet(float2 _fPos, float _fMinRadius, float _fMaxRadius, float3 _fColor)
 {
 	// The new Object
 	Planet* pNewObject = new Planet();
@@ -28,8 +31,6 @@ ATHObject* ObjectGenerator::GeneratePlanet(float2 _fPos, float _fMinRadius, floa
 	// Decide stats
 	float fPlanetRadius = ATHRandom::Rand(_fMinRadius, _fMaxRadius);
 	pNewObject->SetProperty("radius", &fPlanetRadius, APT_FLOAT);
-
-	std::cout << "Radius: " << fPlanetRadius << "\n";
 
 	// Set the mass
 	float fDensity = 1.0f;
@@ -58,55 +59,70 @@ ATHObject* ObjectGenerator::GeneratePlanet(float2 _fPos, float _fMinRadius, floa
 	pPlanetBody->CreateFixture(&fixtureDef);
 	pNewObject->SetProperty("gravity-radius", &planetCircleShape.m_radius, APT_FLOAT);
 
-	
-
-	struct sPixel
-	{
-		float R;
-		float G;
-		float B;
-		float A;
-	};
-
 	// Create the image?
-	unsigned int unWidth = 512;
-	unsigned int unHeight = 512;
+	ATHRenderNode* pRenderNode = GeneratePlanetTexture(_fColor, fPlanetRadius);
+
+	// Init the game object
+	pNewObject->Init(pRenderNode, pPlanetBody);
+	m_pObjectManager->AddObject(pNewObject);
+
+	return pNewObject;
+}
+
+ATHRenderNode* ObjectGenerator::GeneratePlanetTexture(float3 _fBaseColor, float _fRadius)
+{
+	unsigned int unWidth = (unsigned int)(_fRadius * UNIT_TO_PIXEL_RATIO) + 1;
+	unsigned int unHeight = (unsigned int)(_fRadius * UNIT_TO_PIXEL_RATIO) + 1;
 	unsigned int unPixelCount = unWidth * unHeight;
 
 	unsigned int PosX = 0;
 	unsigned int PosY = 0;
-	sPixel* pPixels = new sPixel[unPixelCount];
+	float4* pPixels = new float4[unPixelCount];
+
 	float fPixelWidth = 1.0f / unWidth;
 	float fPixelHeight = 1.0f / unHeight;
+	b2Vec2 b2Center(0.5f, 0.5f);
+	float fOuterLimit = 0.501f * 0.501f;
+	float fInnerValue = 0.40f * 0.40f;
+	float fBorderValue = 0.497f * 0.497f;
 
 	for (unsigned int i = 0; i < (unPixelCount); ++i)
 	{
-		b2Vec2 b2Center(0.5f, 0.5f);
-		b2Vec2 b2Pos( PosX / (float)unWidth + fPixelWidth / 2.0f, PosY / (float)unHeight + fPixelHeight / 2.0f);
+		b2Vec2 b2Pos(PosX / (float)unWidth + fPixelWidth / 2.0f, PosY / (float)unHeight + fPixelHeight / 2.0f);
 
-		float fDist = ( b2Pos - b2Center ).Length();
-		if (fDist <= 0.501f)
+		float fDist = (b2Pos - b2Center).LengthSquared();
+		
+		if (fDist <= fOuterLimit)
 		{
-			pPixels[i].A = 1.0f;
-			pPixels[i].R = 0.864f - fDist + 0.2f; // 247
-			pPixels[i].G = 0.339f + ATHRandom::Rand(-0.1f, 0.0f); // 138
-			pPixels[i].B = 0.177f + ATHRandom::Rand(-0.1f, 0.0f); // 71
+			pPixels[i].cA = 1.0f;
+			pPixels[i].cR = _fBaseColor.cR + ATHRandom::Rand(-0.1f, 0.0f); // 247
+			pPixels[i].cG = _fBaseColor.cG + ATHRandom::Rand(-0.1f, 0.0f); // 138
+			pPixels[i].cB = _fBaseColor.cB + ATHRandom::Rand(-0.1f, 0.0f); // 71
 
-			if (fDist > 0.48f)
+			if (fDist > fInnerValue )
 			{
-				pPixels[i].R -= (fDist - 0.48f) * 8.0f;
-				pPixels[i].G -= (fDist - 0.48f) * 8.0f;
-				pPixels[i].B -= (fDist - 0.48f) * 8.0f;
+				if (fDist > fBorderValue)
+				{
+					pPixels[i].cR = 0.0f;
+					pPixels[i].cG = 0.0f;
+					pPixels[i].cB = 0.0f;
+				}
+				else
+				{
+					pPixels[i].cR *= 1.0f - 0.33f * (fDist - fInnerValue) / (fOuterLimit - fInnerValue);
+					pPixels[i].cG *= 1.0f - 0.33f * (fDist - fInnerValue) / (fOuterLimit - fInnerValue);
+					pPixels[i].cB *= 1.0f - 0.33f * (fDist - fInnerValue) / (fOuterLimit - fInnerValue);
+				}
 			}
 		}
 		else
 		{
-			pPixels[i].A = 0.0f;
-			pPixels[i].R = 0.0f;
-			pPixels[i].G = 0.0f;
-			pPixels[i].B = 0.0f;
+			pPixels[i].cA = 0.0f;
+			pPixels[i].cR = 0.0f;
+			pPixels[i].cG = 0.0f;
+			pPixels[i].cB = 0.0f;
 		}
-		
+
 		PosX++;
 		if (PosX >= unWidth)
 		{
@@ -114,35 +130,36 @@ ATHObject* ObjectGenerator::GeneratePlanet(float2 _fPos, float _fMinRadius, floa
 			PosY++;
 		}
 	}
+	
+	char szNumberBuff[32];
+	_itoa_s(s_unPlanetTextureCount, szNumberBuff, 32, 10);
 
-	static unsigned int unPlanetTextureCount = 0;
 	std::string strPlanetTexHandle("PlanetTexture_");
-	strPlanetTexHandle += unPlanetTextureCount;
-	unPlanetTextureCount += 1;
+	strPlanetTexHandle += szNumberBuff;
+	s_unPlanetTextureCount += 1;
 
-	ATHRenderer::GetInstance()->
+	ATHAtlas::ATHTextureHandle athTExHandle = ATHRenderer::GetInstance()->
 		GetAtlas()->
 		LoadTextureFromData(strPlanetTexHandle.c_str(),
 		unWidth,
 		unHeight,
 		(void*)pPixels,
-		sizeof(sPixel)* unPixelCount);
+		sizeof(float4)* unPixelCount);
 
 	delete pPixels;
+
+	if (!athTExHandle.Valid())
+		std::cout << "Error: Failed to create Planet texture.\n";
 
 	// Create the render object
 	ATHRenderNode* pRenderNode = ATHRenderer::GetInstance()->CreateRenderNode("Texture", 0);
 
 	D3DXMATRIX matScale;
-	D3DXMatrixScaling(&matScale, fPlanetRadius * 2.0f, fPlanetRadius * 2.0f, 1.0f);
+	D3DXMatrixScaling(&matScale, _fRadius * 2.0f, _fRadius * 2.0f, 1.0f);
 	pRenderNode->SetLocalTransform(matScale);
 
-	pRenderNode->SetTexture(ATHRenderer::GetInstance()->GetAtlas()->GetTexture(strPlanetTexHandle.c_str()));
+	pRenderNode->SetTexture(athTExHandle);
 	pRenderNode->SetMesh(&ATHRenderer::GetInstance()->m_Quad);
 
-	// Init the game object
-	pNewObject->Init(pRenderNode, pPlanetBody);
-	m_pObjectManager->AddObject(pNewObject);
-
-	return pNewObject;
+	return pRenderNode;
 }

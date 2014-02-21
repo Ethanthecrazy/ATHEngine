@@ -1,5 +1,8 @@
 #include "Planet.h"
 #include "../../../engine/Box2D/Box2D.h"
+#include "../../../engine/ATHRenderer/ATHRenderNode.h"
+#include "../../../engine/ATHRenderer/ATHRenderer.h"
+#include "../../../engine/ATHRenderer/Texture/ATHAtlas.h"
 
 #define PLANET_GRAVITY_CONSTANT 9.8f
 
@@ -7,6 +10,16 @@ Planet::Planet()
 {
 	ATHObject();
 	m_fMass = 0.0f;
+}
+
+Planet::~Planet()
+{
+	// When the planet dies, it needs to clean up its texture;
+	ATHRenderNode* pRenderNode = GetRenderNode();
+	if (pRenderNode)
+	{
+		ATHRenderer::GetInstance()->GetAtlas()->UnloadTexture(pRenderNode->GetTexture().GetTexture());
+	}
 }
 
 void Planet::FixedUpdate()

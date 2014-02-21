@@ -3,6 +3,7 @@
 
 #include "../../engine/ATHUtil/UTimer.h"
 #include "../../engine/ATHEngine.h"
+#include "ObjectGenerator.h"
 
 #include <vector>
 #include <string>
@@ -40,6 +41,7 @@ class CGame
 public:
 
 	ATHEngine m_Engine;
+	ObjectGenerator m_ObjectGenerator;
 
 	static CGame* GetInstance();
 

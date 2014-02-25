@@ -3,7 +3,9 @@
 #include "../../engine/Box2D/Box2D.h"
 #include "../../engine/ATHUtil/ATHRand.h"
 #include "../../engine/ATHRenderer/ATHRenderer.h"
+
 #include "Classes\Planet.h"
+#include "PlanetPixelFunc.h"
 
 #include <iostream>
 
@@ -73,64 +75,7 @@ ATHRenderNode* ObjectGenerator::GeneratePlanetTexture(float3 _fBaseColor, float 
 {
 	unsigned int unWidth = (unsigned int)(_fRadius * UNIT_TO_PIXEL_RATIO) + 1;
 	unsigned int unHeight = (unsigned int)(_fRadius * UNIT_TO_PIXEL_RATIO) + 1;
-	unsigned int unPixelCount = unWidth * unHeight;
 
-	unsigned int PosX = 0;
-	unsigned int PosY = 0;
-	float4* pPixels = new float4[unPixelCount];
-
-	float fPixelWidth = 1.0f / unWidth;
-	float fPixelHeight = 1.0f / unHeight;
-	b2Vec2 b2Center(0.5f, 0.5f);
-	float fOuterLimit = 0.501f * 0.501f;
-	float fInnerValue = 0.40f * 0.40f;
-	float fBorderValue = 0.497f * 0.497f;
-
-	for (unsigned int i = 0; i < (unPixelCount); ++i)
-	{
-		b2Vec2 b2Pos(PosX / (float)unWidth + fPixelWidth / 2.0f, PosY / (float)unHeight + fPixelHeight / 2.0f);
-
-		float fDist = (b2Pos - b2Center).LengthSquared();
-		
-		if (fDist <= fOuterLimit)
-		{
-			pPixels[i].cA = 1.0f;
-			pPixels[i].cR = _fBaseColor.cR + ATHRandom::Rand(-0.1f, 0.0f); // 247
-			pPixels[i].cG = _fBaseColor.cG + ATHRandom::Rand(-0.1f, 0.0f); // 138
-			pPixels[i].cB = _fBaseColor.cB + ATHRandom::Rand(-0.1f, 0.0f); // 71
-
-			if (fDist > fInnerValue )
-			{
-				if (fDist > fBorderValue)
-				{
-					pPixels[i].cR = 0.0f;
-					pPixels[i].cG = 0.0f;
-					pPixels[i].cB = 0.0f;
-				}
-				else
-				{
-					pPixels[i].cR *= 1.0f - 0.33f * (fDist - fInnerValue) / (fOuterLimit - fInnerValue);
-					pPixels[i].cG *= 1.0f - 0.33f * (fDist - fInnerValue) / (fOuterLimit - fInnerValue);
-					pPixels[i].cB *= 1.0f - 0.33f * (fDist - fInnerValue) / (fOuterLimit - fInnerValue);
-				}
-			}
-		}
-		else
-		{
-			pPixels[i].cA = 0.0f;
-			pPixels[i].cR = 0.0f;
-			pPixels[i].cG = 0.0f;
-			pPixels[i].cB = 0.0f;
-		}
-
-		PosX++;
-		if (PosX >= unWidth)
-		{
-			PosX = 0;
-			PosY++;
-		}
-	}
-	
 	char szNumberBuff[32];
 	_itoa_s(s_unPlanetTextureCount, szNumberBuff, 32, 10);
 
@@ -139,14 +84,11 @@ ATHRenderNode* ObjectGenerator::GeneratePlanetTexture(float3 _fBaseColor, float 
 	s_unPlanetTextureCount += 1;
 
 	ATHAtlas::ATHTextureHandle athTExHandle = ATHRenderer::GetInstance()->
-		GetAtlas()->
-		LoadTextureFromData(strPlanetTexHandle.c_str(),
-		unWidth,
-		unHeight,
-		(void*)pPixels,
-		sizeof(float4)* unPixelCount);
-
-	delete pPixels;
+		GetAtlas()->GenerateTexture(strPlanetTexHandle.c_str(), 
+		unWidth, 
+		unHeight, 
+		PlanetPixelFunc, 
+		new float4( ATHRandom::Rand(0.0f, 1.0f), ATHRandom::Rand(0.0f, 1.0f), ATHRandom::Rand(0.0f, 1.0f), 1.0f ) );
 
 	if (!athTExHandle.Valid())
 		std::cout << "Error: Failed to create Planet texture.\n";

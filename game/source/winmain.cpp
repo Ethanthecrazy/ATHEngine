@@ -29,7 +29,6 @@
 #include <fstream>
 #include <ctime>
 
-#include "../../engine/ATHUtil/MemoryManager.h"
 #include "CGame.h"
 
 #ifdef _DEBUG
@@ -172,10 +171,10 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 #ifdef _DEBUG
 
-	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	// this function call will set a breakpoint at the location of a leaked block
 	// set the parameter to the identifier for a leaked block
-	//_CrtSetBreakAlloc(1);
+	//_CrtSetBreakAlloc(1440);
 
 #endif
 
@@ -200,7 +199,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	//////////////////////////////////////////
 
 
-	MemoryManager::GetInstance()->Init( g_nMEMORY_SIZE );
+	//MemoryManager::GetInstance()->Init( g_nMEMORY_SIZE );
 	CGame* theGame = CGame::GetInstance();
 	theGame->m_Engine.WindowsArgs(hInstance, WindowProc, g_szWINDOW_CLASS_NAME, nCmdShow);
 	theGame->Initialize();
@@ -242,8 +241,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	
 	theGame->Shutdown();
 
-	MemoryManager::GetInstance()->DebugString();
-	MemoryManager::FreeInstance();
+	//MemoryManager::GetInstance()->DebugString();
+	//MemoryManager::FreeInstance();
 
 
 	/////////////////////////////////////////

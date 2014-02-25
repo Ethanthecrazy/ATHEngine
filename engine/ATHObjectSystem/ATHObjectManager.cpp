@@ -1,9 +1,9 @@
 #include "ATHObjectManager.h"
 
 #include <fstream>
+#include <iostream>
 
 #include "../ATHRenderer/ATHRenderer.h"
-#include "../ATHUtil/NewInclude.h"
 #include "../Box2D/Box2D.h"
 #include "../ATHUtil/FileUtil.h"
 #include "ATHObject.h"

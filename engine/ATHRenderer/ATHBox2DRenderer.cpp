@@ -20,7 +20,6 @@
 
 
 #include "ATHRenderer.h"
-#include "../ATHUtil/NewInclude.h"
 
 void ATHBox2DRenderer::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color)
 {

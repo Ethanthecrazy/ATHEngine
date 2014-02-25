@@ -57,6 +57,8 @@ void CGame::Initialize()
 	}
 
 	ATHRandom::SeedRand( (unsigned long)time(0) );
+	ATHRandom::SeedFastRand( (unsigned int)time(0) );
+
 	m_ObjectGenerator.GeneratePlanet(float2(32.0f, -32.0f), 5.0f, 10.0f, float3(0.9f, 0.3f, 0.1f));
 
 }

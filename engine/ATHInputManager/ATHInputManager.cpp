@@ -24,7 +24,7 @@ ATHInputManager::ATHInputManager()
 
 	m_fMouseDiffX = 0.0f;
 	m_fMouseDiffY = 0.0f;
-	m_fMouseDiffY = 0.0f;
+	m_fMouseDiffZ = 0.0f;
 	m_fSensitivity = 1.0f;
 
 }

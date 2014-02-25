@@ -18,14 +18,15 @@ void ATHRenderFuncDebugLines( ATHRenderer* pRenderer, ID3DXEffect* _pShader, ATH
 
 void ATHRenderFuncTexture( ATHRenderer* pRenderer, ID3DXEffect* _pShader, ATHRenderNode* pNode )
 {
+	if (!pNode->GetTexture().GetTexture())
+		return;
 
 	D3DXMATRIX matMVP = pRenderer->GetCamera()->GetViewMatrix() * pRenderer->GetCamera()->GetProjectionMatrix();
 
 	D3DXMATRIX mat = pNode->GetTrasform() * matMVP;
 
 	_pShader->SetMatrix( "gWVP", &mat );
-	_pShader->SetTexture( "tex1", pNode->GetTexture().GetTexture() );
-
+	_pShader->SetTexture("tex1", pNode->GetTexture().GetTexture());
 	_pShader->SetFloatArray( "multColor", float4( 1.0f ).Array, 4 );
 	_pShader->CommitChanges();
 

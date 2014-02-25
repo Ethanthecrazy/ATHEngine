@@ -7,7 +7,6 @@
 
 #include "Camera.h"
 #include "ATHRenderNode.h"
-#include "../ATHUtil/NewInclude.h"
 #include "Texture/ATHAtlas.h"
 #include "Mesh/ATHVertexDecl.h"
 #include "ATHRenderFunctions.h"

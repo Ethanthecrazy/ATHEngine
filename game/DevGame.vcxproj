@@ -95,6 +95,7 @@
     <ClInclude Include="source\Classes\Planet.h" />
     <ClInclude Include="source\ObjectGenerator.h" />
     <ClInclude Include="source\CGame.h" />
+    <ClInclude Include="source\PlanetPixelFunc.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

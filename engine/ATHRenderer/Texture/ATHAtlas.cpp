@@ -1,7 +1,10 @@
 #include "ATHAtlas.h"
 #include "../ATHRenderer.h"
 
-#include "../../ATHUtil/NewInclude.h"
+#include <ppl.h>
+#include "../../ATHObjectSystem/ATHObject.h"
+
+#define MAX_PIXELS_PER_UPDATE 2048
 
 ATHAtlas::ATHAtlas()
 {
@@ -12,6 +15,79 @@ ATHAtlas::ATHAtlas()
 void ATHAtlas::Initialize( LPDIRECT3DDEVICE9 _device )
 {
 	m_pDevice = _device;
+}
+//================================================================================
+void ATHAtlas::Update()
+{
+	if (m_liTextureJobs.size() < 1)
+		return;
+
+	ATHTexGenJob* pCurrJob = m_liTextureJobs.front();
+
+	unsigned int unNumPixels = pCurrJob->m_unTextureWidth * pCurrJob->m_unTextureHeight;
+	float fPixelWidth = 1.0f / pCurrJob->m_unTextureWidth;
+	float fPixelHeight = 1.0f / pCurrJob->m_unTextureHeight;
+
+	for (unsigned int unCurrPix = 0; unCurrPix < MAX_PIXELS_PER_UPDATE; ++unCurrPix)
+	{
+		pCurrJob->m_PixelFunc(pCurrJob->m_unCurrPosX / (float)pCurrJob->m_unTextureWidth + fPixelWidth / 2.0f,
+			pCurrJob->m_unCurrPosY / (float)pCurrJob->m_unTextureHeight + fPixelHeight / 2.0f,
+			pCurrJob->m_fPixels + pCurrJob->m_unCurrPixel, pCurrJob->m_pData );
+
+		pCurrJob->m_unCurrPixel++;
+
+		// Keep track of positioning
+		pCurrJob->m_unCurrPosX++;
+		if (pCurrJob->m_unCurrPosX >= pCurrJob->m_unTextureWidth)
+		{
+			pCurrJob->m_unCurrPosX = 0;
+			pCurrJob->m_unCurrPosY++;
+		}
+
+		if (pCurrJob->m_unCurrPixel >= unNumPixels)
+		{
+
+			ATHAtlas::ATHTextureHandle athTExHandle = LoadTextureFromData("ATH_TEXTURE_GENERATION",
+				pCurrJob->m_unTextureWidth,
+				pCurrJob->m_unTextureWidth,
+				(void*)pCurrJob->m_fPixels,
+				sizeof(float4)* unNumPixels);
+
+			delete pCurrJob->m_fPixels;
+
+			//if (!athTExHandle.Valid())
+				//std::cout << "Error: Failed to create Planet texture.\n";
+			
+			// Get the info from the created tex node and destroy it
+			// When creating the job, a texture node was created empty 
+			// and a reference to it was given out, so we need to move
+			// the information from one node to another
+			
+			// Give the waiting tex node its texture
+			pCurrJob->m_pTexNode->m_lpTexture = athTExHandle.m_pTexNode->m_lpTexture;
+			pCurrJob->m_pTexNode->m_SurfDesc = athTExHandle.m_pTexNode->m_SurfDesc;
+			pCurrJob->m_pTexNode->m_szName = pCurrJob->m_szTextureName;
+
+			// clean up the precreated node
+			std::map< std::string, sTexNode* >::iterator itrCurr = m_mapTextures.begin();
+			while (itrCurr != m_mapTextures.end()) 
+			{
+				if ((*itrCurr).second->m_lpTexture == athTExHandle.m_pTexNode->m_lpTexture)
+				{
+					delete (*itrCurr).second;
+					m_mapTextures.erase(itrCurr);
+					break; 
+				}
+				itrCurr++; 
+			}
+
+			pCurrJob->m_PixelFunc(0, 0, nullptr, pCurrJob->m_pData);
+			delete pCurrJob;
+			m_liTextureJobs.pop_front();
+
+			return;
+		}
+	}
 }
 //================================================================================
 void ATHAtlas::Shutdown()
@@ -27,7 +103,7 @@ ATHAtlas::ATHTextureHandle ATHAtlas::LoadTexture(char* _szHandle, char* _szFilep
 	std::string szHandleString = _szHandle;
 
 	if( m_mapTextures.count( szHandleString ) > 0 )
-		return ATHTextureHandle();
+		return ATHTextureHandle(m_mapTextures[szHandleString]);
 
 	sTexNode* pNewTex = new sTexNode();
 
@@ -71,7 +147,7 @@ ATHAtlas::ATHTextureHandle ATHAtlas::LoadTextureFromData(const char* _szHandle, 
 	
 	std::string szHandleString = _szHandle;
 
-	if (m_mapTextures.count(szHandleString))
+	if (m_mapTextures.count(szHandleString) > 0)
 		return ATHTextureHandle(m_mapTextures[szHandleString]);
 
 	HRESULT result = 0;
@@ -147,7 +223,7 @@ void ATHAtlas::UnloadTexture( LPDIRECT3DTEXTURE9 _texture )
 	{
 		if( (*itrCurr).second->m_lpTexture == _texture )
 		{
-			(*itrCurr).second->m_lpTexture->Release();
+			IF((*itrCurr).second->m_lpTexture)->Release();
 			delete (*itrCurr).second;
 			m_mapTextures.erase( itrCurr );
 			return;
@@ -155,6 +231,37 @@ void ATHAtlas::UnloadTexture( LPDIRECT3DTEXTURE9 _texture )
 
 		itrCurr++;
 	}
+}
+//================================================================================
+ATHAtlas::ATHTextureHandle ATHAtlas::GenerateTexture(const char* _szName, unsigned int _unWidth, unsigned int _unHeight, PixelFunc _PixelOperation, void* _pData )
+{
+	if (_unWidth == 0 || _unHeight == 0)
+		return ATHTextureHandle();
+
+	std::string szHandleString( _szName );
+	sTexNode* pEmptyNode = new sTexNode();
+
+	m_mapTextures[szHandleString] = pEmptyNode;
+
+	ATHTexGenJob* pNewJob = new ATHTexGenJob();
+	pNewJob->m_pTexNode = pEmptyNode;
+	pNewJob->m_unTextureLevel = 0;
+	pNewJob->m_szTextureName = szHandleString;
+
+	pNewJob->m_unTextureWidth = _unWidth;
+	pNewJob->m_unTextureHeight = _unHeight;
+
+	pNewJob->m_unCurrPosX = 0;
+	pNewJob->m_unCurrPosY = 0;
+
+	pNewJob->m_fPixels = new float4[_unHeight * _unWidth];
+	pNewJob->m_PixelFunc = _PixelOperation;
+	pNewJob->m_pData = _pData;
+	pNewJob->m_unCurrPixel = 0;
+
+	m_liTextureJobs.push_back(pNewJob);
+
+	return ATHTextureHandle(pEmptyNode);
 }
 //================================================================================
 ATHAtlas::ATHTextureHandle ATHAtlas::GetTexture( const char* _szHandle )
@@ -190,12 +297,22 @@ void ATHAtlas::Clear()
 
 	while( itrCurr != m_mapTextures.end() )
 	{
-		(*itrCurr).second->m_lpTexture->Release();
+		IF((*itrCurr).second->m_lpTexture)->Release();
 		delete (*itrCurr).second;
 		
 		itrCurr++;
 	}
 
 	m_mapTextures.clear();
+
+	std::list< ATHTexGenJob* >::iterator itrJob = m_liTextureJobs.begin();
+	while (itrJob != m_liTextureJobs.end())
+	{
+		delete (*itrJob)->m_fPixels;
+		delete (*itrJob);
+		itrJob++;
+	}
+
+	m_liTextureJobs.clear();
 }
 //================================================================================

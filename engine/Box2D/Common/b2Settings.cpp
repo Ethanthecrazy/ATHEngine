@@ -20,19 +20,20 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstdarg>
-#include "../../ATHUtil/NewInclude.h"
 
 b2Version b2_version = {2, 2, 1};
 
 // Memory allocators. Modify these to use your own allocator.
 void* b2Alloc(int32 size)
 {
-	return MemoryManager::GetInstance()->Allocate( size, "b2Settings.cpp" );
+	//return MemoryManager::GetInstance()->Allocate( size, "b2Settings.cpp" );
+	return malloc(size);
 }
 
 void b2Free(void* mem)
 {
-	MemoryManager::GetInstance()->DeAllocate( mem );
+	//MemoryManager::GetInstance()->DeAllocate( mem );
+	free(mem);
 }
 
 // You can modify this to use your logging facility.

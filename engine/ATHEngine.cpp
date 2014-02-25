@@ -223,6 +223,9 @@ void ATHEngine::TestInit()
 //================================================================================
 bool ATHEngine::Update(float _fDT)
 {
+	if (m_bShutdown)
+		return false;
+
 	bool bReturn = true;
 
 	m_fGameTime += _fDT;
@@ -238,6 +241,8 @@ bool ATHEngine::Update(float _fDT)
 	m_pEventManager->ProcessEvents();
 
 	m_pAudioManager->Update();
+
+	m_pRenderer->GetAtlas()->Update();
 
 	return bReturn;
 }

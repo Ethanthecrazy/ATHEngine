@@ -1,7 +1,6 @@
 #include "FileUtil.h"
 
 #include <fstream>
-#include "NewInclude.h"
 
 #define DEFAULT_FILEPATH_FILE "assets.xml"
 

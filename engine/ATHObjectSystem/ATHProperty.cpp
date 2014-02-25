@@ -1,5 +1,5 @@
 #include "ATHProperty.h"
-#include "../ATHUtil/NewInclude.h"
+#include <iostream>
 
 ATHProperty::ATHProperty() : m_pData(nullptr), m_unDataSize(0), m_Type( APT_VOID )
 {}

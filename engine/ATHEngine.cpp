@@ -25,6 +25,7 @@ ATHEngine::ATHEngine ()
 	m_bFullscreen = false;
 	m_bVsync = false;
 	m_bShutdown = true;
+	m_bDebugLines = false;
 
 	m_nScreenWidth = 640;
 	m_nScreenHeight = 480;
@@ -54,7 +55,7 @@ void ATHEngine::Init()
 	// Start the renderer
 	m_pRenderer = ATHRenderer::GetInstance();
 	m_pRenderer->Initialize(m_hWnd, m_hInstance, m_nScreenWidth, m_nScreenHeight, m_bFullscreen, m_bVsync);
-
+	m_pRenderer->SetDebugLines(m_bDebugLines);
 	// Setup input management
 	m_pInputManager = ATHInputManager::GetInstance();
 	m_pInputManager->Init(m_hWnd, m_hInstance, m_nScreenWidth, m_nScreenWidth, m_nScreenWidth / 2, m_nScreenWidth / 2);
@@ -122,6 +123,18 @@ void ATHEngine::LoadConfig()
 			{
 				m_nScreenWidth = atoi(attrResX->value());
 				m_nScreenHeight = atoi(attrResY->value());
+			}
+		}
+		
+		rapidxml::xml_node<>* nodeDebugLines = nodeGraphics->first_node("DebugLines");
+		if (nodeDebugLines)
+		{
+			rapidxml::xml_attribute<>* attrActive = nodeDebugLines->first_attribute("Active");
+			if (attrActive)
+			{
+				std::string strActive = attrActive->value();
+				if (strcmp(strActive.c_str(), "true") == 0)
+					m_bDebugLines = true;
 			}
 		}
 	}
@@ -242,7 +255,7 @@ bool ATHEngine::Update(float _fDT)
 
 	m_pAudioManager->Update();
 
-	m_pRenderer->GetAtlas()->Update();
+	m_pRenderer->GetAtlas()->Update( _fDT );
 
 	return bReturn;
 }

@@ -26,6 +26,7 @@ private:
 	bool m_bFullscreen;
 	bool m_bVsync;
 	bool m_bShutdown;
+	bool m_bDebugLines;
 
 	int m_nScreenWidth;
 	int m_nScreenHeight;

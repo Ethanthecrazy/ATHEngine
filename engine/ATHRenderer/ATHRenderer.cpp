@@ -75,7 +75,7 @@ ATHRenderer::ATHRenderer() : m_meshDebugLines( "DebugLines", GetVertexDeclaratio
 	m_pNodeInventory	= std::list<ATHRenderNode*>();
 
 	m_d3deffDepth = nullptr;
-
+	m_bDebugLinesActive = false;
 }
 //================================================================================
 ATHRenderer::~ATHRenderer()
@@ -638,6 +638,9 @@ void ATHRenderer::DrawMesh( ATHMesh* _pMesh )
 //================================================================================
 void ATHRenderer::DebugLinesAdd( float3 _fStart, float3 _fEnd, float4 _fColor )
 {
+	if (!m_bDebugLinesActive)
+		return;
+
 	m_meshDebugLines.m_vecPositions.push_back( _fStart );
 	m_meshDebugLines.m_vecPositions.push_back( _fEnd );
 	m_meshDebugLines.m_vecColors.push_back( _fColor );

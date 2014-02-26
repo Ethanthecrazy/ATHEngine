@@ -85,12 +85,12 @@ public:
 	ATHAtlas();
 
 	void Initialize( LPDIRECT3DDEVICE9 _device );
-	void Update();
+	void Update( float _fDT );
 	void Shutdown();
 
 	ATHTextureHandle LoadTexture(char* _szHandle, char* _szFilepath);
 	ATHTextureHandle LoadTextureFromData(const char* _szHandle, unsigned int _unWidth, unsigned int _unHeight, void* _pData, size_t _tDataSize);
-	void UnloadTexture( LPDIRECT3DTEXTURE9 _texture );
+	void UnloadTexture(ATHTextureHandle _pNode);
 
 	ATHTextureHandle GenerateTexture( const char* _szName, unsigned int _unWidth, unsigned int _unHeight, PixelFunc _PixelOperation, void* _pData = nullptr);
 

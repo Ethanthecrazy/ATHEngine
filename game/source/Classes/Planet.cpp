@@ -18,7 +18,7 @@ Planet::~Planet()
 	ATHRenderNode* pRenderNode = GetRenderNode();
 	if (pRenderNode)
 	{
-		ATHRenderer::GetInstance()->GetAtlas()->UnloadTexture(pRenderNode->GetTexture().GetTexture());
+		ATHRenderer::GetInstance()->GetAtlas()->UnloadTexture(pRenderNode->GetTexture());
 	}
 }
 

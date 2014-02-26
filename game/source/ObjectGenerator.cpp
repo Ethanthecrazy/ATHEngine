@@ -9,8 +9,7 @@
 
 #include <iostream>
 
-#define PLANET_RAD_MIN 1.0f
-#define PLANET_RAD_MAX 10.0f
+#define PLANET_SLOT_LENGTH 1.0f
 #define UNIT_TO_PIXEL_RATIO 128
 unsigned int ObjectGenerator::s_unPlanetTextureCount = 0;
 
@@ -22,8 +21,43 @@ ObjectGenerator::ObjectGenerator()
 void ObjectGenerator::Init(ATHObjectManager* _pObjectManager)
 {
 	m_pObjectManager = _pObjectManager;
+	RefreshSlotBag();
 }
 
+void ObjectGenerator::RefreshSlotBag()
+{
+	m_vecPlanetSlotBag.clear();
+
+	m_vecPlanetSlotBag.push_back(20);
+	m_vecPlanetSlotBag.push_back(20);
+
+	m_vecPlanetSlotBag.push_back(31);
+	m_vecPlanetSlotBag.push_back(31);
+
+	m_vecPlanetSlotBag.push_back(42);
+	m_vecPlanetSlotBag.push_back(42);
+	m_vecPlanetSlotBag.push_back(42);
+
+	m_vecPlanetSlotBag.push_back(53);
+	m_vecPlanetSlotBag.push_back(53);
+
+	m_vecPlanetSlotBag.push_back(64);
+	m_vecPlanetSlotBag.push_back(64);
+
+	m_vecPlanetSlotBag.push_back(75);
+
+	std::random_shuffle(m_vecPlanetSlotBag.begin(), m_vecPlanetSlotBag.end());
+}
+
+unsigned int ObjectGenerator::GetNextPlanetSlotCount()
+{
+	if (m_vecPlanetSlotBag.size() < 1)
+		RefreshSlotBag();
+	
+	unsigned int unReturn = m_vecPlanetSlotBag.front();
+	m_vecPlanetSlotBag.erase( m_vecPlanetSlotBag.begin() );
+	return unReturn;
+}
 
 ATHObject* ObjectGenerator::GeneratePlanet(float2 _fPos, float _fMinRadius, float _fMaxRadius, float3 _fColor)
 {
@@ -31,7 +65,9 @@ ATHObject* ObjectGenerator::GeneratePlanet(float2 _fPos, float _fMinRadius, floa
 	Planet* pNewObject = new Planet();
 
 	// Decide stats
-	float fPlanetRadius = ATHRandom::Rand(_fMinRadius, _fMaxRadius);
+	int nSlotCount = GetNextPlanetSlotCount();
+	pNewObject->SetProperty("structure-slot-count", &nSlotCount, APT_INT);
+	float fPlanetRadius = PLANET_SLOT_LENGTH / (2.0f * sin(3.141592f / nSlotCount));
 	pNewObject->SetProperty("radius", &fPlanetRadius, APT_FLOAT);
 
 	// Set the mass
@@ -61,7 +97,7 @@ ATHObject* ObjectGenerator::GeneratePlanet(float2 _fPos, float _fMinRadius, floa
 	pPlanetBody->CreateFixture(&fixtureDef);
 	pNewObject->SetProperty("gravity-radius", &planetCircleShape.m_radius, APT_FLOAT);
 
-	// Create the image?
+	// Create the image
 	ATHRenderNode* pRenderNode = GeneratePlanetTexture(_fColor, fPlanetRadius);
 
 	// Init the game object

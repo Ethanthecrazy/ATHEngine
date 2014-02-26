@@ -80,6 +80,7 @@ private:
 
 	ATHMesh		m_meshDebugLines;
 	ATHBox2DRenderer m_DebugRenderer;
+	bool m_bDebugLinesActive;
 
 public:
 
@@ -142,6 +143,7 @@ public:
 	void DebugLinesAdd( float3 _fStart, float3 _fEnd, float4 _fColor );
 	void DebugLinesCleanup();
 	ATHBox2DRenderer* GetDebugRenderer() { return &m_DebugRenderer; }
+	void SetDebugLines(bool _bActive) { m_bDebugLinesActive = _bActive; }
 
 	void BuildQuad();
 };

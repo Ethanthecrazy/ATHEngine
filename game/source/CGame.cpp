@@ -60,7 +60,6 @@ void CGame::Initialize()
 	ATHRandom::SeedFastRand( (unsigned int)time(0) );
 
 	m_ObjectGenerator.GeneratePlanet(float2(32.0f, -32.0f), 5.0f, 10.0f, float3(0.9f, 0.3f, 0.1f));
-
 }
 
 // execution
@@ -72,13 +71,13 @@ bool CGame::Main()
 	static ATHObject* s_pObj = nullptr;
 	if (!s_pObj)
 	{
-		s_pObj = m_ObjectGenerator.GeneratePlanet(float2(0.0f, 0.0f), 5.0f, 10.0f, float3(ATHRandom::Rand(0.0f, 1.0f), ATHRandom::Rand(0.0f, 1.0f), ATHRandom::Rand(0.0f, 1.0f)));
+		s_pObj = m_ObjectGenerator.GeneratePlanet(float2(0.0f, 0.0f), 3.0f, 3.0f, float3(ATHRandom::Rand(0.0f, 1.0f), ATHRandom::Rand(0.0f, 1.0f), ATHRandom::Rand(0.0f, 1.0f)));
 	}
 
 	if (GetAsyncKeyState(VK_F1) & 1)
 	{
 		s_pObj->SetAlive(false);
-		s_pObj = m_ObjectGenerator.GeneratePlanet(float2(0.0f, 0.0f), 5.0f, 10.0f, float3(ATHRandom::Rand(0.0f, 1.0f), ATHRandom::Rand(0.0f, 1.0f), ATHRandom::Rand(0.0f, 1.0f)));
+		s_pObj = m_ObjectGenerator.GeneratePlanet(float2(0.0f, 0.0f), 3.0f, 10.0f, float3(ATHRandom::Rand(0.0f, 1.0f), ATHRandom::Rand(0.0f, 1.0f), ATHRandom::Rand(0.0f, 1.0f)));
 	}
 
 	m_fElapsedTime = (float)m_Timer.GetElapsedTime();

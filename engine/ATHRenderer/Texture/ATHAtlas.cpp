@@ -2,10 +2,12 @@
 #include "../ATHRenderer.h"
 
 #include <ppl.h>
+
 #include "../../ATHObjectSystem/ATHObject.h"
 
-#define MAX_PIXELS_PER_UPDATE 2048
-
+#define MAX_PIXELS_PER_UPDATE 10000
+#define MAX_FRAMERATE 120
+#define MAX_FRAMERATE_TIME ( 1.0f / MAX_FRAMERATE )
 ATHAtlas::ATHAtlas()
 {
 	m_pDevice = nullptr;
@@ -17,7 +19,7 @@ void ATHAtlas::Initialize( LPDIRECT3DDEVICE9 _device )
 	m_pDevice = _device;
 }
 //================================================================================
-void ATHAtlas::Update()
+void ATHAtlas::Update( float _fDT )
 {
 	if (m_liTextureJobs.size() < 1)
 		return;
@@ -27,67 +29,90 @@ void ATHAtlas::Update()
 	unsigned int unNumPixels = pCurrJob->m_unTextureWidth * pCurrJob->m_unTextureHeight;
 	float fPixelWidth = 1.0f / pCurrJob->m_unTextureWidth;
 	float fPixelHeight = 1.0f / pCurrJob->m_unTextureHeight;
-
-	for (unsigned int unCurrPix = 0; unCurrPix < MAX_PIXELS_PER_UPDATE; ++unCurrPix)
+	
+	unsigned int unPixelsThisLoop = MAX_PIXELS_PER_UPDATE;
+	if (pCurrJob->m_unCurrPixel + unPixelsThisLoop >= unNumPixels)
 	{
-		pCurrJob->m_PixelFunc(pCurrJob->m_unCurrPosX / (float)pCurrJob->m_unTextureWidth + fPixelWidth / 2.0f,
-			pCurrJob->m_unCurrPosY / (float)pCurrJob->m_unTextureHeight + fPixelHeight / 2.0f,
-			pCurrJob->m_fPixels + pCurrJob->m_unCurrPixel, pCurrJob->m_pData );
+		unPixelsThisLoop -= pCurrJob->m_unCurrPixel + unPixelsThisLoop - unNumPixels;
+	}
 
-		pCurrJob->m_unCurrPixel++;
+	Concurrency::parallel_for(pCurrJob->m_unCurrPixel, pCurrJob->m_unCurrPixel + unPixelsThisLoop, [&](unsigned int i)
+	{
+		unsigned int unPosX = i % pCurrJob->m_unTextureWidth;
+		unsigned int unPosY = i / pCurrJob->m_unTextureWidth;
 
-		// Keep track of positioning
-		pCurrJob->m_unCurrPosX++;
-		if (pCurrJob->m_unCurrPosX >= pCurrJob->m_unTextureWidth)
+		pCurrJob->m_PixelFunc(unPosX / (float)pCurrJob->m_unTextureWidth + fPixelWidth / 2.0f,
+			unPosY / (float)pCurrJob->m_unTextureHeight + fPixelHeight / 2.0f,
+			pCurrJob->m_fPixels + i, pCurrJob->m_pData);
+
+	});
+
+	pCurrJob->m_unCurrPixel += unPixelsThisLoop;
+
+	if (pCurrJob->m_unCurrPixel >= unNumPixels)
+	{
+		bool bExists = false;
+		// Check to make sure that target node still exists
+		std::map< std::string, sTexNode* >::iterator itrCurr = m_mapTextures.begin();
+		while (itrCurr != m_mapTextures.end())
 		{
-			pCurrJob->m_unCurrPosX = 0;
-			pCurrJob->m_unCurrPosY++;
+			if ((*itrCurr).second == pCurrJob->m_pTexNode)
+			{
+				bExists = true;
+				break;
+			}
+			itrCurr++;
 		}
 
-		if (pCurrJob->m_unCurrPixel >= unNumPixels)
+		if (!bExists) // If it doesnt exist
 		{
-
-			ATHAtlas::ATHTextureHandle athTExHandle = LoadTextureFromData("ATH_TEXTURE_GENERATION",
-				pCurrJob->m_unTextureWidth,
-				pCurrJob->m_unTextureWidth,
-				(void*)pCurrJob->m_fPixels,
-				sizeof(float4)* unNumPixels);
-
+			// End it now
 			delete pCurrJob->m_fPixels;
-
-			//if (!athTExHandle.Valid())
-				//std::cout << "Error: Failed to create Planet texture.\n";
-			
-			// Get the info from the created tex node and destroy it
-			// When creating the job, a texture node was created empty 
-			// and a reference to it was given out, so we need to move
-			// the information from one node to another
-			
-			// Give the waiting tex node its texture
-			pCurrJob->m_pTexNode->m_lpTexture = athTExHandle.m_pTexNode->m_lpTexture;
-			pCurrJob->m_pTexNode->m_SurfDesc = athTExHandle.m_pTexNode->m_SurfDesc;
-			pCurrJob->m_pTexNode->m_szName = pCurrJob->m_szTextureName;
-
-			// clean up the precreated node
-			std::map< std::string, sTexNode* >::iterator itrCurr = m_mapTextures.begin();
-			while (itrCurr != m_mapTextures.end()) 
-			{
-				if ((*itrCurr).second->m_lpTexture == athTExHandle.m_pTexNode->m_lpTexture)
-				{
-					delete (*itrCurr).second;
-					m_mapTextures.erase(itrCurr);
-					break; 
-				}
-				itrCurr++; 
-			}
-
 			pCurrJob->m_PixelFunc(0, 0, nullptr, pCurrJob->m_pData);
 			delete pCurrJob;
 			m_liTextureJobs.pop_front();
-
 			return;
 		}
+
+		ATHAtlas::ATHTextureHandle athTExHandle = LoadTextureFromData("ATH_TEXTURE_GENERATION",
+			pCurrJob->m_unTextureWidth,
+			pCurrJob->m_unTextureWidth,
+			(void*)pCurrJob->m_fPixels,
+			sizeof(float4)* unNumPixels);
+
+		delete pCurrJob->m_fPixels;
+
+		// Get the info from the created tex node and destroy it
+		// When creating the job, a texture node was created empty 
+		// and a reference to it was given out, so we need to move
+		// the information from one node to another
+
+		// Give the waiting tex node its texture
+		pCurrJob->m_pTexNode->m_lpTexture = athTExHandle.m_pTexNode->m_lpTexture;
+		pCurrJob->m_pTexNode->m_SurfDesc = athTExHandle.m_pTexNode->m_SurfDesc;
+		pCurrJob->m_pTexNode->m_szName = pCurrJob->m_szTextureName;
+
+		// clean up the precreated node
+		itrCurr = m_mapTextures.begin();
+		while (itrCurr != m_mapTextures.end())
+		{
+			if ((*itrCurr).second->m_lpTexture == athTExHandle.m_pTexNode->m_lpTexture)
+			{
+				delete (*itrCurr).second;
+				m_mapTextures.erase(itrCurr);
+				break;
+			}
+			itrCurr++;
+		}
+
+
+		pCurrJob->m_PixelFunc(0, 0, nullptr, pCurrJob->m_pData);
+		delete pCurrJob;
+		m_liTextureJobs.pop_front();
+
+		return;
 	}
+
 }
 //================================================================================
 void ATHAtlas::Shutdown()
@@ -215,13 +240,13 @@ ATHAtlas::ATHTextureHandle ATHAtlas::LoadTextureFromData(const char* _szHandle, 
 
 }
 //================================================================================
-void ATHAtlas::UnloadTexture( LPDIRECT3DTEXTURE9 _texture )
+void ATHAtlas::UnloadTexture(ATHTextureHandle _pNode)
 {
 	std::map< std::string, sTexNode* >::iterator itrCurr = m_mapTextures.begin();
 
 	while( itrCurr != m_mapTextures.end() )
 	{
-		if( (*itrCurr).second->m_lpTexture == _texture )
+		if ((*itrCurr).second == _pNode.m_pTexNode )
 		{
 			IF((*itrCurr).second->m_lpTexture)->Release();
 			delete (*itrCurr).second;
@@ -309,6 +334,7 @@ void ATHAtlas::Clear()
 	while (itrJob != m_liTextureJobs.end())
 	{
 		delete (*itrJob)->m_fPixels;
+		(*itrJob)->m_PixelFunc(0, 0, nullptr, (*itrJob)->m_pData);
 		delete (*itrJob);
 		itrJob++;
 	}

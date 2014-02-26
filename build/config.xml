@@ -1,5 +1,8 @@
 <Config>
   <Graphics Fullscreen="false" Vsync="false" >
     <Resolution X="1280" Y="720" />
+    <DebugLines Active="false" />
   </Graphics>
+  <Controls>
+  </Controls>
 </Config>

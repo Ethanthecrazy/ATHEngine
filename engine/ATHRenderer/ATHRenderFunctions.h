@@ -18,9 +18,6 @@ void ATHRenderFuncDebugLines( ATHRenderer* pRenderer, ID3DXEffect* _pShader, ATH
 
 void ATHRenderFuncTexture( ATHRenderer* pRenderer, ID3DXEffect* _pShader, ATHRenderNode* pNode )
 {
-	if (!pNode->GetTexture().GetTexture())
-		return;
-
 	D3DXMATRIX matMVP = pRenderer->GetCamera()->GetViewMatrix() * pRenderer->GetCamera()->GetProjectionMatrix();
 
 	D3DXMATRIX mat = pNode->GetTrasform() * matMVP;
